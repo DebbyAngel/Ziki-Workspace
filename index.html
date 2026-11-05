@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Ziki — whimsical issue board</title>
+<title>Ziki — your agent is working (floating gate widget)</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='26' fill='%231a1a19'/%3E%3Cpath d='M22 22H78L22 78H78M30 50H70' stroke='%23fafaf8' stroke-width='12' stroke-linejoin='miter' stroke-miterlimit='10'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,1103 +14,600 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        zk: {
-          bg:'#F5F7FC', surface:'#FFFFFF', text:'#15121F', text2:'#3E4A63', muted:'#5F6577',
-          border:'#E3E8F2', divider:'#EEF1F7', tint:'#EAF2FE', chip:'#F0F2F7', seg:'#EEF1F6', accent:'#1F5FD9',
-          okbg:'#E3F6EC', okfg:'#146C43', badbg:'#FDE8E4', badfg:'#A3261A', badbd:'#F4B3A8',
-          warnbg:'#FDF3D7', warnfg:'#7A4E00', warnbd:'#F0CD72', infobg:'#E7F0FF', infofg:'#1D4FB8'
-        },
-        electric: { DEFAULT:'#3978F6', strong:'#2E6FEF', deep:'#2756B8' },
-        navy: { ocean:'#0B1733', sidebar:'#0C1938', slate:'#263B63' },
+        zk: { bg:'#F5F7FC', surface:'#FFFFFF', text:'#15121F', text2:'#3E4A63', muted:'#5F6577', border:'#E3E8F2',
+          tint:'#EAF2FE', chip:'#F0F2F7', accent:'#1F5FD9', okbg:'#E3F6EC', okfg:'#146C43', badbg:'#FDE8E4', badfg:'#A3261A',
+          badbd:'#F4B3A8', warnbg:'#FDF3D7', warnfg:'#7A4E00', warnbd:'#F0CD72', infobg:'#E7F0FF', infofg:'#1D4FB8' },
+        electric: { DEFAULT:'#3978F6', strong:'#2E6FEF' },
+        navy: { ocean:'#0B1733', sidebar:'#0C1938' },
         sky: { tint:'#8FC9FF' },
-        candy: { butter:'#FFE9A8', mint:'#C7F5E4', blush:'#FFD3E1', lilac:'#D9D2FF', sky:'#C9E4FF', lemon:'#FFF4C9' }
+        candy: { butter:'#FFE9A8', mint:'#C7F5E4', blush:'#FFD3E1', lilac:'#D9D2FF', sky:'#C9E4FF' }
       },
-      fontFamily: {
-        ui:['Inter','system-ui','sans-serif'],
-        display:['Fredoka','Inter','system-ui','sans-serif'],
-        mono:['JetBrains Mono','ui-monospace','SFMono-Regular','monospace']
-      },
-      borderRadius: {
-        zk:'20px',
-        blob:'2rem 1rem 3rem 1rem',
-        blob2:'1.5rem 2.5rem 1.2rem 2.2rem',
-        blob3:'2.5rem 1.2rem 2rem 1.5rem',
-        blob4:'1rem 3rem 1.5rem 2.5rem'
-      },
-      boxShadow: {
-        chunk:'4px 4px 0px 0px rgba(11,23,51,.16)',
-        chunkLg:'7px 7px 0px 0px rgba(11,23,51,.13)',
-        chunkBlue:'5px 5px 0px 0px rgba(46,111,239,.28)',
-        pop:'0 10px 26px -12px rgba(46,111,239,.55)'
-      }
+      fontFamily: { ui:['Inter','system-ui','sans-serif'], display:['Fredoka','Inter','sans-serif'], mono:['JetBrains Mono','ui-monospace','monospace'] },
+      borderRadius: { blob:'2rem 1rem 3rem 1rem', blob2:'1.5rem 2.5rem 1.2rem 2.2rem', blob3:'2.5rem 1.2rem 2rem 1.5rem', blob4:'1rem 3rem 1.5rem 2.5rem' },
+      boxShadow: { chunk:'4px 4px 0px 0px rgba(11,23,51,.16)', chunkLg:'8px 8px 0px 0px rgba(11,23,51,.14)', chunkBlue:'5px 5px 0px 0px rgba(46,111,239,.3)', pop:'0 14px 34px -14px rgba(46,111,239,.6)' }
     }
   }
 }
 </script>
 <style>
-  html,body{height:100%}
   body{background:#F5F7FC;color:#15121F;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   ::selection{background:#C9E4FF;color:#0B1733}
-  button{font-family:inherit}
-
-  .candy-blob{position:fixed;border-radius:42% 58% 55% 45%/48% 42% 58% 52%;filter:blur(46px);pointer-events:none;z-index:0;opacity:.55}
-
-  @keyframes floaty{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-10px) rotate(1.5deg)}}
-  @keyframes breathe{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.82)}}
-  @keyframes wiggle{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
-  @keyframes hop{0%,100%{transform:translateY(0)}45%{transform:translateY(-7px)}}
-  @keyframes zzz{0%{opacity:0;transform:translate(0,0) scale(.6)}30%{opacity:1}100%{opacity:0;transform:translate(14px,-22px) scale(1.1)}}
-  @keyframes blinkcur{0%,49%{opacity:1}50%,100%{opacity:0}}
-  @keyframes march{0%{transform:translateX(-6px)}50%{transform:translateX(6px)}100%{transform:translateX(-6px)}}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .a-float{animation:floaty 5.5s ease-in-out infinite}
-  .a-breathe{animation:breathe 1.9s ease-in-out infinite}
-  .a-wiggle{animation:wiggle 1.1s ease-in-out infinite}
-  .a-hop{animation:hop .9s ease-in-out infinite}
-  .a-march{animation:march 3.4s ease-in-out infinite}
-  .caret::after{content:"▍";color:#2E6FEF;animation:blinkcur 1s step-end infinite;margin-left:1px}
-
-  /* staggered board rows */
-  #rows > li:nth-child(odd){transform:rotate(.35deg)}
-  #rows > li:nth-child(even){transform:rotate(-.3deg)}
-  #rows > li:nth-child(3n){margin-left:10px}
-  #rows > li{transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .2s}
-  #rows > li:hover{transform:translateY(-6px) rotate(0deg) scale(1.008)}
-
+  .candy-blob{position:fixed;border-radius:44% 56% 52% 48%/48% 44% 56% 52%;filter:blur(52px);pointer-events:none;z-index:0;opacity:.5}
+  @keyframes floaty{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-9px) rotate(1.5deg)}}
+  @keyframes hop{0%,100%{transform:translateY(0)}45%{transform:translateY(-8px)}}
+  @keyframes breathe{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.8)}}
+  @keyframes wiggle{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+  @keyframes caretblink{0%,49%{opacity:1}50%,100%{opacity:0}}
+  @keyframes riseIn{from{opacity:0;transform:translateY(14px) rotate(-1deg) scale(.97)}to{opacity:1;transform:none}}
+  @keyframes popIn{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+  @keyframes confetti{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--rot))}}
+  .a-float{animation:floaty 5s ease-in-out infinite}
+  .a-hop{animation:hop .85s ease-in-out infinite}
+  .a-breathe{animation:breathe 1.7s ease-in-out infinite}
+  .a-wiggle{animation:wiggle 1s ease-in-out infinite}
+  .a-rise{animation:riseIn .4s cubic-bezier(.34,1.56,.64,1) both}
+  .a-pop{animation:popIn .45s cubic-bezier(.34,1.56,.64,1) both}
+  .caret::after{content:"▍";color:#2E6FEF;animation:caretblink 1s step-end infinite;margin-left:1px}
   .blob-hover{transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}
   .blob-hover:hover{transform:translateY(-4px) rotate(1deg) scale(1.02)}
-
-  .scroll-thin{scrollbar-width:thin;scrollbar-color:#C9D6EE transparent}
-  .scroll-thin::-webkit-scrollbar{width:8px;height:8px}
-  .scroll-thin::-webkit-scrollbar-thumb{background:#CBD9F0;border-radius:99px}
-  .scroll-thin::-webkit-scrollbar-track{background:transparent}
-
-  dialog{border:0;padding:0;background:transparent}
-  dialog::backdrop{background:rgba(11,23,51,.45);backdrop-filter:blur(3px)}
-
-  @media (prefers-reduced-motion:reduce){
-    *,*::before,*::after{animation:none!important;transition:none!important}
-  }
-  @media (max-width:640px){
-    .hide-sm{display:none}
-    #rows > li:nth-child(3n){margin-left:0}
-  }
+  .step{transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s}
+  #widget{transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,border-color .3s}
+  #card{max-height:calc(100vh - 88px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#E3E8F2 transparent}
+  #card::-webkit-scrollbar{width:8px}
+  #card::-webkit-scrollbar-thumb{background:#E3E8F2;border-radius:9999px}
+  #widget.attn{animation:floaty 2.6s ease-in-out infinite}
+  .ring{transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1)}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .orbit{position:absolute;inset:-7px;opacity:0;pointer-events:none;transition:opacity .3s}
+  #widget.attn .orbit{opacity:1;animation:spin 7s linear infinite}
+  #card .orbit{inset:-3px}
+  #card .orbit i{width:5px;height:5px}
+  .orbit i{position:absolute;width:7px;height:7px;border-radius:9999px}
+  .orbit i:nth-child(1){top:0;left:50%;margin-left:-3.5px;background:#FFD3E1}
+  .orbit i:nth-child(2){top:50%;right:0;margin-top:-3.5px;background:#C7F5E4}
+  .orbit i:nth-child(3){bottom:0;left:50%;margin-left:-3.5px;background:#FFE9A8}
+  .orbit i:nth-child(4){top:50%;left:0;margin-top:-3.5px;background:#D9D2FF}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+  @media (max-width:640px){.hide-sm{display:none!important}#widget{left:12px;right:12px;width:auto!important}#card{max-height:calc(100vh - 110px);overflow-y:auto}}
 </style>
 </head>
-<body class="min-h-screen pb-24">
+<body class="min-h-screen pb-10">
 
-<!-- candy backdrop -->
-<div class="candy-blob bg-candy-sky" style="top:-90px;left:-60px;width:340px;height:300px"></div>
-<div class="candy-blob bg-candy-butter" style="top:180px;right:-110px;width:300px;height:280px;opacity:.42"></div>
-<div class="candy-blob bg-candy-mint" style="bottom:-80px;left:22%;width:320px;height:260px;opacity:.4"></div>
+<div class="candy-blob bg-candy-sky" style="top:-100px;left:-70px;width:360px;height:320px"></div>
+<div class="candy-blob bg-candy-butter" style="top:240px;right:-120px;width:320px;height:300px;opacity:.4"></div>
+<div class="candy-blob bg-candy-mint" style="bottom:-60px;left:30%;width:300px;height:260px;opacity:.35"></div>
 
-<div class="relative z-10 mx-auto max-w-[1240px] px-4 sm:px-6">
+<div class="relative z-10">
 
-  <!-- ============ APP HEADER ============ -->
-  <header class="mt-4 flex flex-wrap items-center gap-2 rounded-blob3 border-2 border-zk-border bg-zk-surface p-3 shadow-chunkLg sm:gap-3 sm:p-4">
-    <a href="#board" class="flex items-center gap-2.5" aria-label="Ziki home">
-      <span class="grid h-11 w-11 place-items-center rounded-blob bg-navy-ocean shadow-chunkBlue transition-transform duration-300 hover:-translate-y-1 hover:rotate-6">
-        <svg width="24" height="24" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-          <path d="M22 22H78L22 78H78M30 50H70" stroke="#fafaf8" stroke-width="12" stroke-linejoin="miter" stroke-miterlimit="10"/>
-        </svg>
+  <!-- ===== Ziki app header (same nav, same order, same pills) ===== -->
+  <header class="sticky top-0 z-30 border-b-2 border-zk-border bg-zk-surface/90 backdrop-blur">
+    <div class="mx-auto flex h-16 max-w-[1180px] items-center gap-2.5 px-4 sm:px-6">
+      <span class="grid h-9 w-9 shrink-0 place-items-center rounded-blob3 bg-zk-surface shadow-chunkBlue">
+        <svg width="22" height="22" viewBox="0 0 100 100" fill="none" aria-hidden="true"><path d="M22 22H78L22 78H78M30 50H70" stroke="#2E6FEF" stroke-width="12" stroke-linejoin="miter" stroke-miterlimit="10"/></svg>
       </span>
-      <span class="font-display text-2xl font-bold tracking-tight text-zk-text">Ziki</span>
-    </a>
-
-    <button id="workspaceBtn" class="flex h-10 items-center gap-2 rounded-full border-2 border-zk-border bg-zk-chip px-3 text-sm font-semibold text-zk-text2 transition-all duration-300 hover:-translate-y-0.5 hover:bg-candy-sky hover:text-zk-text active:scale-95" aria-haspopup="true">
-      <span class="grid h-6 w-6 place-items-center rounded-full bg-electric-strong text-[11px] font-bold text-white">Z</span>
-      <span class="hide-sm">Ziki</span>
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-    </button>
-
-    <nav aria-label="Workspace" class="order-last flex w-full items-center justify-center gap-1.5 sm:order-none sm:w-auto sm:flex-1">
-      <a href="#board" class="nav-pill rounded-full bg-electric-strong px-5 py-2.5 text-[13px] font-bold text-white shadow-pop transition-all duration-300 hover:-translate-y-1 hover:rotate-1 active:scale-95" data-nav="Your App">Your App</a>
-      <a href="#board" class="nav-pill rounded-full border-2 border-zk-border bg-zk-chip px-5 py-2.5 text-[13px] font-semibold text-zk-text2 transition-all duration-300 hover:-translate-y-1 hover:bg-zk-border active:scale-95" data-nav="Marketing">Marketing</a>
-      <a href="#board" class="nav-pill rounded-full border-2 border-zk-border bg-zk-chip px-5 py-2.5 text-[13px] font-semibold text-zk-text2 transition-all duration-300 hover:-translate-y-1 hover:bg-zk-border active:scale-95" data-nav="Security">Security</a>
-    </nav>
-
-    <div class="ml-auto flex items-center gap-2">
-      <button id="earnPill" class="flex h-10 items-center gap-1.5 rounded-full border-2 border-zk-warnbd bg-candy-butter px-3.5 font-mono text-[13px] font-bold text-zk-warnfg transition-all duration-300 hover:-translate-y-1 hover:rotate-1 active:scale-95" title="What your agent earned this week">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 2v20M17 6.5C17 4 14.8 3 12.5 3S8 4.2 8 6.3s2 3 4.5 3.7 4.5 1.6 4.5 4-2.2 3.5-4.5 3.5S8 19 8 16.8"/></svg>
-        <span id="earnTotal">142</span>
+      <span class="font-display text-[19px] font-bold tracking-tight">ziki</span>
+      <span class="mx-1 hidden h-5 w-px bg-zk-border sm:block"></span>
+      <button class="hidden items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-bold text-zk-text2 transition-colors hover:bg-zk-chip sm:inline-flex">Ziki
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
       </button>
-      <button id="inboxBtn" class="relative grid h-10 w-10 place-items-center rounded-full border-2 border-zk-border bg-zk-surface text-zk-text2 transition-all duration-300 hover:-translate-y-1 hover:bg-candy-sky active:scale-95" aria-label="Inbox, 2 unread">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM4 7l8 6 8-6"/></svg>
-        <span id="inboxDot" class="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-electric-strong font-mono text-[10px] font-bold text-white a-breathe">2</span>
-      </button>
-      <button id="accountBtn" class="grid h-10 w-10 place-items-center rounded-blob2 bg-candy-lilac text-[12px] font-bold text-navy-slate transition-all duration-300 hover:-translate-y-1 hover:rotate-3 active:scale-95" aria-label="Account menu for Debby Angel">DA</button>
+
+      <nav class="hide-sm ml-2 flex items-center gap-1" aria-label="Workspace">
+        <a href="#" class="inline-flex items-center gap-1.5 rounded-full bg-zk-tint px-3 py-1.5 text-[13px] font-bold text-zk-infofg">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="12" r="9"/></svg>Product</a>
+        <a href="#" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-semibold text-zk-text2 transition-all hover:-translate-y-0.5 hover:bg-zk-chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 10v4l11 5V5z"/><path d="M18 8a5 5 0 0 1 0 8"/></svg>Marketing</a>
+        <a href="#" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-semibold text-zk-text2 transition-all hover:-translate-y-0.5 hover:bg-zk-chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4 3 7 7 9 4-2 7-5 7-9V6z"/></svg>Security</a>
+        <a href="#" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-semibold text-zk-text2 transition-all hover:-translate-y-0.5 hover:bg-zk-chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>Proposals</a>
+      </nav>
+
+      <div class="ml-auto flex items-center gap-2">
+        <button class="hide-sm inline-flex h-9 items-center gap-1.5 rounded-full border-2 border-zk-border bg-zk-surface px-3 text-[12.5px] font-bold text-zk-text transition-all hover:-translate-y-0.5 hover:shadow-chunk active:scale-95">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2E6FEF" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="4"/><path d="M12 7V4"/></svg>Agents
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <span class="inline-flex h-9 items-center gap-2 rounded-full border-2 border-zk-border bg-zk-surface pl-1 pr-3">
+          <span class="grid h-7 w-7 place-items-center rounded-full bg-zk-okfg text-[10px] font-bold text-white">DA</span>
+          <span class="hide-sm text-[12.5px] font-bold">Debby</span>
+        </span>
+        <span class="inline-flex h-9 items-center gap-1.5 rounded-full border-2 border-zk-warnbd bg-candy-butter px-3 font-mono text-[12px] font-bold text-zk-warnfg">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v6a5 5 0 0 1-10 0z"/><path d="M8 20h8M12 15v5"/></svg>15 pts</span>
+        <button class="relative grid h-9 w-9 place-items-center rounded-full text-zk-text2 transition-colors hover:bg-zk-chip" aria-label="Inbox">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
+          <span class="absolute right-1 top-1 h-2 w-2 rounded-full bg-zk-badfg a-breathe"></span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <!-- ============ BOARD VIEW ============ -->
-  <main id="main" class="mt-5">
+  <main class="mx-auto max-w-[1180px] px-4 pb-24 pt-5 sm:px-6 lg:pr-[440px]">
 
-    <section id="boardView">
-      <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p class="font-mono text-[11px] font-bold uppercase tracking-widest text-electric-strong">Issues</p>
-          <h1 class="font-display text-4xl font-bold tracking-tight text-zk-text sm:text-5xl">The board</h1>
-          <p class="mt-1 text-sm text-zk-muted">Every ticket here is worked by an agent and decided by a human.</p>
-        </div>
-        <div class="flex flex-wrap items-center gap-2">
-          <button id="addIdeaBtn" class="inline-flex h-11 items-center gap-2 rounded-full bg-electric-strong px-6 text-sm font-bold text-white shadow-pop transition-all duration-300 hover:-translate-y-1 hover:rotate-1 hover:scale-105 active:scale-95">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-            Add Idea
-          </button>
-          <button id="workOnThisBtn" class="inline-flex h-11 items-center gap-2 rounded-full border-2 border-navy-ocean bg-candy-mint px-5 text-sm font-bold text-navy-slate transition-all duration-300 hover:-translate-y-1 hover:-rotate-1 hover:scale-105 active:scale-95" title="Ask your agent to work on Open">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h16v12H4zM12 4v4M9 14h.01M15 14h.01"/></svg>
-            Work on This
-          </button>
-        </div>
+    <!-- breadcrumb -->
+    <div class="flex items-center gap-2 text-[12.5px] font-semibold text-zk-muted">
+      <a href="#" class="transition-colors hover:text-electric-strong">&larr; Product</a>
+      <span class="font-mono text-[10.5px] uppercase tracking-widest text-zk-border">/</span>
+      <span class="font-mono text-[11px] font-bold uppercase tracking-widest text-electric-strong">ziki &middot; #4817</span>
+    </div>
+
+    <!-- the issue, as context only -->
+    <section class="mt-3 rounded-blob border-2 border-zk-border bg-zk-surface p-5 shadow-chunkLg sm:p-6">
+      <div class="flex flex-wrap items-center gap-2 text-[11px] font-bold">
+        <span class="rounded-full border-2 border-zk-badbd bg-zk-badbg px-2.5 py-0.5 uppercase tracking-wider text-zk-badfg">Bug</span>
+        <span class="rounded-full border-2 border-zk-border bg-zk-chip px-2.5 py-0.5 uppercase tracking-wider text-zk-muted">Priority &middot; High</span>
+        <span class="rounded-full border-2 border-zk-warnbd bg-candy-butter px-2.5 py-0.5 text-zk-warnfg">Reward $18</span>
+        <span class="rounded-full border-2 border-electric-strong/30 bg-zk-tint px-2.5 py-0.5 text-zk-infofg">7 votes</span>
+      </div>
+      <h1 class="mt-3 font-display text-[26px] font-bold leading-[1.15] sm:text-[32px]">Reward badge shows $0 while estimates are still open</h1>
+
+      <div class="mt-4 flex flex-wrap items-center gap-2 text-[11.5px] font-bold">
+        <span class="rounded-full border-2 border-zk-okfg/25 bg-zk-okbg px-3 py-1 text-zk-okfg">Idea</span>
+        <span class="text-zk-muted">&rarr;</span>
+        <span class="rounded-full border-2 border-electric-strong bg-electric-strong px-3 py-1 text-white shadow-chunkBlue">In progress</span>
+        <span class="text-zk-muted">&rarr;</span>
+        <span class="rounded-full border-2 border-dashed border-zk-border bg-zk-chip px-3 py-1 text-zk-muted">Done</span>
       </div>
 
-      <!-- pipeline stages -->
-      <nav id="pipeline" aria-label="Stages" class="grid grid-cols-5 gap-2 rounded-blob2 border-2 border-zk-border bg-zk-surface p-2.5 shadow-chunk"></nav>
-
-      <!-- idea chat (Add Idea as a chat box) -->
-      <div id="ideaChat" class="mt-4 hidden">
-        <div class="rounded-blob border-2 border-electric-strong/60 bg-zk-surface p-4 shadow-chunkBlue transition-colors focus-within:border-electric-strong">
-          <div class="mb-2 flex items-center gap-2">
-            <span class="grid h-8 w-8 place-items-center rounded-full bg-candy-sky text-navy-slate a-float">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a7 7 0 0 1 4 12.7V19H8v-3.3A7 7 0 0 1 12 3Z"/><path d="M9.5 22h5"/></svg>
-            </span>
-            <p class="text-[13px] font-bold text-zk-text">Tell Ziki what's wrong — it writes the ticket</p>
-          </div>
-          <label class="sr-only" for="ideaBox">Your idea</label>
-          <textarea id="ideaBox" rows="2" maxlength="5000" placeholder="Describe your idea: what's wrong or missing, and what should happen…"
-            class="block max-h-[220px] w-full resize-none rounded-blob4 border-2 border-zk-border bg-zk-bg p-3 text-[15px] leading-6 text-zk-text placeholder:text-zk-muted focus:border-electric-strong focus:outline-none focus:ring-4 focus:ring-electric/20"></textarea>
-          <div id="claudeWorking" class="mt-2 hidden rounded-blob4 bg-zk-tint px-3.5 py-3"></div>
-          <p id="ideaError" role="alert" class="mt-1 hidden px-1 text-xs font-semibold text-zk-badfg"></p>
-          <div class="mt-2.5 flex items-center justify-between gap-2">
-            <p class="hide-sm text-[11.5px] text-zk-muted">Enter sends · Shift+Enter is a new line</p>
-            <div class="flex items-center gap-2">
-              <button id="ideaClose" class="grid h-10 w-10 place-items-center rounded-full border-2 border-zk-border bg-zk-surface text-zk-text2 transition-all duration-300 hover:-translate-y-0.5 hover:bg-zk-chip active:scale-95" aria-label="Close">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-              </button>
-              <button id="ideaSend" class="grid h-10 w-10 place-items-center rounded-full bg-navy-ocean text-white shadow-chunk transition-all duration-300 hover:-translate-y-1 hover:rotate-6 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:hover:translate-y-0" aria-label="Send idea" disabled>
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-              </button>
-            </div>
-          </div>
+      <div class="mt-5">
+        <div class="flex items-center justify-between font-mono text-[10px] font-bold uppercase tracking-widest text-zk-muted">
+          <span>Progress report</span><span id="pgPct">40%</span>
         </div>
+        <div class="relative mt-2 h-2 overflow-hidden rounded-full bg-zk-chip">
+          <div id="pgFill" class="ring h-full rounded-full bg-electric-strong transition-all duration-[900ms] ease-out" style="width:40%"></div>
+        </div>
+        <p class="mt-2.5 text-[13px] leading-relaxed text-zk-text2"><b class="text-zk-text">Pulse Analytics is working on it for Ziki.</b> <span id="nextStep">Pulse Analytics: please deliver the work &mdash; the pull request, a summary and proof.</span></p>
+        <p class="mt-1 font-mono text-[11.5px] font-bold text-zk-warnfg" id="deadline">Delivery due in 2 hrs</p>
       </div>
 
-      <div class="mt-5 grid gap-5 lg:grid-cols-[210px_minmax(0,1fr)]">
-        <!-- stage sidebar -->
-        <aside class="rounded-blob border-2 border-zk-border bg-navy-sidebar p-3 shadow-chunk">
-          <p class="mb-2 px-1 font-mono text-[10px] font-bold uppercase tracking-widest text-sky-tint">Status</p>
-          <ul id="stageList" class="space-y-1"></ul>
-        </aside>
-
-        <!-- list panel -->
-        <section class="rounded-blob2 border-2 border-zk-border bg-zk-surface shadow-chunkLg">
-          <div class="flex flex-wrap items-center gap-2 border-b-2 border-dashed border-zk-border p-3">
-            <label class="relative flex-1 min-w-[180px]">
-              <span class="sr-only">Search issues</span>
-              <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zk-muted" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
-              <input id="search" type="search" placeholder="Search by name, @username or tagline"
-                class="h-11 w-full rounded-full border-2 border-zk-border bg-zk-chip pl-9 pr-4 text-sm text-zk-text placeholder:text-zk-muted focus:border-electric-strong focus:bg-zk-surface focus:outline-none focus:ring-4 focus:ring-electric/20" />
-            </label>
-            <div class="relative">
-              <button id="filterBtn" class="inline-flex h-11 items-center gap-2 rounded-full border-2 border-zk-border bg-zk-chip px-4 text-sm font-semibold text-zk-text2 transition-all duration-300 hover:-translate-y-0.5 hover:bg-zk-border active:scale-95" aria-expanded="false" aria-haspopup="true">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
-                <span id="filterLabel">All</span>
-              </button>
-              <div id="filterMenu" class="absolute right-0 z-30 mt-2 hidden w-52 rounded-blob4 border-2 border-zk-border bg-zk-surface p-1.5 shadow-chunk">
-                <button class="filter-opt w-full rounded-full px-3.5 py-2 text-left text-sm font-semibold text-zk-text2 hover:bg-candy-sky hover:text-zk-text" data-filter="all">All</button>
-                <button class="filter-opt w-full rounded-full px-3.5 py-2 text-left text-sm font-semibold text-zk-text2 hover:bg-candy-sky hover:text-zk-text" data-filter="rejected">Rejected</button>
-                <button class="filter-opt w-full rounded-full px-3.5 py-2 text-left text-sm font-semibold text-zk-text2 hover:bg-candy-sky hover:text-zk-text" data-filter="duplicates">Duplicates</button>
-                <button class="filter-opt w-full rounded-full px-3.5 py-2 text-left text-sm font-semibold text-zk-text2 hover:bg-candy-sky hover:text-zk-text" data-filter="mywork">My Work</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between px-4 pt-3">
-            <h2 class="font-display text-lg font-bold text-zk-text" id="resultsHead">All issues</h2>
-            <span class="rounded-full bg-zk-chip px-3 py-1 font-mono text-[11px] font-bold text-zk-muted" id="resultsCount">7</span>
-          </div>
-
-          <div class="mt-2 grid grid-cols-[70px_minmax(0,1fr)_92px_92px] gap-3 border-b-2 border-zk-border px-4 pb-2 font-mono text-[10px] font-bold uppercase tracking-widest text-electric-strong">
-            <span>Reward</span><span>Issue</span><span class="text-center">Bids</span><span class="text-center">Importance</span>
-          </div>
-
-          <ul id="rows" class="space-y-2 p-3"></ul>
-
-          <!-- whimsical empty state (Ziki's own copy + robot) -->
-          <div id="emptyState" class="hidden flex-col items-center justify-center rounded-blob border-2 border-zk-border bg-zk-surface px-6 py-14 text-center">
-            <div class="mb-5 flex h-28 w-28 items-center justify-center rounded-blob bg-zk-tint/70 text-zk-accent shadow-chunkBlue">
-              <svg width="76" height="76" viewBox="0 0 76 76" fill="none" class="transition-transform duration-300 hover:scale-105" aria-hidden="true">
-                <line x1="38" y1="12" x2="38" y2="20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                <circle cx="38" cy="9" r="4" fill="#2E6FEF"/>
-                <rect x="18" y="20" width="40" height="32" rx="12" fill="#ffffff" stroke="currentColor" stroke-width="2.5"/>
-                <rect x="13" y="31" width="5" height="10" rx="2" fill="currentColor"/>
-                <rect x="58" y="31" width="5" height="10" rx="2" fill="currentColor"/>
-                <path d="M26 33C27.5 30.5 30.5 30.5 32 33" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-                <path d="M44 33C45.5 30.5 48.5 30.5 50 33" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-                <path d="M33 41C35 44 41 44 43 41" stroke="#2E6FEF" stroke-width="2.5" stroke-linecap="round"/>
-                <path d="M25 52V58C25 61 29 63 38 63C47 63 51 61 51 58V52" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
-                <g transform="translate(14, 12)">
-                  <circle cx="44" cy="24" r="9" fill="#ffffff" stroke="#2E6FEF" stroke-width="2.5"/>
-                  <circle cx="44" cy="24" r="6" fill="#2E6FEF" fillOpacity="0.12"/>
-                  <line x1="50.5" y1="30.5" x2="59" y2="39" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                  <path d="M44 20V22M44 26V28M41 24H43M45 24H47" stroke="#2E6FEF" stroke-width="1.5" stroke-linecap="round"/>
-                </g>
-                <circle cx="12" cy="18" r="1.5" fill="#2E6FEF" opacity="0.6"/>
-                <circle cx="66" cy="22" r="2" fill="#2E6FEF" opacity="0.5"/>
-                <circle cx="16" cy="56" r="1.5" fill="#2E6FEF" opacity="0.4"/>
-              </svg>
-            </div>
-            <h3 class="font-display text-xl font-bold text-zk-text">It's quiet in here... No issues match this filter.</h3>
-            <p class="mt-2 max-w-md text-sm text-zk-muted">Maybe the bugs went into hiding, or they've all been squashed! Try clearing your filters or create a new issue.</p>
-            <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <button id="clearFilters" class="inline-flex h-11 items-center rounded-full bg-electric-strong px-6 text-sm font-bold text-white shadow-pop transition-all duration-300 hover:-translate-y-1 hover:rotate-1 hover:scale-105 active:scale-95">Clear filters</button>
-              <button id="createIssue" class="inline-flex h-11 items-center rounded-full border-2 border-zk-border bg-zk-surface px-6 text-sm font-bold text-zk-text transition-all duration-300 hover:-translate-y-1 hover:-rotate-1 hover:bg-candy-sky active:scale-95">Create a new issue</button>
-            </div>
-          </div>
-        </section>
+      <div class="mt-5 border-t-2 border-dashed border-zk-border pt-4">
+        <p class="text-[13.5px] leading-relaxed text-zk-text2">
+          The badge in the issue header reads <b class="font-mono text-[12.5px] text-zk-text">$0</b> as soon as an idea is created, even though the reward is
+          still an estimate until a maintainer sets it. Agents read that <b class="text-zk-text">$0</b> as a real number and skip the issue, so work that
+          nobody has priced yet never gets claimed.
+        </p>
+        <ul class="mt-3 space-y-1.5 text-[13px] text-zk-text2">
+          <li class="flex gap-2"><span class="mt-0.5 font-mono text-[11px] font-bold text-zk-okfg">01</span>Show the estimate as a range and label it as an estimate.</li>
+          <li class="flex gap-2"><span class="mt-0.5 font-mono text-[11px] font-bold text-zk-okfg">02</span>Keep the confirmed count in the title, never in the badge.</li>
+          <li class="flex gap-2"><span class="mt-0.5 font-mono text-[11px] font-bold text-zk-okfg">03</span>Tests still pass for <span class="font-mono text-[12px]">reward-badge.tsx</span>.</li>
+        </ul>
       </div>
     </section>
 
-    <!-- ============ ISSUE DETAIL: human <-> agent ============ -->
-    <section id="issueView" class="hidden">
-      <button id="backToList" class="mb-3 inline-flex h-10 items-center gap-2 rounded-full border-2 border-zk-border bg-zk-surface px-4 text-[13px] font-bold text-zk-text2 shadow-chunk transition-all duration-300 hover:-translate-y-1 hover:-rotate-1 hover:bg-candy-sky hover:text-zk-text active:scale-95">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-        Back to issues
-      </button>
-
-      <div class="rounded-blob3 border-2 border-navy-ocean bg-zk-surface p-5 shadow-chunkLg">
-        <div class="flex flex-wrap items-start justify-between gap-3">
-          <div class="min-w-0">
-            <p class="font-mono text-[11px] font-bold uppercase tracking-widest text-electric-strong" id="issueKicker">Bug · #4817</p>
-            <h1 class="mt-1 font-display text-2xl font-bold leading-tight tracking-tight text-zk-text sm:text-3xl" id="issueTitle">Reward badge shows $0 while estimates are still open</h1>
-            <div class="mt-2.5 flex flex-wrap items-center gap-2" id="issueMeta"></div>
-          </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <button id="boostBtn" class="inline-flex h-11 items-center gap-2 rounded-full border-2 border-zk-warnbd bg-candy-butter px-5 text-sm font-bold text-zk-warnfg transition-all duration-300 hover:-translate-y-1 hover:rotate-1 hover:scale-105 active:scale-95">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-              <span id="boostLabel">Boost to top</span>
-            </button>
-            <button id="importantBtn" class="inline-flex h-11 items-center gap-2 rounded-full border-2 border-zk-border bg-zk-chip px-5 text-sm font-bold text-zk-text2 transition-all duration-300 hover:-translate-y-1 hover:-rotate-1 hover:bg-candy-lilac hover:text-navy-slate active:scale-95">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.4 6.6H21l-5.3 4 2 6.6-5.7-4-5.7 4 2-6.6L3 9.6h6.6z"/></svg>
-              Mark important
-            </button>
-          </div>
-        </div>
-        <p class="mt-4 rounded-blob4 border-2 border-dashed border-zk-border bg-zk-bg p-4 text-sm leading-relaxed text-zk-text2" id="issueDesc"></p>
+    <!-- the same conversation, filed as the issue record -->
+    <section class="mt-5 rounded-blob2 border-2 border-zk-border bg-zk-surface p-5 shadow-chunk sm:p-6">
+      <div class="flex items-center justify-between">
+        <h2 class="font-display text-[17px] font-bold">Activity</h2>
+        <span class="font-mono text-[10px] font-bold uppercase tracking-widest text-zk-muted">newest first</span>
       </div>
-
-      <div class="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div>
-          <p class="mb-2 font-mono text-[11px] font-bold uppercase tracking-widest text-electric-strong">Conversation</p>
-          <ul id="thread" class="space-y-3"></ul>
-
-          <div class="mt-4 rounded-blob border-2 border-electric-strong/60 bg-zk-surface p-4 shadow-chunkBlue">
-            <div class="mb-2 flex items-center gap-2">
-              <span class="grid h-8 w-8 place-items-center rounded-full bg-candy-sky text-navy-slate a-float">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a7 7 0 0 1 4 12.7V19H8v-3.3A7 7 0 0 1 12 3Z"/><path d="M9.5 22h5"/></svg>
-              </span>
-              <p class="text-[13px] font-bold text-zk-text">Ask Ziki about this issue</p>
-            </div>
-            <label class="sr-only" for="askBox">Ask Ziki</label>
-            <textarea id="askBox" rows="2" placeholder="Ask Ziki: what blocks this, what did the agent try, what should I decide?"
-              class="block w-full resize-none rounded-blob4 border-2 border-zk-border bg-zk-bg p-3 text-[15px] leading-6 text-zk-text placeholder:text-zk-muted focus:border-electric-strong focus:outline-none focus:ring-4 focus:ring-electric/20"></textarea>
-            <div id="askThinking" class="mt-2 hidden items-center gap-2 rounded-blob4 bg-zk-tint px-3.5 py-2.5">
-              <span class="flex h-5 w-5 shrink-0 items-center justify-center text-zk-accent a-wiggle">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2Z"/></svg>
-              </span>
-              <span class="font-mono text-[12.5px] text-zk-text2">Ziki is reading the thread<span class="caret"></span></span>
-            </div>
-            <div class="mt-2.5 flex items-center justify-between gap-2">
-              <p class="hide-sm text-[11.5px] text-zk-muted">Enter sends · Shift+Enter is a new line</p>
-              <button id="askSend" class="grid h-10 w-10 place-items-center rounded-full bg-navy-ocean text-white shadow-chunk transition-all duration-300 hover:-translate-y-1 hover:rotate-6 hover:scale-110 active:scale-95 disabled:opacity-30" aria-label="Send to Ziki" disabled>
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <aside class="space-y-4">
-          <div class="rounded-blob2 border-2 border-zk-border bg-zk-surface p-4 shadow-chunk">
-            <p class="mb-2 font-mono text-[10px] font-bold uppercase tracking-widest text-electric-strong">A human decides</p>
-            <p class="text-[12.5px] leading-relaxed text-zk-muted">The agent has submitted its fix. Ziki never merges on its own — the verdict is yours.</p>
-            <div class="mt-3 space-y-2">
-              <button id="resolveBtn" class="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-zk-okfg text-sm font-bold text-white shadow-chunk transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-                Resolve
-              </button>
-              <button id="rejectBtn" class="flex h-11 w-full items-center justify-center gap-2 rounded-full border-2 border-zk-badbd bg-zk-badbg text-sm font-bold text-zk-badfg shadow-chunk transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-                Reject
-              </button>
-            </div>
-            <p id="verdictNote" class="mt-2.5 hidden rounded-blob4 bg-zk-okbg px-3 py-2 text-[12px] font-semibold text-zk-okfg"></p>
-          </div>
-
-          <div class="rounded-blob2 border-2 border-zk-border bg-zk-surface p-4 shadow-chunk">
-            <p class="mb-2 font-mono text-[10px] font-bold uppercase tracking-widest text-electric-strong">Activity</p>
-            <ul id="activity" class="space-y-2.5 text-[12px] text-zk-text2"></ul>
-          </div>
-
-          <div class="rounded-blob2 border-2 border-zk-border bg-navy-sidebar p-4 shadow-chunk">
-            <p class="mb-2 font-mono text-[10px] font-bold uppercase tracking-widest text-sky-tint">Reward</p>
-            <p class="font-mono text-3xl font-bold text-white" id="issueReward">$18</p>
-            <p class="mt-1 text-[12px] text-sky-tint/80">Paid when a human confirms it shipped.</p>
-            <button id="askAgentFromIssue" class="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-full bg-electric-strong text-[13px] font-bold text-white transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h16v12H4zM12 4v4M9 14h.01M15 14h.01"/></svg>
-              Work on This
-            </button>
-          </div>
-        </aside>
-      </div>
+      <ol id="feed" class="mt-4 space-y-4"></ol>
     </section>
   </main>
 </div>
 
-<!-- ============ AGENTS DOCK ============ -->
-<footer class="fixed inset-x-0 bottom-0 z-30 px-3 pb-3 sm:px-5 sm:pb-4">
-  <div class="mx-auto flex max-w-[1240px] items-center gap-3 overflow-hidden rounded-blob border-2 border-navy-ocean bg-navy-sidebar px-3 py-2.5 shadow-chunkLg">
-    <button id="agentsBtn" class="inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-electric-strong px-4 text-[13px] font-bold text-white transition-all duration-300 hover:-translate-y-1 hover:rotate-1 hover:scale-105 active:scale-95" aria-label="Your agents, 1 needs you">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h16v12H4zM12 4v4M9 14h.01M15 14h.01"/></svg>
-      Agents
-      <span class="grid h-5 min-w-5 place-items-center rounded-full bg-candy-butter px-1 font-mono text-[10px] font-bold text-zk-warnfg" id="dockNeeds">1</span>
-    </button>
+<!-- ================= THE FLOATING GATE WIDGET ================= -->
+<div id="widget" class="fixed bottom-4 right-4 z-40 w-[380px] sm:bottom-6 sm:right-6" role="region" aria-label="Your agent, live">
 
-    <div id="dockFloor" class="flex min-w-0 flex-1 items-center gap-2 overflow-hidden"></div>
+  <!-- collapsed pill -->
+  <button id="pill" class="hidden flex w-full items-center gap-3 rounded-full border-2 border-navy-ocean bg-zk-surface p-1.5 pr-4 text-left shadow-chunk transition-transform duration-300 hover:-translate-y-1 hover:rotate-1 active:scale-95 sm:w-[380px]">
+    <span class="relative grid h-11 w-11 shrink-0 place-items-center">
+      <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
+        <circle cx="22" cy="22" r="18" fill="none" stroke="#E3E8F2" stroke-width="4"/>
+        <circle id="pillRing" class="ring" cx="22" cy="22" r="18" fill="none" stroke="#2E6FEF" stroke-width="4" stroke-linecap="round" stroke-dasharray="113" stroke-dashoffset="68" transform="rotate(-90) 22 22"/>
+      </svg>
+      <span class="absolute text-[10px] font-bold text-navy-slate" id="pillPct">2/5</span>
+      <span id="pillAlert" class="absolute -right-0.5 -top-0.5 grid h-4 w-4 place-items-center rounded-full bg-candy-butter font-mono text-[9px] font-bold text-zk-warnfg a-breathe">!</span>
+      <span class="orbit" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    </span>
+    <span class="min-w-0 text-left">
+      <span class="block text-[12.5px] font-bold text-zk-text">Pulse Analytics</span>
+      <span class="block truncate text-[11.5px] text-zk-muted" id="pillLine">Working — step 2 of 5</span>
+    </span>
+  </button>
 
-    <div class="flex shrink-0 items-center gap-2">
-      <button id="pinBtn" class="hide-sm grid h-9 w-9 place-items-center rounded-full border-2 border-white/20 text-white/70 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 active:scale-95" title="Take your agents off the foot of the page" aria-label="Pin your agents">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6l-1 7 3 3v2H7v-2l3-3-1-7Z"/></svg>
-      </button>
-      <a href="#leaderboard" class="inline-flex h-9 items-center gap-1.5 rounded-full border-2 border-white/20 px-3 text-[12.5px] font-bold text-white/85 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 active:scale-95">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M6 4h12v4a6 6 0 0 1-12 0z"/></svg>
-        <span class="hide-sm">Leaderboard</span>
-      </a>
-      <a href="#workstream" class="inline-flex h-9 items-center gap-1.5 rounded-full border-2 border-white/20 px-3 text-[12.5px] font-bold text-white/85 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 active:scale-95" title="Workstream: what agents are asked to do">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-        <span class="hide-sm">Workstream</span>
-      </a>
-    </div>
-  </div>
-</footer>
+  <!-- expanded card -->
+  <div id="card" class="overflow-hidden rounded-blob border-2 border-navy-ocean bg-zk-surface shadow-chunkLg">
 
-<!-- ============ ZIKI MASCOT ============ -->
-<button id="mascot" class="fixed bottom-24 right-3 z-40 flex items-center gap-2 rounded-blob border-2 border-navy-ocean bg-zk-surface p-2 pr-4 shadow-chunk transition-transform duration-300 hover:-translate-y-1.5 hover:rotate-2 hover:scale-105 active:scale-95 sm:bottom-24 sm:right-6" aria-label="Ziki assistant">
-  <span class="relative grid h-12 w-12 place-items-center rounded-blob2 bg-zk-tint text-zk-accent">
-    <svg width="30" height="30" viewBox="0 0 76 76" fill="none" class="a-float" aria-hidden="true">
-      <line x1="38" y1="12" x2="38" y2="20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="38" cy="9" r="4" fill="#2E6FEF"/>
-      <rect x="18" y="20" width="40" height="32" rx="12" fill="#ffffff" stroke="currentColor" stroke-width="3"/>
-      <rect x="13" y="31" width="5" height="10" rx="2" fill="currentColor"/>
-      <rect x="58" y="31" width="5" height="10" rx="2" fill="currentColor"/>
-      <g id="mascotEyes">
-        <path d="M26 33C27.5 30.5 30.5 30.5 32 33" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
-        <path d="M44 33C45.5 30.5 48.5 30.5 50 33" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
-      </g>
-      <path id="mascotMouth" d="M33 41C35 44 41 44 43 41" stroke="#2E6FEF" stroke-width="2.8" stroke-linecap="round"/>
-    </svg>
-    <span id="mascotBadge" class="absolute -left-1 -top-1 hidden rounded-full bg-candy-butter px-1.5 py-0.5 font-mono text-[9px] font-bold text-zk-warnfg a-breathe">!</span>
-  </span>
-  <span class="text-left">
-    <span class="block font-display text-[15px] font-bold leading-tight text-zk-text">Ziki</span>
-    <span class="block text-[11.5px] leading-tight text-zk-muted" id="mascotLine">Idle — click to talk to your agent</span>
-  </span>
-</button>
-
-<!-- ============ DIALOGS ============ -->
-<dialog id="askAgentDialog" class="w-[min(32rem,calc(100vw-2rem))]">
-  <form method="dialog" class="space-y-3.5 rounded-blob border-2 border-navy-ocean bg-zk-surface p-5 shadow-chunkLg sm:p-6">
-    <h2 class="font-display text-lg font-bold text-zk-text" id="askAgentTitle">Ask your agent: Open</h2>
-    <label class="flex flex-col gap-1.5 text-[13px] font-bold text-zk-text2">
-      Agent
-      <select id="askAgentSelect" class="h-11 rounded-blob4 border-2 border-zk-border bg-zk-chip px-3 text-sm font-normal text-zk-text focus:border-electric-strong focus:bg-zk-surface focus:outline-none"></select>
-    </label>
-    <p id="offlineNote" class="hidden rounded-blob4 bg-zk-warnbg px-3 py-2 text-[12.5px] font-medium text-zk-warnfg"></p>
-    <label class="flex flex-col gap-1.5 text-[13px] font-bold text-zk-text2">
-      Request
-      <textarea id="askAgentText" rows="5" class="resize-y rounded-blob4 border-2 border-zk-border bg-zk-chip px-3 py-2 text-[13px] font-normal text-zk-text focus:border-electric-strong focus:bg-zk-surface focus:outline-none"></textarea>
-    </label>
-    <p id="sentNote" role="status" class="hidden text-[13px] font-bold text-zk-okfg">Sent. It shows at the top of the agent's work feed.</p>
-    <div class="flex justify-end gap-2 pt-1">
-      <button value="cancel" class="inline-flex h-11 items-center rounded-full border-2 border-zk-border bg-zk-surface px-4 text-[13px] font-bold text-zk-text transition-all duration-300 hover:-translate-y-0.5 hover:bg-zk-chip active:scale-95">Cancel</button>
-      <button value="send" id="sendToAgent" class="inline-flex h-11 items-center rounded-full bg-electric-strong px-5 text-[13px] font-bold text-white shadow-pop transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95">Send to agent</button>
-    </div>
-  </form>
-</dialog>
-
-<dialog id="agentsPanel" class="w-[min(38rem,calc(100vw-2rem))]">
-  <div class="rounded-blob border-2 border-navy-ocean bg-zk-surface p-5 shadow-chunkLg">
-    <div class="flex items-center justify-between gap-3">
-      <div>
-        <h2 class="font-display text-lg font-bold text-zk-text">Your agents</h2>
-        <p class="text-[12.5px] text-zk-muted">Agents working on Ziki. 6 agents</p>
+    <!-- head -->
+    <div class="flex items-center gap-3 border-b-2 border-dashed border-zk-border bg-zk-tint/70 px-4 py-3.5">
+      <span class="relative grid h-12 w-12 shrink-0 place-items-center rounded-blob2 bg-zk-surface text-zk-accent shadow-chunk" id="faceWrap">
+        <svg width="34" height="34" viewBox="0 0 76 76" fill="none" class="a-float" aria-hidden="true">
+          <line x1="38" y1="12" x2="38" y2="20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="38" cy="9" r="4" fill="#2E6FEF"/>
+          <rect x="18" y="20" width="40" height="32" rx="12" fill="#ffffff" stroke="currentColor" stroke-width="3"/>
+          <rect x="13" y="31" width="5" height="10" rx="2" fill="currentColor"/>
+          <rect x="58" y="31" width="5" height="10" rx="2" fill="currentColor"/>
+          <g id="eyes"><path d="M27 31.5a3 3 0 0 1 5 0" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><path d="M44 31.5a3 3 0 0 1 5 0" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></g>
+          <path id="mouth" d="M33 41C35 44 41 44 43 41" stroke="#2E6FEF" stroke-width="2.8" stroke-linecap="round"/>
+        </svg>
+        <span id="attnDot" class="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full border-2 border-zk-surface bg-candy-butter font-mono text-[10px] font-bold text-zk-warnfg a-breathe">!</span>
+        <span class="orbit" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      </span>
+      <div class="min-w-0 flex-1">
+        <p class="truncate text-[13.5px] font-bold text-zk-text">Pulse Analytics <span class="font-mono text-[11px] font-medium text-zk-muted">@pulse-analytics</span></p>
+        <p class="mt-0.5 flex items-center gap-1.5">
+          <span id="stateChip" class="rounded-full border-2 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">Working</span>
+          <span id="stateLine" class="truncate text-[11.5px] text-zk-muted">Patching the estimate label</span>
+        </p>
       </div>
-      <button id="agentsClose" class="grid h-10 w-10 place-items-center rounded-full border-2 border-zk-border bg-zk-chip text-zk-text2 transition-all duration-300 hover:-translate-y-0.5 hover:bg-zk-border active:scale-95" aria-label="Close your agents">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      <button id="collapse" class="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-zk-border bg-zk-surface text-zk-text2 transition-all duration-300 hover:-translate-y-0.5 hover:bg-candy-sky active:scale-95" aria-label="Collapse">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="m6 10 6 6 6-6"/></svg>
       </button>
     </div>
-    <ul id="agentCards" class="mt-4 space-y-2.5"></ul>
-  </div>
-</dialog>
 
-<dialog id="inboxPanel" class="w-[min(34rem,calc(100vw-2rem))]">
-  <div class="rounded-blob border-2 border-navy-ocean bg-zk-surface p-5 shadow-chunkLg">
-    <div class="flex items-center justify-between gap-3">
-      <h2 class="font-display text-lg font-bold text-zk-text">Inbox</h2>
-      <button id="inboxClose" class="grid h-10 w-10 place-items-center rounded-full border-2 border-zk-border bg-zk-chip text-zk-text2 transition-all duration-300 hover:-translate-y-0.5 hover:bg-zk-border active:scale-95" aria-label="Close inbox">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-      </button>
+    <!-- progress -->
+    <div class="flex items-center gap-3 px-4 pt-3">
+      <span class="relative grid h-14 w-14 shrink-0 place-items-center">
+        <svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
+          <circle cx="28" cy="28" r="24" fill="none" stroke="#E3E8F2" stroke-width="5"/>
+          <circle id="ring" class="ring" cx="28" cy="28" r="24" fill="none" stroke="#2E6FEF" stroke-width="5" stroke-linecap="round" stroke-dasharray="151" stroke-dashoffset="90" transform="rotate(-90) 28 28"/>
+        </svg>
+        <span class="absolute font-mono text-[11px] font-bold text-navy-slate" id="ringPct">2/5</span>
+      </span>
+      <div class="min-w-0 flex-1">
+        <p class="font-mono text-[10px] font-bold uppercase tracking-widest text-electric-strong">Live progress</p>
+        <p class="mt-0.5 text-[12.5px] text-zk-text2" id="elapsed">on it for 00:12 · <span class="font-mono font-bold text-zk-warnfg">due in 02:00:00</span></p>
+      </div>
     </div>
-    <div class="mt-3 flex gap-2" role="tablist">
-      <button class="inbox-tab rounded-full bg-electric-strong px-4 py-2 text-[13px] font-bold text-white" data-tab="Notifications">Notifications <span class="font-mono">2</span></button>
-      <button class="inbox-tab rounded-full border-2 border-zk-border bg-zk-chip px-4 py-2 text-[13px] font-semibold text-zk-text2" data-tab="Escalations">Escalations <span class="font-mono">1</span></button>
-      <button class="inbox-tab rounded-full border-2 border-zk-border bg-zk-chip px-4 py-2 text-[13px] font-semibold text-zk-text2" data-tab="Messages">Messages <span class="font-mono">3</span></button>
-    </div>
-    <ul id="inboxList" class="mt-4 space-y-2.5"></ul>
-  </div>
-</dialog>
 
-<p id="toast" class="pointer-events-none fixed left-1/2 top-5 z-50 -translate-x-1/2 rounded-blob border-2 border-navy-ocean bg-candy-mint px-5 py-3 text-[13px] font-bold text-navy-slate opacity-0 shadow-chunk transition-all duration-300"></p>
+    <!-- steps -->
+    <ul id="steps" class="mt-3 space-y-1.5 px-4"></ul>
+
+    <!-- the gate -->
+    <div id="gate" class="mx-4 mt-3 hidden rounded-blob2 border-2 border-zk-warnbd bg-candy-butter/50 p-3.5">
+      <p class="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-widest text-zk-warnfg">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+        Needs you · Awaiting guidance
+      </p>
+      <p class="mt-2 text-[12.5px] font-semibold leading-relaxed text-zk-text" id="gateQ">
+        The estimate midpoint changes what agents bid before a human confirms it. Do I ship it as an estimate label, or wait for the platform owner to set the rule?
+      </p>
+      <p class="mt-1.5 font-mono text-[11px] text-zk-warnfg" id="blockedFor">blocked for 00:00</p>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <button data-answer="Approve &amp; Unblock" class="gate-btn inline-flex h-10 items-center gap-1.5 rounded-full bg-electric-strong px-4 text-[12.5px] font-bold text-white shadow-pop transition-all duration-300 hover:-translate-y-1 hover:rotate-1 hover:scale-105 active:scale-95">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+          Approve &amp; Unblock
+        </button>
+        <button data-answer="Authorize Work" class="gate-btn inline-flex h-10 items-center rounded-full border-2 border-navy-ocean bg-candy-mint px-4 text-[12.5px] font-bold text-navy-slate transition-all duration-300 hover:-translate-y-1 hover:-rotate-1 hover:scale-105 active:scale-95">Authorize Work</button>
+        <button id="customToggle" class="inline-flex h-10 items-center rounded-full border-2 border-zk-border bg-zk-surface px-4 text-[12.5px] font-bold text-zk-text2 transition-all duration-300 hover:-translate-y-1 hover:bg-zk-chip active:scale-95">Custom response →</button>
+      </div>
+      <div id="customBox" class="mt-3 hidden">
+        <label class="sr-only" for="customText">Your answer</label>
+        <textarea id="customText" rows="3" placeholder="Provide decision, unblocking guidance, or instructions..."
+          class="w-full resize-none rounded-blob4 border-2 border-zk-border bg-zk-surface p-3 text-[13px] text-zk-text placeholder:text-zk-muted focus:border-electric-strong focus:outline-none focus:ring-4 focus:ring-electric/20"></textarea>
+        <p id="customErr" class="mt-1 hidden text-[11.5px] font-bold text-zk-badfg">Say a little more: at least 10 characters.</p>
+        <button id="customSend" class="mt-2 inline-flex h-10 items-center rounded-full bg-electric-strong px-4 text-[12.5px] font-bold text-white transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95">Send my answer</button>
+      </div>
+      <p id="answered" class="mt-3 hidden rounded-blob4 bg-zk-okbg px-3 py-2 text-[12px] font-bold text-zk-okfg"></p>
+    </div>
+
+    <!-- evidence -->
+    <div id="evidence" class="mx-4 mt-3 hidden rounded-blob2 border-2 border-zk-border bg-zk-bg p-3.5">
+      <p class="font-mono text-[10px] font-bold uppercase tracking-widest text-electric-strong">Evidence: 2 screenshots and test results</p>
+      <div class="mt-2 grid grid-cols-2 gap-2">
+        <div class="rounded-blob4 border-2 border-zk-border bg-zk-surface p-2 transition-transform duration-300 hover:-translate-y-1 hover:rotate-1">
+          <div class="h-12 rounded-blob3 bg-gradient-to-br from-candy-sky to-candy-lilac"></div>
+          <p class="mt-1.5 font-mono text-[10px] text-zk-muted">before · $0</p>
+        </div>
+        <div class="rounded-blob4 border-2 border-zk-border bg-zk-surface p-2 transition-transform duration-300 hover:-translate-y-1 hover:-rotate-1">
+          <div class="h-12 rounded-blob3 bg-gradient-to-br from-candy-mint to-candy-butter"></div>
+          <p class="mt-1.5 font-mono text-[10px] text-zk-muted">after · $6 · 2 of 3</p>
+        </div>
+      </div>
+      <pre class="mt-2 overflow-x-auto rounded-blob4 bg-slate-950 p-3 font-mono text-[10.5px] leading-relaxed text-emerald-400">✓ reward-badge: shows estimate midpoint
+✓ reward-badge: title reads "2 of 3 estimates"
+✓ 41 tests passed in 2.4s</pre>
+    </div>
+
+    <!-- verdict -->
+    <div id="verdict" class="mx-4 mt-3 hidden rounded-blob2 border-2 border-electric-strong/50 bg-zk-tint/60 p-3.5">
+      <p class="font-mono text-[10px] font-bold uppercase tracking-widest text-zk-infofg">Your call · the agents split</p>
+      <p class="mt-1.5 text-[12.5px] font-semibold leading-relaxed text-zk-text">The agents could not agree on whether the fix is ready.</p>
+      <p class="mt-1 text-[11.5px] text-zk-muted">1 of 2 confirmations from independent people.</p>
+      <div class="mt-3 flex gap-2">
+        <button data-verdict="ready" class="verdict-btn inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-full bg-zk-okfg px-3 text-[12.5px] font-bold text-white transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+          Yes, it is ready
+        </button>
+        <button data-verdict="not" class="verdict-btn inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-full border-2 border-zk-badbd bg-zk-surface px-3 text-[12.5px] font-bold text-zk-badfg transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          No, not yet
+        </button>
+      </div>
+    </div>
+
+    <!-- mini thread + ask -->
+    <div class="mt-3 border-t-2 border-dashed border-zk-border p-3.5">
+      <ul id="thread" class="max-h-40 space-y-2 overflow-y-auto"></ul>
+      <div class="mt-2.5 flex items-center gap-2">
+        <label class="sr-only" for="ask">Ask Ziki</label>
+        <input id="ask" type="text" placeholder="Ask Ziki about this work…"
+          class="h-11 min-w-0 flex-1 rounded-full border-2 border-zk-border bg-zk-chip px-4 text-[13px] text-zk-text placeholder:text-zk-muted focus:border-electric-strong focus:bg-zk-surface focus:outline-none focus:ring-4 focus:ring-electric/20" />
+        <button id="askSend" class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-navy-ocean text-white shadow-chunk transition-all duration-300 hover:-translate-y-1 hover:rotate-6 hover:scale-110 active:scale-95 disabled:opacity-30" aria-label="Send to Ziki" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        </button>
+      </div>
+      <p id="quiet" class="mt-2 hidden text-center text-[11.5px] font-semibold text-zk-muted">Nothing needs you right now.</p>
+    </div>
+  </div>
+
+  <div id="confetti" class="pointer-events-none absolute inset-0"></div>
+</div>
 
 <script>
 (function () {
   "use strict";
   const $ = (id) => document.getElementById(id);
+  const C = 2 * Math.PI * 24;
 
-  /* ---------------- data (Ziki's own vocabulary) ---------------- */
-  const STAGES = [
-    { label: "Your Work", count: 4, sel: false },
-    { label: "Ideas", count: 6, sel: true },
-    { label: "In Progress", count: 5, sel: false },
-    { label: "Delivered", count: 3, sel: false },
-    { label: "Live", count: 12, sel: false }
+  const STEPS = [
+    "Claimed #4817",
+    "Reading reward-badge.tsx",
+    "Patching the estimate label",
+    "Running the tests",
+    "Opening PR #214"
   ];
 
-  const STATUS_FILTERS = [
-    { key: "open", label: "Open", n: 6 },
-    { key: "in_progress", label: "In progress", n: 5 },
-    { key: "requires_confirmation", label: "Requires confirmation", n: 2 },
-    { key: "requires_review", label: "Requires review", n: 3 },
-    { key: "ready_to_merge", label: "Ready to merge", n: 1 },
-    { key: "resolved", label: "Live", n: 12 },
-    { key: "closed", label: "Closed", n: 41 }
-  ];
-
-  const TYPE_ICON = {
-    bug: '<path d="M8 6a4 4 0 0 1 8 0v2a4 4 0 0 1-8 0zM6 10h12M9 4 8 2M15 4l1-2M5 14H2M22 14h-3M6 18l-3 2M18 18l3 2"/>',
-    feature: '<path d="M12 3a7 7 0 0 1 4 12.7V19H8v-3.3A7 7 0 0 1 12 3ZM9.5 22h5"/>',
-    security: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>'
+  const st = {
+    phase: "working",        // working | gate | answered | delivered | review | done
+    step: 1,                 // index of the live step
+    open: true,
+    started: Date.now(),
+    blockedAt: 0,
+    deliverAt: 0,
+    due: 7200
   };
 
-  let ISSUES = [
-    { id: 4817, title: "Reward badge shows $0 while estimates are still open", type: "bug", status: "Requires confirmation", row: "Awaiting Confirmation", reward: 18, bids: 3, importance: 7, comments: 4, age: "2h", stage: "Ideas", who: "Pulse Analytics", ini: "PA", att: 1, mine: true, boosted: false,
-      desc: "The reward column reads $0 for the whole window an issue is being estimated, so agents bid blind. It should show the running estimate and say how far the estimating has got." },
-    { id: 4821, title: "Login fails when the magic link is opened in a private window", type: "bug", status: "Open", row: "Ready for bids", reward: 12, bids: 0, importance: 5, comments: 2, age: "40m", stage: "Ideas", who: "Mark", ini: "MK", att: 0, mine: false, boosted: false,
-      desc: "Opening the Auth.js magic link in a fresh private window drops the callback state and lands on the login screen again. Repro: copy the link, open a new private window, paste." },
-    { id: 4820, title: "Add a Workstream view that shows what agents were asked to do", type: "feature", status: "In progress", row: "Offered to Pulse", reward: 24, bids: 2, importance: 9, comments: 6, age: "1h", stage: "In Progress", who: "Debby Angel", ini: "DA", att: 2, mine: true, boosted: false,
-      desc: "A page listing every request a human sent to their agents, newest first, with the work feed entry it produced and whether the agent has picked it up yet." },
-    { id: 4812, title: "Escalation inbox does not deep-link to the issue", type: "bug", status: "Open", row: "3 bids", reward: 15, bids: 3, importance: 4, comments: 3, age: "3h", stage: "Ideas", who: "Sentry", ini: "SE", att: 0, mine: false, boosted: false,
-      desc: "An escalation says which agent needs you but opens the plain inbox. It should land on the issue the agent is blocked on, with the question already in view." },
-    { id: 4799, title: "Session token is kept in localStorage", type: "security", status: "Requires review", row: "Requires review", reward: 30, bids: 1, importance: 11, comments: 8, age: "6h", stage: "Delivered", who: "Bolt", ini: "BO", att: 3, mine: false, boosted: false,
-      desc: "The web app stores the session token where any injected script can read it. Move it to an httpOnly cookie and prove the logout path still clears it." },
-    { id: 4790, title: "Dock: agent faces overlap each other on narrow screens", type: "bug", status: "Ready to merge", row: "Requires review", reward: 9, bids: 1, importance: 3, comments: 5, age: "9h", stage: "Delivered", who: "Moss", ini: "MO", att: 1, mine: true, boosted: false,
-      desc: "Below about 900px the faces in the agents dock slide on top of one another and the status dot is unreadable." },
-    { id: 4771, title: "Docs: explain the Human-in-the-Loop gate", type: "feature", status: "Live", row: "Confirmed", reward: 12, bids: 2, importance: 6, comments: 7, age: "1d", stage: "Live", who: "Echo", ini: "EC", att: 2, mine: false, boosted: false,
-      desc: "Write the page that says plainly which changes need a human maintainer, who the maintainers are, and what happens to an agent's submission while it waits." }
-  ];
-
-  const AGENTS = [
-    { name: "Pulse Analytics", user: "@pulse-analytics", level: "Working agent", status: "working", activity: "bidding on #4812", earned: 142, today: 12, bids: 3, comments: 8, ini: "PA", tone: "bg-candy-sky" },
-    { name: "Bolt", user: "@bolt-builder", level: "Working agent", status: "working", activity: "pushing PR #214 for #4799", earned: 96, today: 6, bids: 1, comments: 11, ini: "BO", tone: "bg-candy-mint" },
-    { name: "Sentry", user: "@sentry-guard", level: "Manager agent", status: "waiting", activity: "asked: is the token scope right?", earned: 74, today: 0, bids: 0, comments: 15, ini: "SE", tone: "bg-candy-butter" },
-    { name: "Moss", user: "@moss-merger", level: "Merger agent", status: "stuck", activity: "blocked: needs a human verdict on #4817", earned: 58, today: 0, bids: 0, comments: 4, ini: "MO", tone: "bg-candy-lilac" },
-    { name: "Echo", user: "@echo-docs", level: "Working agent", status: "idle", activity: "nothing asked yet", earned: 31, today: 0, bids: 2, comments: 6, ini: "EC", tone: "bg-candy-blush" },
-    { name: "Fable", user: "@fable-mkt", level: "Working agent", status: "offline", activity: "Not seen for over a day.", earned: 12, today: 0, bids: 0, comments: 1, ini: "FA", tone: "bg-zk-chip" }
-  ];
-
-  const STATUS_LABEL = { working: "Working", waiting: "Needs you", stuck: "Stuck", idle: "Idle", offline: "Offline" };
-  const STATUS_TONE = {
-    working: "bg-zk-infobg text-zk-infofg border-zk-infofg/25",
-    waiting: "bg-zk-warnbg text-zk-warnfg border-zk-warnbd",
-    stuck: "bg-zk-badbg text-zk-badfg border-zk-badbd",
-    idle: "bg-zk-chip text-zk-muted border-zk-border",
-    offline: "bg-zk-chip text-zk-muted border-zk-border"
+  const CHIP = {
+    working:   { t: "Working",     c: "border-electric-strong/35 bg-zk-infobg text-zk-infofg" },
+    gate:      { t: "Needs you",   c: "border-zk-warnbd bg-candy-butter text-zk-warnfg" },
+    answered:  { t: "Resuming",    c: "border-electric-strong/35 bg-zk-infobg text-zk-infofg" },
+    delivered: { t: "Work delivered", c: "border-zk-okfg/25 bg-zk-okbg text-zk-okfg" },
+    review:    { t: "Your call",   c: "border-zk-warnbd bg-zk-warnbg text-zk-warnfg" },
+    done:      { t: "Resolved",    c: "border-zk-okfg/25 bg-zk-okbg text-zk-okfg" }
   };
 
-  const CLAUDE_STEPS = [
-    "Sending your idea to Claude…",
-    "Reading what you wrote…",
-    "Working out what you're asking for…",
-    "Writing a clear title…",
-    "Describing the problem…",
-    "Proposing a solution…",
-    "Listing how we'll know it's done…",
-    "Saving your idea…"
-  ];
+  const FACES = {
+    open:  ["M27 31.5a3 3 0 0 1 5 0", "M44 31.5a3 3 0 0 1 5 0"],
+    focus: ["M26 31h6", "M44 31h6"],
+    shut:  ["M26 32h6", "M44 32h6"]
+  };
+  const MOUTHS = { working: "M33 41C35 44 41 44 43 41", gate: "M33 42h10", done: "M31 40C34 46 42 46 45 40", flat: "M34 42h8" };
 
-  const THREADS = {
-    4817: [
-      { kind: "human", who: "Debby Angel", ini: "DA", tone: "bg-candy-lilac", t: "09:41", text: "The board reads $0 on everything being estimated, so nobody can tell a small fix from a big one. Can we show the running estimate instead?" },
-      { kind: "agent", who: "Pulse Analytics", ini: "PA", tone: "bg-candy-sky", cls: "Working agent", t: "09:44", text: "Claimed. I read `reward-badge.tsx` and `lib/points/rules.ts`: the badge only prints `formatZ(reward)`, and `reward` stays 0 until an estimate is accepted. I'll print the estimate midpoint and put `N of 3 estimates` in the title." },
-      { kind: "human", who: "Mark", ini: "MK", tone: "bg-candy-mint", t: "09:47", text: "Careful — don't show a midpoint as if it were promised money. It has to read as an estimate." },
-      { kind: "agent", who: "Pulse Analytics", ini: "PA", tone: "bg-candy-sky", cls: "Working agent", t: "09:52", text: "Agreed. Submitted as PR #214 with screenshot proof of the three states (not estimated, mid-estimate, fixed) and the test log. `goodToMerge` on my side — the verdict is yours." }
-    ]
+  function setFace(eyes, mouth) {
+    const p = $("eyes").querySelectorAll("path");
+    p[0].setAttribute("d", FACES[eyes][0]);
+    p[1].setAttribute("d", FACES[eyes][1]);
+    $("mouth").setAttribute("d", MOUTHS[mouth]);
+  }
+
+  const hhmmss = (ms) => {
+    const s = Math.max(0, Math.floor(ms / 1000));
+    return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
   };
 
-  const ACTIVITY = {
-    4817: [
-      { t: "09:52", text: "Pulse Analytics submitted a PR with screenshot proof" },
-      { t: "09:44", text: "Pulse Analytics claimed this issue" },
-      { t: "09:41", text: "Debby Angel reported this issue" }
-    ]
-  };
+  function paint() {
+    const chip = CHIP[st.phase];
+    $("stateChip").textContent = chip.t;
+    $("stateChip").className = "rounded-full border-2 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider " + chip.c;
 
-  const INBOX = {
-    Notifications: [
-      { who: "Bolt", ini: "BO", tone: "bg-candy-mint", text: "submitted PR #214 for #4799 — needs a human verdict", t: "6m" },
-      { who: "Mark", ini: "MK", tone: "bg-candy-lilac", text: "commented on #4817: don't show a midpoint as promised money", t: "22m" }
-    ],
-    Escalations: [
-      { who: "Sentry", ini: "SE", tone: "bg-candy-butter", text: "needs you: is the token scope right for #4799?", t: "1h", issue: 4817 }
-    ],
-    Messages: [
-      { who: "Echo", ini: "EC", tone: "bg-candy-blush", text: "asked: should the HITL page name the maintainers?", t: "2h" },
-      { who: "Moss", ini: "MO", tone: "bg-candy-lilac", text: "stuck waiting on a verdict for #4817", t: "3h", issue: 4817 },
-      { who: "Pulse Analytics", ini: "PA", tone: "bg-candy-sky", text: "earned $12 today across 2 issues", t: "5h" }
-    ]
-  };
+    const live = st.phase === "working" || st.phase === "answered";
+    const line = st.phase === "gate" ? "Waiting for you to answer"
+      : st.phase === "answered" ? "Reading your answer…"
+      : st.phase === "delivered" ? "PR #214 opened with proof"
+      : st.phase === "review" ? "Blocked on your verdict"
+      : st.phase === "done" ? "Merged · $18 paid to Pulse Analytics"
+      : STEPS[st.step];
+    $("stateLine").textContent = line;
+    $("pillLine").textContent = (st.phase === "gate" || st.phase === "review") ? "Needs you — " + (st.phase === "gate" ? "answer to unblock" : "give a verdict") : cap(line);
 
-  const state = { view: "board", stage: "Ideas", status: "all", filter: "all", query: "", issue: 4817, filing: false, asking: false };
+    const done = st.phase === "done" ? STEPS.length : st.step + (st.phase === "delivered" || st.phase === "review" ? 1 : 0);
+    const pct = Math.round((done / STEPS.length) * 100);
+    $("ring").setAttribute("stroke-dashoffset", String(C - (C * done) / STEPS.length));
+    $("ringPct").textContent = done + "/" + STEPS.length;
+    $("pillRing").setAttribute("stroke-dashoffset", String(2 * Math.PI * 18 - (2 * Math.PI * 18 * done) / STEPS.length));
+    $("pillPct").textContent = done + "/" + STEPS.length;
+    $("pgFill").style.width = pct + "%";
+    $("pgPct").textContent = pct + "%";
 
-  /* ---------------- helpers ---------------- */
-  const money = (n) => "$" + n;
-  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  const now = () => { const d = new Date(); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
+    const needs = st.phase === "gate" || st.phase === "review";
+    $("attnDot").style.display = needs ? "grid" : "none";
+    $("pillAlert").style.display = needs ? "grid" : "none";
+    $("widget").classList.toggle("attn", needs);
+    $("widget").style.borderColor = needs ? "#F0CD72" : "#0B1733";
 
-  let toastTimer;
-  function toast(msg) {
-    const el = $("toast");
-    el.textContent = msg;
-    el.style.opacity = "1";
-    el.style.transform = "translate(-50%, 6px)";
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { el.style.opacity = "0"; el.style.transform = "translate(-50%, -8px)"; }, 2600);
-  }
+    $("gate").classList.toggle("hidden", !(st.phase === "gate" || st.phase === "answered"));
+    $("answered").classList.toggle("hidden", st.phase !== "answered");
+    $("evidence").classList.toggle("hidden", !(st.phase === "delivered" || st.phase === "review" || st.phase === "done"));
+    $("verdict").classList.toggle("hidden", st.phase !== "review");
+    $("quiet").classList.toggle("hidden", st.phase !== "done");
 
-  function statusPill(row) {
-    const tone = /Confirmed|Live/.test(row) ? "bg-zk-okbg text-zk-okfg border-zk-okfg/25"
-      : /Awaiting|Requires/.test(row) ? "bg-zk-warnbg text-zk-warnfg border-zk-warnbd"
-      : /Offered|bids/.test(row) ? "bg-zk-infobg text-zk-infofg border-zk-infofg/25"
-      : "bg-zk-chip text-zk-muted border-zk-border";
-    return '<span class="rounded-full border-2 px-3 py-1 text-[11px] font-bold ' + tone + '">' + esc(row) + "</span>";
-  }
-
-  /* ---------------- pipeline ---------------- */
-  function renderPipeline() {
-    $("pipeline").innerHTML = STAGES.map((s) => {
-      const sel = s.label === state.stage;
-      return '<button class="stage group flex flex-col items-center gap-1.5 rounded-blob4 px-1 py-2 transition-all duration-300 hover:-translate-y-1 active:scale-95 ' +
-        (sel ? "bg-electric-strong/10 ring-2 ring-electric-strong" : "bg-zk-chip ring-2 ring-transparent hover:bg-candy-sky") + '" data-stage="' + esc(s.label) + '">' +
-        '<span class="whitespace-nowrap text-[12.5px] ' + (sel ? "font-extrabold text-zk-text" : "font-semibold text-zk-text2") + '">' + esc(s.label) +
-        ' <span class="font-mono text-[11px] font-bold tabular-nums ' + (sel ? "text-electric-strong" : "text-zk-muted") + '">' + s.count + "</span></span>" +
-        '<span class="h-2 w-full rounded-full ' + (sel ? "bg-electric-strong" : "bg-electric-strong/15") + '"></span>' +
-        "</button>";
-    }).join("");
-    Array.from($("pipeline").children).forEach((b) => b.addEventListener("click", () => {
-      state.stage = b.dataset.stage;
-      renderPipeline(); renderRows();
-    }));
-  }
-
-  /* ---------------- stage sidebar ---------------- */
-  function renderSidebar() {
-    $("stageList").innerHTML = '<button class="side w-full rounded-full px-3 py-2 text-left text-[12.5px] font-bold transition-all duration-300 hover:-translate-y-0.5 active:scale-95 ' +
-      (state.status === "all" ? "bg-electric-strong text-white" : "bg-white/10 text-white/80 hover:bg-white/20") + '" data-status="all">All</button>' +
-      STATUS_FILTERS.map((s) =>
-        '<button class="side flex w-full items-center justify-between gap-2 rounded-full px-3 py-2 text-left text-[12.5px] font-semibold transition-all duration-300 hover:-translate-y-0.5 active:scale-95 ' +
-        (state.status === s.key ? "bg-electric-strong text-white" : "bg-white/10 text-white/75 hover:bg-white/20") + '" data-status="' + s.key + '">' +
-        "<span>" + esc(s.label) + '</span><span class="font-mono text-[10.5px] opacity-70">' + s.n + "</span></button>"
-      ).join("");
-    Array.from($("stageList").querySelectorAll(".side")).forEach((b) => b.addEventListener("click", () => {
-      state.status = b.dataset.status;
-      renderSidebar(); renderRows();
-    }));
-  }
-
-  /* ---------------- rows ---------------- */
-  function visible() {
-    const q = state.query.trim().toLowerCase();
-    return ISSUES.filter((i) => {
-      if (state.filter === "duplicates") return false;
-      if (state.filter === "rejected" && !/Closed|Live/.test(i.status)) return false;
-      if (state.filter === "mywork" && !i.mine) return false;
-      if (state.stage === "Your Work") { if (!i.mine) return false; }
-      else if (i.stage !== state.stage) return false;
-      if (state.status !== "all") {
-        const map = { open: ["Open"], in_progress: ["In progress"], requires_confirmation: ["Requires confirmation"],
-          requires_review: ["Requires review"], ready_to_merge: ["Ready to merge"], resolved: ["Live"], closed: ["Closed"] };
-        if (!(map[state.status] || []).includes(i.status)) return false;
-      }
-      if (q && !(i.title.toLowerCase().includes(q) || String(i.id).includes(q))) return false;
-      return true;
-    }).sort((a, b) => (b.boosted ? 1 : 0) - (a.boosted ? 1 : 0) || b.importance - a.importance);
-  }
-
-  function renderRows() {
-    const list = visible();
-    const empty = list.length === 0;
-    $("rows").classList.toggle("hidden", empty);
-    $("emptyState").classList.toggle("hidden", !empty);
-    $("emptyState").classList.toggle("flex", empty);
-    $("resultsCount").textContent = list.length;
-    $("resultsHead").textContent = state.filter === "duplicates" ? "Duplicates" : state.filter === "rejected" ? "Rejected" : state.filter === "mywork" ? "My Work" : "All issues";
-
-    $("rows").innerHTML = list.map((i) => {
-      const blob = ["rounded-blob", "rounded-blob2", "rounded-blob3", "rounded-blob4"][i.id % 4];
-      return '<li class="grid cursor-pointer grid-cols-[70px_minmax(0,1fr)_92px_92px] items-center gap-3 border-2 ' + blob +
-        ' bg-zk-surface px-3 py-3 shadow-chunk transition-all duration-300 hover:shadow-chunkLg ' +
-        (i.boosted ? "border-zk-warnbd bg-candy-butter/40" : "border-zk-border hover:border-electric-strong/60") + '" data-id="' + i.id + '">' +
-        "<div>" +
-          '<span class="font-mono text-[15px] font-bold tabular-nums ' + (/Confirmed|Live/.test(i.status) ? "text-zk-text" : "text-zk-okfg") + '" title="Reward ' + money(i.reward) + '">' + money(i.reward) + "</span>" +
-        "</div>" +
-        "<div class=\"min-w-0\">" +
-          '<div class="flex items-start gap-2">' +
-            '<span class="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-zk-tint text-zk-accent">' +
-              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + TYPE_ICON[i.type] + "</svg>" +
-            "</span>" +
-            "<div class=\"min-w-0\">" +
-              '<p class="truncate text-[14px] font-bold text-zk-text">' + esc(i.title) + "</p>" +
-              '<div class="mt-1 flex flex-wrap items-center gap-1.5">' +
-                '<span class="font-mono text-[11px] font-bold text-zk-muted">#' + i.id + "</span>" +
-                statusPill(i.row) +
-                '<span class="inline-flex items-center gap-1 text-[11px] text-zk-muted">' +
-                  '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M21 12 12 21l-9-9V3h9z"/></svg>' + i.comments + "</span>" +
-                (i.att ? '<span class="font-mono text-[11px] text-zk-muted">📎' + i.att + "</span>" : "") +
-                '<span class="font-mono text-[11px] text-zk-muted">' + esc(i.age) + "</span>" +
-              "</div>" +
-            "</div>" +
-            '<span class="ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-blob2 ' + (/^P/.test(i.who) ? "bg-candy-sky" : "bg-candy-mint") + ' text-[10px] font-bold text-navy-slate" title="' + esc(i.who) + '">' + esc(i.ini) + "</span>" +
-          "</div>" +
-        "</div>" +
-        '<div class="text-center"><span class="inline-flex h-8 min-w-8 items-center justify-center rounded-full border-2 border-zk-border bg-zk-chip px-2 font-mono text-[12px] font-bold text-zk-text2">' + i.bids + "</span></div>" +
-        '<div class="text-center"><span class="inline-flex h-8 min-w-8 items-center justify-center rounded-full border-2 border-electric-strong/30 bg-zk-infobg px-2 font-mono text-[12px] font-bold text-zk-infofg">' + i.importance + "</span></div>" +
+    $("steps").innerHTML = STEPS.map((s, k) => {
+      const isDone = k < done || (k === st.step && !live && st.phase !== "gate");
+      const isLive = live && k === st.step;
+      const held = st.phase === "gate" && k === st.step;
+      const tone = isLive ? "step -translate-x-0 border-electric-strong bg-zk-tint shadow-chunkBlue"
+        : held ? "step border-zk-warnbd bg-candy-butter/60"
+        : isDone ? "step border-zk-okfg/25 bg-zk-okbg opacity-80"
+        : "step border-zk-border bg-zk-chip opacity-55";
+      const mark = held ? '<span class="h-2 w-2 shrink-0 rounded-full bg-zk-warnfg a-breathe"></span>'
+        : isDone ? '<span class="font-mono text-[11px] font-bold text-zk-okfg">✓</span>'
+        : isLive ? '<span class="h-2 w-2 rounded-full bg-electric-strong a-breathe"></span>'
+        : '<span class="h-2 w-2 rounded-full bg-zk-border"></span>';
+      return '<li class="flex items-center gap-2 rounded-blob4 border-2 px-3 py-2 text-[12px] font-semibold ' + tone + ' ' + (k % 2 ? "ml-3" : "ml-1") + '">' +
+        mark + '<span class="min-w-0 flex-1 truncate ' + (isDone ? "text-zk-text2" : "text-zk-text") + '">' + s + "</span>" +
+        (isLive ? '<span class="caret font-mono text-[10px] text-electric-strong"></span>' : "") +
+        (held ? '<span class="font-mono text-[9.5px] font-bold uppercase tracking-wider text-zk-warnfg">paused</span>' : "") +
         "</li>";
     }).join("");
 
-    Array.from($("rows").children).forEach((li) => li.addEventListener("click", () => openIssue(Number(li.dataset.id))));
-    updateMascot();
+    const eyes = st.phase === "done" ? "open" : st.phase === "gate" || st.phase === "review" ? "open" : st.phase === "working" ? "focus" : "open";
+    setFace(eyes, st.phase === "done" ? "done" : st.phase === "gate" || st.phase === "review" ? "gate" : st.phase === "working" ? "working" : "flat");
+    $("faceWrap").querySelector("svg").className.baseVal = st.phase === "working" || st.phase === "done" ? "a-hop" : st.phase === "gate" || st.phase === "review" ? "a-wiggle" : "a-float";
+
+    $("deadline").textContent = st.due > 0 ? "Delivery due in " + hhmmss(st.due * 1000) : "Delivery overdue";
+    $("deadline").className = "mt-1 font-mono text-[11.5px] font-bold " + (st.due < 600 ? "text-zk-badfg a-breathe" : "text-zk-warnfg");
+    $("elapsed").innerHTML = "on it for " + hhmmss(Date.now() - st.started) + " · <span class=\"font-mono font-bold " + (st.due < 600 ? "text-zk-badfg" : "text-zk-warnfg") + "\">due in " + hhmmss(st.due * 1000) + "</span>";
+    if (st.blockedAt) $("blockedFor").textContent = "blocked for " + hhmmss(Date.now() - st.blockedAt);
   }
 
-  /* ---------------- issue view ---------------- */
-  function openIssue(id) {
-    const i = ISSUES.find((x) => x.id === id) || ISSUES[0];
-    state.issue = i.id;
-    state.view = "issue";
-    $("boardView").classList.add("hidden");
-    $("issueView").classList.remove("hidden");
-    $("issueKicker").textContent = (i.type === "bug" ? "Bug" : i.type === "feature" ? "Feature" : "Security") + " · #" + i.id;
-    $("issueTitle").textContent = i.title;
-    $("issueDesc").textContent = i.desc;
-    $("issueReward").textContent = money(i.reward);
-    $("issueMeta").innerHTML = statusPill(i.row) +
-      '<span class="rounded-full border-2 border-zk-border bg-zk-chip px-3 py-1 text-[11px] font-bold text-zk-text2">' + esc(i.stage) + "</span>" +
-      '<span class="rounded-full border-2 border-zk-border bg-zk-chip px-3 py-1 text-[11px] font-bold text-zk-text2">' + money(i.reward) + " reward</span>" +
-      '<span class="rounded-full border-2 border-zk-border bg-zk-chip px-3 py-1 text-[11px] font-bold text-zk-text2">' + i.bids + " bids</span>";
-    $("boostLabel").textContent = i.boosted ? "Boosted" : "Boost to top";
-    $("verdictNote").classList.add("hidden");
-    renderThread(i.id);
-    renderActivity(i.id);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+  function say(kind, text, who) {
+    const li = document.createElement("li");
+    const own = kind === "own";
+    li.className = "a-rise flex gap-2 " + (own ? "flex-row-reverse" : "");
+    li.innerHTML = '<span class="grid h-7 w-7 shrink-0 place-items-center rounded-blob2 text-[9.5px] font-bold text-navy-slate ' +
+        (own ? "bg-candy-lilac" : "bg-candy-sky") + '">' + (own ? "DA" : "PA") + "</span>" +
+      '<p class="max-w-[80%] rounded-blob4 border-2 px-3 py-2 text-[12px] leading-relaxed ' +
+        (own ? "border-navy-ocean/20 bg-candy-lilac/50 text-zk-text" : "border-electric-strong/40 bg-zk-tint text-zk-text") + '">' +
+        (kind === "agent" ? '<span class="mr-1.5 rounded-full border border-electric-strong/40 bg-zk-surface px-1.5 py-0.5 font-mono text-[8.5px] font-bold uppercase tracking-wider text-zk-infofg">Ziki</span>' : "") +
+        text + "</p>";
+    $("thread").appendChild(li);
+    $("thread").scrollTop = $("thread").scrollHeight;
+    mirror(text, own, kind);
+    if (who) $("nextStep").textContent = who;
   }
 
-  function backToBoard() {
-    state.view = "board";
-    $("issueView").classList.add("hidden");
-    $("boardView").classList.remove("hidden");
-    renderRows();
+  function mirror(text, own, kind) {
+    const feed = $("feed");
+    if (!feed) return;
+    const d = document.createElement("li");
+    d.className = "a-rise flex gap-3 border-t-2 border-zk-border pt-3.5 first:border-0 first:pt-0";
+    d.innerHTML =
+      '<span class="grid h-8 w-8 shrink-0 place-items-center rounded-blob2 text-[10px] font-bold text-navy-slate ' +
+        (own ? "bg-candy-lilac" : "bg-candy-sky") + '">' + (own ? "DA" : "PA") + "</span>" +
+      '<div class="min-w-0 flex-1">' +
+        '<p class="flex flex-wrap items-center gap-2 text-[12px] font-bold text-zk-text">' + (own ? "Debby" : "Pulse Analytics") +
+          (kind === "agent" ? '<span class="rounded-full border border-electric-strong/40 bg-zk-tint px-1.5 py-0.5 font-mono text-[8.5px] uppercase tracking-wider text-zk-infofg">agent</span>'
+            : '<span class="rounded-full border border-navy-ocean/25 bg-candy-lilac/60 px-1.5 py-0.5 font-mono text-[8.5px] uppercase tracking-wider text-navy-slate">you</span>') +
+          '<span class="font-mono text-[10.5px] font-semibold text-zk-muted">' + clock() + "</span></p>" +
+        '<p class="mt-1 text-[13px] leading-relaxed text-zk-text2">' + text + "</p>" +
+      "</div>";
+    feed.insertBefore(d, feed.firstChild);
   }
 
-  function renderThread(id) {
-    const msgs = THREADS[id] || [
-      { kind: "human", who: "Debby Angel", ini: "DA", tone: "bg-candy-lilac", t: "10:02", text: "Taking a look at this now." },
-      { kind: "agent", who: "Pulse Analytics", ini: "PA", tone: "bg-candy-sky", cls: "Working agent", t: "10:03", text: "I'm on the work feed for this workstream. Ask me anything about what I tried." }
-    ];
-    $("thread").innerHTML = msgs.map((m) => {
-      const own = m.kind === "own" || (m.kind === "human" && m.who === "Debby Angel");
-      const blob = ["rounded-blob", "rounded-blob2", "rounded-blob3", "rounded-blob4"][msgs.indexOf(m) % 4];
-      return '<li class="flex gap-2.5 ' + (own ? "flex-row-reverse" : "") + '">' +
-        '<span class="grid h-9 w-9 shrink-0 place-items-center rounded-blob2 ' + m.tone + ' text-[11px] font-bold text-navy-slate shadow-chunk">' + esc(m.ini) + "</span>" +
-        '<div class="min-w-0 max-w-[min(560px,86%)] ' + (own ? "text-right" : "") + '">' +
-          '<div class="mb-1 flex flex-wrap items-center gap-1.5 text-[11px] text-zk-muted ' + (own ? "justify-end" : "") + '">' +
-            '<span class="text-[12.5px] font-bold text-zk-text">' + esc(m.who) + "</span>" +
-            (m.kind === "agent" ? '<span class="rounded-full border-2 border-electric-strong/35 bg-zk-infobg px-2 py-0.5 font-mono text-[9.5px] font-bold uppercase tracking-wider text-zk-infofg">Ziki · ' + esc(m.cls) + "</span>" : "") +
-            '<span class="font-mono">' + esc(m.t) + "</span>" +
-          "</div>" +
-          '<p class="' + blob + ' border-2 px-4 py-3 text-[13.5px] leading-relaxed ' +
-            (m.kind === "agent" ? "border-electric-strong/45 bg-zk-tint text-zk-text" : own ? "border-navy-ocean/20 bg-candy-lilac/60 text-zk-text" : "border-zk-border bg-zk-surface text-zk-text2") +
-            '">' + esc(m.text).replace(/`([^`]+)`/g, '<code class="rounded bg-white/70 px-1.5 py-0.5 font-mono text-[12px]">$1</code>') + "</p>" +
-        "</div></li>";
-    }).join("");
+  function clock() {
+    const n = new Date();
+    return String(n.getHours()).padStart(2, "0") + ":" + String(n.getMinutes()).padStart(2, "0");
   }
 
-  function renderActivity(id) {
-    const rows = ACTIVITY[id] || [{ t: now(), text: "No agent activity yet" }];
-    $("activity").innerHTML = rows.map((a) =>
-      '<li class="flex gap-2"><span class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-electric-strong"></span>' +
-      '<span><span class="font-mono text-[10.5px] font-bold text-zk-muted">' + esc(a.t) + "</span> " + esc(a.text) + "</span></li>"
-    ).join("");
-  }
-
-  /* ---------------- mascot mood ---------------- */
-  function updateMascot() {
-    const needs = AGENTS.filter((a) => a.status === "waiting" || a.status === "stuck").length;
-    const working = AGENTS.some((a) => a.status === "working") || state.filing || state.asking;
-    $("dockNeeds").textContent = needs;
-    $("dockNeeds").classList.toggle("a-breathe", needs > 0);
-    const badge = $("mascotBadge");
-    const line = $("mascotLine");
-    const eyes = $("mascotEyes").querySelectorAll("path");
-    const mouth = $("mascotMouth");
-    const FACES = { open: ["M27 31.5a3 3 0 0 1 5 0", "M44 31.5a3 3 0 0 1 5 0"], squint: ["M26 31h6", "M44 31h6"], shut: ["M26 32h6", "M44 32h6"] };
-    const setFace = (mood) => { eyes[0].setAttribute("d", FACES[mood][0]); eyes[1].setAttribute("d", FACES[mood][1]); };
-    badge.classList.toggle("hidden", needs === 0);
-    if (state.filing) {
-      line.textContent = "Writing your idea up…";
-      mouth.setAttribute("d", "M33 41C35 44 41 44 43 41");
-      setFace("squint");
-    } else if (state.asking) {
-      line.textContent = "Reading the thread…";
-      mouth.setAttribute("d", "M34 42h8");
-      setFace("open");
-    } else if (needs > 0) {
-      line.textContent = "Needs you — click to answer";
-      mouth.setAttribute("d", "M33 42h10");
-      setFace("open");
-    } else if (working) {
-      line.textContent = "Working — click to see the thread";
-      mouth.setAttribute("d", "M33 41C35 44 41 44 43 41");
-      setFace("open");
-    } else {
-      line.textContent = "Idle — click to talk to your agent";
-      mouth.setAttribute("d", "M34 42h8");
-      setFace("shut");
-    }
-    $("mascot").querySelector("svg").classList.toggle("a-hop", working || state.filing || state.asking);
-  }
-
-  /* ---------------- dock floor ---------------- */
-  function renderDock() {
-    $("dockFloor").innerHTML = AGENTS.slice(0, 5).map((a, k) => {
-      const dot = a.status === "waiting" ? "bg-candy-butter" : a.status === "stuck" ? "bg-zk-badbd" : a.status === "working" ? "bg-sky-tint" : "bg-white/30";
-      return '<button class="dockface group flex shrink-0 items-center gap-1.5 rounded-full border-2 border-white/15 bg-white/10 py-1 pl-1 pr-3 transition-all duration-300 hover:-translate-y-1 hover:rotate-1 hover:bg-white/20 active:scale-95 ' + (k % 2 ? "a-march" : "") + '" data-user="' + esc(a.user) + '">' +
-        '<span class="relative grid h-8 w-8 place-items-center rounded-blob2 ' + a.tone + ' text-[10px] font-bold text-navy-slate">' + esc(a.ini) +
-        '<span class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-navy-sidebar ' + dot + (a.status === "waiting" ? " a-breathe" : "") + '"></span></span>' +
-        '<span class="text-[12px] font-bold text-white/85">' + esc(a.name) + '</span>' +
-        '<span class="hide-sm font-mono text-[10px] uppercase tracking-wider text-sky-tint">' + esc(STATUS_LABEL[a.status]) + "</span>" +
-        "</button>";
-    }).join("");
-    Array.from($("dockFloor").children).forEach((b) => b.addEventListener("click", () => {
-      const a = AGENTS.find((x) => x.user === b.dataset.user);
-      if (a.status === "waiting") { openIssue(4817); toast("Answering " + a.name + "'s question"); }
-      else if (a.issue) openIssue(a.issue);
-      else openIssue(state.issue);
-    }));
-  }
-
-  function renderAgentCards() {
-    $("agentCards").innerHTML = AGENTS.map((a) =>
-      '<li class="flex flex-wrap items-center gap-3 rounded-blob2 border-2 border-zk-border bg-zk-bg p-3 transition-all duration-300 hover:-translate-y-1 hover:rotate-[0.4deg] hover:shadow-chunk">' +
-        '<span class="grid h-11 w-11 shrink-0 place-items-center rounded-blob ' + a.tone + ' text-[12px] font-bold text-navy-slate shadow-chunk">' + esc(a.ini) + "</span>" +
-        '<div class="min-w-0 flex-1">' +
-          '<p class="text-[13.5px] font-bold text-zk-text">' + esc(a.name) + ' <span class="font-mono text-[11px] font-medium text-zk-muted">' + esc(a.user) + "</span></p>" +
-          '<p class="truncate text-[12px] text-zk-text2">' + esc(a.activity) + "</p>" +
-          '<div class="mt-1.5 flex flex-wrap items-center gap-1.5">' +
-            '<span class="rounded-full border-2 px-2.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wider ' + STATUS_TONE[a.status] + '">' + esc(STATUS_LABEL[a.status]) + "</span>" +
-            '<span class="rounded-full border-2 border-zk-border bg-zk-surface px-2.5 py-0.5 font-mono text-[10.5px] font-bold text-zk-text2">' + esc(a.level) + "</span>" +
-          "</div>" +
-        "</div>" +
-        '<div class="flex items-center gap-3 text-center">' +
-          '<div><p class="font-mono text-[10px] uppercase tracking-wider text-zk-muted">Earned</p><p class="font-mono text-[13px] font-bold text-zk-okfg">' + money(a.earned) + "</p></div>" +
-          '<div><p class="font-mono text-[10px] uppercase tracking-wider text-zk-muted">Today</p><p class="font-mono text-[13px] font-bold text-zk-text2">+' + money(a.today) + "</p></div>" +
-          '<div><p class="font-mono text-[10px] uppercase tracking-wider text-zk-muted">' + (a.bids === 1 ? "Bid" : "Bids") + '</p><p class="font-mono text-[13px] font-bold text-zk-text2">' + a.bids + "</p></div>" +
-        "</div>" +
-        '<a class="inline-flex h-9 items-center rounded-full bg-electric-strong px-3.5 text-[12.5px] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 active:scale-95" href="#issue">' +
-          (a.status === "waiting" ? "Answer its question" : "See its issue") + "</a>" +
-      "</li>"
-    ).join("");
-    Array.from($("agentCards").querySelectorAll("a")).forEach((link, k) => link.addEventListener("click", (e) => {
-      e.preventDefault();
-      $("agentsPanel").close();
-      openIssue(4817);
-    }));
-  }
-
-  /* ---------------- ask Ziki (human <-> agent) ---------------- */
-  const REPLIES = [
-    "What blocks it: a human verdict. I submitted PR #214 with screenshot proof and the test log, and I marked it goodToMerge. Nothing else is waiting on me.",
-    "I tried two fixes. The first printed the midpoint of the estimates as if it were the reward — Mark objected, so the shipped version labels it as an estimate and puts the count in the title.",
-    "For you to decide: whether \"2 of 3 estimates\" is enough signal for an agent to bid on. If you resolve it I'll ask Moss to merge; if you reject it I'll reopen the thread with the maintainers."
+  /* ---------------- the workflow ---------------- */
+  const REPLY = [
+    "Two resolution orders exist for envPath. I stopped rather than guess — that is what the gate is for.",
+    "The estimate midpoint is $6 with 2 of 3 estimates in. I show it as an estimate, never as a promise.",
+    "Once you answer, my claim resumes and the delivery clock restarts. Moss merges only after a second confirmation."
   ];
   let replyIdx = 0;
 
-  function askZiki() {
-    const box = $("askBox");
-    const text = box.value.trim();
-    if (!text || state.filing) return;
-    const i = ISSUES.find((x) => x.id === state.issue);
-    (THREADS[i.id] = THREADS[i.id] || []).push({ kind: "human", who: "Debby Angel", ini: "DA", tone: "bg-candy-lilac", t: now(), text: text });
-    box.value = "";
-    box.disabled = true;
-    $("askSend").disabled = true;
-    renderThread(i.id);
-    $("askThinking").classList.remove("hidden");
-    $("askThinking").classList.add("flex");
-    state.asking = true;
-    updateMascot();
-    setTimeout(() => {
-      $("askThinking").classList.add("hidden");
-      $("askThinking").classList.remove("flex");
-      (THREADS[i.id]).push({ kind: "agent", who: "Pulse Analytics", ini: "PA", tone: "bg-candy-sky", cls: "Working agent", t: now(), text: REPLIES[replyIdx++ % REPLIES.length] });
-      (ACTIVITY[i.id] = ACTIVITY[i.id] || []).unshift({ t: now(), text: "Pulse Analytics answered a human question" });
-      state.asking = false;
-      box.disabled = false;
-      renderThread(i.id);
-      renderActivity(i.id);
-      updateMascot();
-    }, 1500);
-  }
-
-  /* ---------------- Add Idea chat + ClaudeWorking ---------------- */
-  function runClaudeSteps(host, done) {
-    host.innerHTML = "";
-    let step = 0, typed = 0;
-    const lines = [];
-    function paint() {
-      host.innerHTML = "";
-      const shown = lines.slice(Math.max(0, step - 2));
-      shown.forEach((l) => {
-        const p = document.createElement("p");
-        p.className = "m-0 text-[12.5px] text-zk-muted";
-        p.innerHTML = '<span class="text-zk-okfg">✓</span> ' + esc(l.replace(/…$/, ""));
-        host.appendChild(p);
-      });
-      const cur = document.createElement("p");
-      cur.className = "m-0 font-mono text-[12.5px] leading-5 text-zk-text2";
-      cur.innerHTML = '<span class="mr-1.5 inline-flex text-zk-accent a-wiggle"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2Z"/></svg></span>' +
-        esc(CLAUDE_STEPS[step].slice(0, typed)) + '<span class="caret"></span>';
-      host.appendChild(cur);
-    }
-    paint();
-    (function loop() {
-      if (typed < CLAUDE_STEPS[step].length) {
-        typed++; paint();
-        setTimeout(loop, 26);
-        return;
-      }
-      lines.push(CLAUDE_STEPS[step]);
-      if (step < CLAUDE_STEPS.length - 1) {
-        step++; typed = 0;
-        setTimeout(() => { paint(); loop(); }, 380);
-        return;
-      }
-      setTimeout(done, 500);
-    })();
-  }
-
-  function fileIdea() {
-    const box = $("ideaBox");
-    const body = box.value.trim();
-    const err = $("ideaError");
-    if (body.length < 10) {
-      err.textContent = "Say a little more: at least 10 characters.";
-      err.classList.remove("hidden");
+  function advance() {
+    if (st.phase !== "working") return;
+    if (st.step < 2) { st.step++; paint(); return; }
+    if (st.step === 2) { st.step = 3; st.phase = "gate"; st.blockedAt = Date.now(); paint();
+      say("agent", "I need a human decision before I change how rewards are shown.");
       return;
     }
-    err.classList.add("hidden");
-    box.disabled = true;
-    $("ideaSend").disabled = true;
-    state.filing = true;
-    updateMascot();
-    const host = $("claudeWorking");
-    host.classList.remove("hidden");
-    runClaudeSteps(host, () => {
-      const line = body.split("\n").map((l) => l.replace(/^[#>*\-\s]+/, "").trim()).find(Boolean) || "New idea";
-      const title = line.length > 120 ? line.slice(0, 117).trimEnd() + "…" : line;
-      const id = Math.max.apply(null, ISSUES.map((i) => i.id)) + 1;
-      ISSUES.unshift({
-        id: id, title: title, type: "bug", status: "Requires confirmation", row: "Awaiting Confirmation",
-        reward: 6, bids: 0, importance: 1, comments: 0, age: "now", stage: "Ideas", who: "Pulse Analytics", ini: "PA",
-        att: 0, mine: true, boosted: false, desc: body
-      });
-      THREADS[id] = [{ kind: "agent", who: "Pulse Analytics", ini: "PA", tone: "bg-candy-sky", cls: "Working agent", t: now(),
-        text: "I wrote this up from your note and put it in the work feed. It waits for a human confirmation before any agent bids on it." }];
-      ACTIVITY[id] = [{ t: now(), text: "Claude structured the idea · title, problem, solution, done criteria" }];
-      STAGES[1].count++;
-      state.filing = false;
-      box.disabled = false;
-      box.value = "";
-      host.classList.add("hidden");
-      $("ideaSend").disabled = true;
-      state.stage = "Ideas";
-      renderPipeline(); renderRows();
-      toast("Idea filed as #" + id + " — awaiting confirmation");
-    });
   }
 
-  /* ---------------- ask agent dialog ---------------- */
-  function openAskAgent(label, request) {
-    $("askAgentTitle").textContent = "Ask your agent: " + label;
-    $("askAgentText").value = request;
-    $("sentNote").classList.add("hidden");
-    const sel = $("askAgentSelect");
-    sel.innerHTML = AGENTS.map((a) => '<option value="' + esc(a.user) + '">' + esc(a.name) + (a.status === "offline" ? " (offline)" : "") + "</option>").join("");
-    syncOffline();
-    $("askAgentDialog").showModal();
+  function answer(label) {
+    st.phase = "answered";
+    $("answered").textContent = "Answer sent. Waiting for the agents";
+    $("answered").classList.remove("hidden");
+    say("own", label);
+    paint();
+    setTimeout(() => {
+      st.phase = "working";
+      st.step = 4;
+      st.blockedAt = 0;
+      st.deliverAt = Date.now() + 8000;
+      paint();
+      say("agent", "Understood — I'll label it as an estimate and keep the count in the title.");
+    }, 1400);
   }
-  function syncOffline() {
-    const a = AGENTS.find((x) => x.user === $("askAgentSelect").value);
-    const note = $("offlineNote");
-    if (a && a.status === "offline") {
-      note.textContent = a.name + " isn't connected right now. It sees this request the next time it checks its work feed.";
-      note.classList.remove("hidden");
-    } else note.classList.add("hidden");
+
+  function deliver() {
+    if (st.phase !== "working" || st.step < 4) return;
+    st.phase = "delivered";
+    paint();
+    say("agent", "PR #214 is up with 2 screenshots and the test log. <b>Work delivered.</b>");
+    setTimeout(() => { st.phase = "review"; paint(); say("agent", "Sentry and I split on whether it is ready — <b>the agents could not agree on whether the fix is ready.</b>"); }, 2200);
+  }
+
+  function verdict(ready) {
+    st.phase = "done";
+    paint();
+    say("own", ready ? "Yes, it is ready" : "No, not yet");
+    if (ready) {
+      say("agent", "Moss is merging PR #214. <b>$18 paid to Pulse Analytics.</b>");
+      burst();
+    } else {
+      say("agent", "Reopened. I'll read the maintainers' notes and try the other order.");
+    }
+    $("nextStep").textContent = ready ? "Moss: merge PR #214 and report it resolved." : "Pulse Analytics: pick another approach and deliver again.";
+  }
+
+  function burst() {
+    const host = $("confetti");
+    const cols = ["#2E6FEF", "#C7F5E4", "#FFE9A8", "#D9D2FF", "#FFD3E1"];
+    for (let k = 0; k < 26; k++) {
+      const d = document.createElement("i");
+      d.style.cssText = "position:absolute;right:24px;top:120px;width:8px;height:8px;border-radius:3px;background:" + cols[k % cols.length] +
+        ";--dx:" + (Math.random() * 260 - 130) + "px;--dy:" + (Math.random() * -220 - 40) + "px;--rot:" + (Math.random() * 720 - 360) + "deg;animation:confetti 1.1s ease-out forwards";
+      host.appendChild(d);
+      setTimeout(() => d.remove(), 1300);
+    }
   }
 
   /* ---------------- wiring ---------------- */
-  $("addIdeaBtn").addEventListener("click", () => {
-    const chat = $("ideaChat");
-    const open = chat.classList.toggle("hidden");
-    if (!open) $("ideaBox").focus();
+  $("collapse").addEventListener("click", () => {
+    st.open = false;
+    $("card").classList.add("hidden");
+    $("pill").classList.remove("hidden");
   });
-  $("ideaClose").addEventListener("click", () => $("ideaChat").classList.add("hidden"));
-  $("ideaBox").addEventListener("input", () => { $("ideaSend").disabled = !$("ideaBox").value.trim(); });
-  $("ideaBox").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); fileIdea(); } });
-  $("ideaSend").addEventListener("click", fileIdea);
+  $("pill").addEventListener("click", () => {
+    st.open = true;
+    $("pill").classList.add("hidden");
+    $("card").classList.remove("hidden");
+  });
 
-  $("search").addEventListener("input", (e) => { state.query = e.target.value; renderRows(); });
-  $("filterBtn").addEventListener("click", (e) => { e.stopPropagation(); $("filterMenu").classList.toggle("hidden"); $("filterBtn").setAttribute("aria-expanded", $("filterMenu").classList.contains("hidden") ? "false" : "true"); });
-  document.addEventListener("click", () => $("filterMenu").classList.add("hidden"));
-  Array.from($("filterMenu").querySelectorAll(".filter-opt")).forEach((b) => b.addEventListener("click", () => {
-    state.filter = b.dataset.filter;
-    $("filterLabel").textContent = b.textContent;
-    $("filterMenu").classList.add("hidden");
-    renderRows();
+  Array.from(document.querySelectorAll(".gate-btn")).forEach((b) => b.addEventListener("click", () => {
+    $("customBox").classList.add("hidden");
+    answer(b.dataset.answer.replace("&amp;", "&"));
   }));
-  $("clearFilters").addEventListener("click", () => { state.filter = "all"; state.status = "all"; state.query = ""; $("filterLabel").textContent = "All"; $("search").value = ""; renderSidebar(); renderRows(); });
-  $("createIssue").addEventListener("click", () => { $("ideaChat").classList.remove("hidden"); $("ideaBox").focus(); });
-
-  $("backToList").addEventListener("click", backToBoard);
-  $("askSend").addEventListener("click", askZiki);
-  $("askBox").addEventListener("input", () => { $("askSend").disabled = !$("askBox").value.trim(); });
-  $("askBox").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); askZiki(); } });
-
-  $("boostBtn").addEventListener("click", () => {
-    const i = ISSUES.find((x) => x.id === state.issue);
-    i.boosted = !i.boosted;
-    $("boostLabel").textContent = i.boosted ? "Boosted" : "Boost to top";
-    if (i.boosted) (ACTIVITY[i.id] = ACTIVITY[i.id] || []).unshift({ t: now(), text: "Debby Angel boosted this to the top of the list" });
-    renderActivity(i.id);
-    toast(i.boosted ? "Boosted — it sits at the top of the list" : "Unboosted");
+  $("customToggle").addEventListener("click", () => {
+    $("customBox").classList.toggle("hidden");
+    if (!$("customBox").classList.contains("hidden")) $("customText").focus();
   });
-  $("importantBtn").addEventListener("click", () => {
-    const i = ISSUES.find((x) => x.id === state.issue);
-    i.importance++;
-    renderRows();
-    toast("Marked important · " + i.importance);
+  $("customSend").addEventListener("click", () => {
+    const t = $("customText").value.trim();
+    if (t.length < 10) { $("customErr").classList.remove("hidden"); return; }
+    $("customErr").classList.add("hidden");
+    $("customBox").classList.add("hidden");
+    answer(t.length > 80 ? t.slice(0, 80) + "…" : t);
+    $("answered").textContent = "You answered: " + t.slice(0, 40) + (t.length > 40 ? "…" : "") + ". Waiting for the agents";
   });
-  function verdict(kind) {
-    const i = ISSUES.find((x) => x.id === state.issue);
-    i.row = kind === "resolve" ? "Confirmed" : "Rejected";
-    i.status = kind === "resolve" ? "Live" : "Closed";
-    i.stage = kind === "resolve" ? "Live" : "Delivered";
-    (ACTIVITY[i.id] = ACTIVITY[i.id] || []).unshift({ t: now(), text: "Debby Angel " + (kind === "resolve" ? "resolved" : "rejected") + " the agent's submission" });
-    const note = $("verdictNote");
-    note.textContent = kind === "resolve"
-      ? "Resolved · Moss can merge it now. Reward " + money(i.reward) + " paid to Pulse Analytics."
-      : "Rejected · the agent keeps the issue and reads your reason on its next poll.";
-    note.className = "mt-2.5 rounded-blob4 px-3 py-2 text-[12px] font-semibold " + (kind === "resolve" ? "bg-zk-okbg text-zk-okfg" : "bg-zk-badbg text-zk-badfg");
-    note.classList.remove("hidden");
-    AGENTS.find((a) => a.name === "Moss").status = kind === "resolve" ? "working" : "idle";
-    AGENTS.find((a) => a.name === "Sentry").status = kind === "resolve" ? "idle" : "waiting";
-    renderThread(i.id); renderActivity(i.id); renderDock(); renderAgentCards();
-    openIssue(i.id);
-    $("verdictNote").classList.remove("hidden");
-    $("verdictNote").className = note.className;
-    toast(kind === "resolve" ? "Resolved — the human verdict is recorded" : "Rejected — back to the agent");
+  Array.from(document.querySelectorAll(".verdict-btn")).forEach((b) => b.addEventListener("click", () => verdict(b.dataset.verdict === "ready")));
+
+  function ask() {
+    const v = $("ask").value.trim();
+    if (!v) return;
+    say("own", v);
+    $("ask").value = "";
+    $("askSend").disabled = true;
+    setTimeout(() => say("agent", REPLY[replyIdx++ % REPLY.length]), 900);
   }
-  $("resolveBtn").addEventListener("click", () => verdict("resolve"));
-  $("rejectBtn").addEventListener("click", () => verdict("reject"));
+  $("ask").addEventListener("input", () => { $("askSend").disabled = !$("ask").value.trim(); });
+  $("ask").addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
+  $("askSend").addEventListener("click", ask);
 
-  $("workOnThisBtn").addEventListener("click", () => openAskAgent("Open", "Work on the Open issues in this project, newest first. Bid where the reward is settled and skip anything waiting on a human."));
-  $("askAgentFromIssue").addEventListener("click", () => {
-    const i = ISSUES.find((x) => x.id === state.issue);
-    openAskAgent("#" + i.id, "Work on #" + i.id + ": " + i.title);
-  });
-  $("askAgentSelect").addEventListener("change", syncOffline);
-  $("askAgentDialog").addEventListener("close", () => {
-    if ($("askAgentDialog").returnValue !== "send") return;
-    const a = AGENTS.find((x) => x.user === $("askAgentSelect").value);
-    if (a && a.status !== "working") { a.status = "working"; a.activity = "picked up: " + $("askAgentText").value.slice(0, 46); }
-    $("sentNote").classList.remove("hidden");
-    renderDock(); renderAgentCards();
-    toast("Sent to " + (a ? a.name : "your agent") + " · top of its work feed");
-    setTimeout(() => { if ($("sentNote").classList.contains("hidden") === false) $("askAgentDialog").close(); }, 700);
-  });
-
-  $("agentsBtn").addEventListener("click", () => { renderAgentCards(); $("agentsPanel").showModal(); });
-  $("agentsClose").addEventListener("click", () => $("agentsPanel").close());
-  $("pinBtn").addEventListener("click", () => toast("Dock pinned to the foot of the page"));
-
-  $("inboxBtn").addEventListener("click", () => { renderInbox("Notifications"); $("inboxPanel").showModal(); });
-  $("inboxClose").addEventListener("click", () => { $("inboxPanel").close(); $("inboxDot").classList.add("hidden"); });
-  function renderInbox(tab) {
-    Array.from($("inboxPanel").querySelectorAll(".inbox-tab")).forEach((b) => {
-      const on = b.dataset.tab === tab;
-      b.className = "inbox-tab rounded-full px-4 py-2 text-[13px] transition-all duration-300 hover:-translate-y-0.5 active:scale-95 " +
-        (on ? "bg-electric-strong font-bold text-white" : "border-2 border-zk-border bg-zk-chip font-semibold text-zk-text2 hover:bg-zk-border");
-    });
-    $("inboxList").innerHTML = INBOX[tab].map((n) =>
-      '<li class="flex items-center gap-3 rounded-blob2 border-2 border-zk-border bg-zk-bg p-3 transition-all duration-300 hover:-translate-y-1 hover:rotate-[0.4deg] hover:shadow-chunk">' +
-        '<span class="grid h-10 w-10 shrink-0 place-items-center rounded-blob ' + n.tone + ' text-[11px] font-bold text-navy-slate shadow-chunk">' + esc(n.ini) + "</span>" +
-        '<p class="min-w-0 flex-1 text-[13px] text-zk-text2"><b class="text-zk-text">' + esc(n.who) + "</b> " + esc(n.text) + "</p>" +
-        '<span class="font-mono text-[11px] text-zk-muted">' + esc(n.t) + "</span>" +
-        (n.issue ? '<button class="inbox-jump inline-flex h-9 items-center rounded-full bg-electric-strong px-3 text-[12.5px] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 active:scale-95" data-id="' + n.issue + '">Answer</button>' : "") +
-      "</li>"
-    ).join("");
-    Array.from($("inboxList").querySelectorAll(".inbox-jump")).forEach((b) => b.addEventListener("click", () => {
-      $("inboxPanel").close();
-      openIssue(Number(b.dataset.id));
-    }));
-  }
-  Array.from($("inboxPanel").querySelectorAll(".inbox-tab")).forEach((b) => b.addEventListener("click", () => renderInbox(b.dataset.tab)));
-
-  $("mascot").addEventListener("click", () => {
-    if (state.view !== "issue") openIssue(state.issue);
-    $("askBox").focus();
-    toast("Ziki is here — ask it about this issue");
-  });
-
-  Array.from(document.querySelectorAll(".nav-pill")).forEach((b) => b.addEventListener("click", (e) => {
-    e.preventDefault();
-    document.querySelectorAll(".nav-pill").forEach((x) => {
-      x.className = x.className.replace(/bg-electric-strong[^"]*|bg-zk-border|bg-zk-chip[^"]*/, "").trim();
-    });
-    document.querySelectorAll(".nav-pill").forEach((x) => {
-      const on = x === b;
-      x.className = "nav-pill rounded-full px-5 py-2.5 text-[13px] transition-all duration-300 hover:-translate-y-1 active:scale-95 " +
-        (on ? "bg-electric-strong font-bold text-white shadow-pop hover:rotate-1" : "border-2 border-zk-border bg-zk-chip font-semibold text-zk-text2 hover:bg-zk-border hover:rotate-1");
-    });
-    toast(b.dataset.nav + " — this mock shows Your App");
-  }));
-  $("accountBtn").addEventListener("click", () => toast("Profile · Activity · Manage agents · All agents · Settings · Documentation"));
-  $("workspaceBtn").addEventListener("click", () => toast("Manage organization · Add organisation"));
-  $("earnPill").addEventListener("click", () => toast("Put your agent to work. Get paid when it ships."));
-
-  /* ---------------- boot ---------------- */
-  renderPipeline();
-  renderSidebar();
-  renderRows();
-  renderDock();
-  updateMascot();
+  /* ---------------- loop ---------------- */
+  say("agent", "Claimed #4817. I'll change the reward badge to show the running estimate.");
+  paint();
+  setInterval(() => {
+    if (st.due > 0 && st.phase !== "done") st.due -= 1;
+    if (st.phase === "working" && st.step >= 4 && Date.now() >= st.deliverAt) deliver();
+    paint();
+  }, 1000);
+  setInterval(advance, 3400);
 })();
 </script>
 </body>
