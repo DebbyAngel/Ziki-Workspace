@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ziki Workspace — Whimsical Edition · Cohort 15</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='%23D946EF'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='18' font-weight='700' fill='white' text-anchor='middle'%3EZ%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root { --ink:#241C3A; }
+  body{
+    margin:0; color:var(--ink);
+    font-family:'Baloo 2','Comic Sans MS',ui-rounded,system-ui,sans-serif;
+    background:linear-gradient(135deg,#EEF2FF 0%,#FDF4FF 45%,#FFF7EB 100%);
+    min-height:100vh;
+  }
+  code{font-family:ui-monospace,monospace;background:rgba(36,28,58,.08);padding:1px 6px;border-radius:99px;font-size:.85em}
+  @keyframes floaty{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+  @keyframes stripes{to{background-position:34px 0}}
+  .candy-stripes{background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.35) 0 8px,transparent 8px 17px);animation:stripes 1s linear infinite}
+  .bouncy{transition:all .3s ease-out}
+  .bouncy:hover{transform:scale(1.05) translateY(-8px) rotate(1deg)}
+  .bouncy:active{transform:scale(.95)}
+  .bouncy-sm:hover{transform:scale(1.05) rotate(1deg)}
+  .bouncy-sm:active{transform:scale(.95)}
+  .blobfeed::-webkit-scrollbar{width:8px}
+  .blobfeed::-webkit-scrollbar-thumb{background:#C4B5FD;border-radius:99px;border:2px solid #FDF4FF}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body class="overflow-x-hidden">
+
+<!-- ambient candy blobs -->
+<div class="pointer-events-none fixed -left-24 -top-24 z-0 h-72 w-72 rounded-[45%_55%_60%_40%/50%_45%_55%_50%] bg-fuchsia-200/50 blur-2xl" style="animation:floaty 9s ease-in-out infinite"></div>
+<div class="pointer-events-none fixed right-[-60px] top-40 z-0 h-80 w-80 rounded-[55%_45%_40%_60%/45%_60%_40%_55%] bg-indigo-200/50 blur-2xl" style="animation:floaty 12s ease-in-out infinite"></div>
+<div class="pointer-events-none fixed bottom-10 left-1/3 z-0 h-64 w-64 rounded-[40%_60%_50%_50%/60%_40%_55%_45%] bg-amber-200/40 blur-2xl" style="animation:floaty 14s ease-in-out infinite"></div>
+
+<div class="relative z-10 mx-auto flex min-h-screen max-w-[1500px] flex-col gap-4 p-4 md:p-6">
+
+  <!-- ============ ZONE 1 · header ============ -->
+  <header class="flex flex-wrap items-center gap-4 rounded-[2.4rem_1.6rem_2.8rem_1.4rem] border-2 border-[#241C3A] bg-white/90 px-6 py-4 backdrop-blur md:rotate-[0.4deg]" style="box-shadow:6px 6px 0 0 rgba(36,28,58,.25)">
+    <div class="flex items-center gap-3">
+      <div class="grid h-12 w-12 -rotate-6 place-items-center rounded-[45%_55%_50%_50%/55%_45%_55%_45%] bg-gradient-to-br from-fuchsia-400 to-indigo-400 text-xl font-black text-white" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.3)">Z</div>
+      <div>
+        <h1 id="channelTitle" class="text-lg font-extrabold leading-tight"># general-dev</h1>
+        <span class="inline-block -rotate-2 rounded-full border-2 border-[#241C3A] bg-violet-100 px-3 py-0.5 text-[10px] font-extrabold tracking-widest">HNG15 COHORT</span>
+      </div>
+    </div>
+    <div class="order-3 w-full md:order-none md:mx-4 md:flex-1">
+      <input id="globalSearch" type="text" autocomplete="off" placeholder="Search channels, threads, or poke Ziki…"
+        class="w-full rounded-full border-2 border-[#241C3A] bg-indigo-50 px-6 py-3 text-sm font-semibold outline-none transition-all duration-300 placeholder:opacity-50 focus:scale-[1.02] focus:bg-white focus:shadow-[4px_4px_0_0_rgba(36,28,58,.25)]" />
+    </div>
+    <div class="ml-auto flex items-center gap-4">
+      <span class="hidden items-center gap-2 text-xs font-extrabold lg:flex">
+        <span class="relative flex h-3 w-3"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"></span><span class="relative inline-flex h-3 w-3 rounded-full border-2 border-[#241C3A] bg-emerald-400"></span></span>
+        142 Online
+      </span>
+      <button id="canvasToggle" aria-pressed="true" class="bouncy rotate-1 rounded-full border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-500 via-violet-500 to-indigo-500 px-6 py-3 text-sm font-extrabold text-white" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.35)">✨ Ziki Canvas <span id="canvasToggleState">[ON]</span></button>
+    </div>
+  </header>
+
+  <div class="flex flex-1 flex-col gap-4 lg:flex-row lg:items-start">
+
+    <!-- ============ sidebar ============ -->
+    <aside class="hidden w-64 shrink-0 flex-col gap-5 md:flex md:rotate-[-0.4deg]" aria-label="Channels and direct messages">
+      <nav class="rounded-[2rem_2.6rem_1.6rem_2.8rem] border-2 border-[#241C3A] bg-gradient-to-b from-white to-violet-50 p-5" style="box-shadow:5px 5px 0 0 rgba(36,28,58,.22)">
+        <div class="mb-3 flex items-center justify-between">
+          <span class="text-[11px] font-black tracking-[0.2em] opacity-60">✏️ CHANNELS</span>
+          <span class="grid h-6 w-6 rotate-6 place-items-center rounded-full border-2 border-[#241C3A] bg-amber-200 text-[10px] font-black">4</span>
+        </div>
+        <ul class="space-y-2" id="chanList"></ul>
+        <div class="mb-3 mt-5 text-[11px] font-black tracking-[0.2em] opacity-60">💌 DM BUDDIES</div>
+        <ul class="space-y-2" id="dmList"></ul>
+      </nav>
+      <div class="-ml-2 rotate-[0.8deg] rounded-[1.4rem_2.4rem_1.2rem_2.6rem] border-2 border-[#241C3A] bg-gradient-to-r from-emerald-100 to-teal-100 p-4 text-xs font-bold" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.22)">
+        <div class="flex items-center gap-3">
+          <span class="grid h-9 w-9 -rotate-3 place-items-center rounded-full border-2 border-[#241C3A] bg-white font-black">PA</span>
+          <div>Pulse Analytics<div id="zikiOnline" class="flex items-center gap-1 text-emerald-700"><span class="h-2 w-2 rounded-full bg-emerald-400"></span> Ziki online</div></div>
+          <button class="bouncy ml-auto text-lg" aria-label="Settings">⚙️</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ============ ZONE 2 · feed ============ -->
+    <section class="flex min-h-[420px] min-w-0 flex-1 rotate-[0.3deg] flex-col rounded-[2.2rem_3rem_1.8rem_2.6rem] border-2 border-[#241C3A] bg-white/80 backdrop-blur" style="box-shadow:7px 7px 0 0 rgba(36,28,58,.25)" aria-label="Channel feed">
+      <div class="flex items-center justify-between gap-3 border-b-2 border-dashed border-[#241C3A]/30 px-6 py-3">
+        <span id="channelTopic" class="truncate text-xs font-bold opacity-70">📌 PR #214 · fix(env): resolve undefined VITE_SUPABASE_URL</span>
+        <div class="flex shrink-0 gap-2 text-[10px] font-black">
+          <span id="feedCount" class="-rotate-2 rounded-full border-2 border-[#241C3A] bg-indigo-100 px-3 py-1">7 MESSAGES</span>
+          <span id="zikiChip" class="rotate-1 rounded-full border-2 border-[#241C3A] bg-fuchsia-100 px-3 py-1">@ZIKI ACTIVE</span>
+        </div>
+      </div>
+      <div id="chatFeed" class="blobfeed flex-1 space-y-4 overflow-y-auto px-6 py-5" aria-live="polite" style="max-height:56vh"></div>
+      <form id="composerForm" autocomplete="off" class="border-t-2 border-dashed border-[#241C3A]/30 p-4">
+        <div class="flex items-center gap-3 rounded-full border-2 border-[#241C3A] bg-indigo-50 p-2 transition-all focus-within:scale-[1.01] focus-within:bg-white focus-within:shadow-[4px_4px_0_0_rgba(36,28,58,.25)]">
+          <button type="button" class="bouncy grid h-10 w-10 place-items-center rounded-full bg-white text-lg" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.2)" aria-label="Attach file">📎</button>
+          <input id="composerInput" type="text" placeholder="Message #general-dev — type @Ziki to wake him up 👇" class="min-w-0 flex-1 bg-transparent px-2 text-sm font-semibold outline-none placeholder:opacity-50" aria-label="Message channel" />
+          <button type="submit" class="bouncy rounded-full border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-500 via-violet-500 to-indigo-500 px-6 py-3 text-base font-extrabold text-white" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.35)">Send it 🚀</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ ZONE 3 · Ziki Canvas ============ -->
+    <aside id="canvasPanel" class="flex w-full min-w-0 shrink-0 rotate-[-0.5deg] flex-col rounded-[2.8rem_1.6rem_3rem_1.8rem] border-2 border-[#241C3A] bg-gradient-to-b from-indigo-50 via-white to-fuchsia-50 transition-all duration-300 lg:sticky lg:top-4 lg:w-[420px]" style="box-shadow:8px 8px 0 0 rgba(36,28,58,.28)" aria-label="Ziki Agent Execution Canvas">
+      <div class="border-b-2 border-dashed border-[#241C3A]/30 px-5 py-4">
+        <div class="flex items-center gap-3 text-base font-black">
+          <span id="panelZ" class="grid h-9 w-9 place-items-center rounded-[50%_42%_55%_45%] border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-300 to-indigo-400 text-white">✦</span>
+          Ziki's Brain Canvas
+          <span class="ml-auto flex items-center gap-2 text-[10px] font-black tracking-widest opacity-60"><span class="h-2 w-2 animate-pulse rounded-full bg-emerald-400"></span>LIVE</span>
+        </div>
+        <div class="mt-2 flex justify-between text-[10px] font-bold opacity-60">
+          <span>SESSION #ZK-8821</span>
+          <span>C_eval <b class="rounded-full border-2 border-[#241C3A] bg-amber-200 px-2 text-amber-900">0.82</b> · HIGH</span>
+        </div>
+      </div>
+
+      <div class="flex-1 space-y-5 overflow-y-auto p-5 blobfeed">
+        <!-- progress -->
+        <div>
+          <div class="mb-2 flex items-baseline justify-between text-xs font-black">
+            <span class="tracking-[0.15em] opacity-60">TASK EXECUTION</span>
+            <span><span id="progressPct">66</span>% complete!</span>
+          </div>
+          <div class="relative h-6 overflow-hidden rounded-full border-2 border-[#241C3A] bg-white" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.2)" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="66">
+            <div id="progressBar" class="h-full rounded-full bg-gradient-to-r from-amber-300 via-fuchsia-400 to-indigo-400 transition-all duration-200" style="width:66%"></div>
+            <div class="absolute inset-y-0 w-1.5 -translate-x-1/2 rounded-full bg-orange-500" style="left:74%; box-shadow:0 0 8px 2px rgba(249,115,22,.7)" title="Human approval gate 🚧"></div>
+          </div>
+          <div class="mt-2 flex items-center justify-between text-[11px] font-bold">
+            <span>⏱️ <b id="sessionTimer" class="font-mono">00:04.2s</b></span>
+            <span id="execState" class="rotate-1 rounded-full border-2 border-[#241C3A] bg-amber-200 px-3 py-1 text-[10px] font-black animate-pulse">😴 PAUSED — AWAITING YOU</span>
+          </div>
+        </div>
+
+        <!-- step 1 -->
+        <article class="bouncy-sm rounded-[2.5rem_1.2rem_3rem_1.2rem] border-2 border-[#241C3A] bg-gradient-to-br from-emerald-50 to-teal-50 px-5 py-4 md:mr-8" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.22); transform:rotate(-.8deg)">
+          <button id="step1Toggle" class="flex w-full items-center gap-3 text-left" aria-expanded="false" aria-controls="step1Details">
+            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-[50%_42%_55%_45%] border-2 border-[#241C3A] bg-emerald-300 font-black" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.25)">✓</span>
+            <span class="flex-1 text-sm font-extrabold">Step 1: Parse Pull Request &amp; Build Logs</span>
+            <span class="rotate-3 rounded-full border-2 border-[#241C3A] bg-emerald-200 px-3 py-1 text-[10px] font-extrabold">DONE · 0.4s</span>
+            <span id="step1Chev" class="transition-transform duration-300">⌄</span>
+          </button>
+          <div id="step1Details" class="mt-3 hidden space-y-2 border-t-2 border-dashed border-[#241C3A]/30 pt-3 text-xs font-semibold opacity-80">
+            <div>🍩 <b>2 build logs parsed</b> — 4,218 lines · failing step <code>bun run build</code> @ 00:41</div>
+            <div class="md:translate-x-2">🔍 Detected undefined ENV <b>VITE_SUPABASE_URL</b> at <code>src/lib/env-urls.ts:42</code></div>
+            <div>🧵 Thread context attached: PR #214 · 3 reviewers · branch <b>fix/env-resolution</b></div>
+          </div>
+        </article>
+
+        <!-- step 2 -->
+        <article id="step2Card" class="rounded-[1.2rem_3rem_1.4rem_2.6rem] border-2 border-[#241C3A] bg-gradient-to-br from-amber-100 to-orange-100 px-5 py-4 transition-all duration-300 md:ml-5" style="box-shadow:6px 6px 0 0 #F59E0B; transform:rotate(.6deg)">
+          <div class="flex items-start gap-3">
+            <span id="step2Icon" class="grid h-10 w-10 shrink-0 animate-pulse place-items-center rounded-[45%_55%_50%_50%/55%_45%_55%_45%] border-2 border-[#241C3A] bg-amber-300 text-lg" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.3)">⚠️</span>
+            <div class="min-w-0 flex-1">
+              <div class="text-sm font-extrabold">Step 2: Inspect Dependency Configuration</div>
+              <span id="step2Badge" class="mt-1 inline-block rotate-2 rounded-full border-2 border-[#241C3A] bg-amber-200 px-3 py-1 text-[10px] font-extrabold">AWAITING YOUR INPUT</span>
+            </div>
+          </div>
+          <p class="mt-3 -rotate-[.6deg] rounded-[1.4rem_0.6rem_1.6rem_0.8rem] bg-amber-50 px-4 py-2 text-xs font-semibold leading-relaxed">
+            Two valid resolution orders found for <code>envPath</code>. Ziki stopped before poking the config — a human must confirm the intent. 🧠
+          </p>
+          <div class="mt-4 flex flex-wrap items-center gap-3">
+            <button id="pauseResume" class="bouncy rounded-full border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-500 via-violet-500 to-indigo-500 px-6 py-3 text-sm font-extrabold text-white" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.35)">▶️ Let him go</button>
+            <button id="stepBack" class="bouncy -rotate-1 rounded-full border-2 border-[#241C3A] bg-white px-6 py-3 text-sm font-extrabold" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.22)">⏪ Step-back</button>
+            <span class="ml-auto font-mono text-[10px] font-black opacity-50">2 / 3</span>
+          </div>
+          <label class="mt-4 block text-[11px] font-black tracking-wide opacity-70">Context override: filepath
+            <div id="ovrWrap" class="mt-1 flex items-center gap-2 rounded-full border-2 border-[#241C3A] bg-white px-4 py-2">
+              <span class="font-mono opacity-40">›</span>
+              <input id="overrideInput" value="'src/lib/env-urls.ts'" spellcheck="false" class="w-full bg-transparent font-mono text-xs font-bold outline-none" aria-label="Context override filepath" />
+            </div>
+          </label>
+          <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <span id="overrideNote" class="text-[10px] font-bold opacity-50">Editable · staged for human approval</span>
+            <button id="approveBtn" class="bouncy animate-bounce rounded-full border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-500 via-violet-500 to-indigo-500 px-8 py-4 text-sm font-extrabold text-white" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.35); animation-duration:1.6s">Approve override 👍</button>
+          </div>
+        </article>
+
+        <!-- step 3 -->
+        <article id="step3Card" class="rounded-[3rem_1.4rem_2.6rem_1.2rem] border-2 border-dashed border-[#241C3A] bg-white/60 px-5 py-4 opacity-70 transition-all duration-500 bouncy-sm" style="margin-left:2.5rem; transform:rotate(1deg)">
+          <div class="flex items-center gap-3">
+            <span id="step3Icon" class="grid h-9 w-9 shrink-0 place-items-center rounded-[50%_45%_55%_50%] border-2 border-[#241C3A] bg-slate-100 text-base">🔒</span>
+            <span class="flex-1 text-sm font-extrabold">Step 3: Generate Optimized Fix &amp; Commit Patch</span>
+            <span id="step3Badge" class="-rotate-3 rounded-full border-2 border-[#241C3A] bg-slate-100 px-3 py-1 text-[10px] font-extrabold">PENDING</span>
+          </div>
+          <div id="step3Note" class="mt-2 pl-1 text-[10px] font-bold opacity-60">◌ Queued behind gate G-02</div>
+          <div id="step3Prog" class="mt-3 hidden space-y-2">
+            <div class="h-2 animate-pulse rounded-full bg-fuchsia-200" style="width:78%"></div>
+            <div class="h-2 animate-pulse rounded-full bg-fuchsia-200" style="width:46%; animation-delay:150ms"></div>
+            <div class="pt-1 text-[10px] font-black tracking-widest opacity-60">⚡ ZIKI IS SYNTHESIZING YOUR PATCH · 1 FILE</div>
+          </div>
+          <div id="step3Result" class="mt-3 hidden space-y-1 border-t-2 border-dashed border-[#241C3A]/30 pt-3 text-xs font-semibold opacity-80">
+            <div>✔ <b>src/lib/env-urls.ts</b> — resolution order pinned · <code>8f3c1a2</code></div>
+            <div class="ml-3">✔ Artifact committed to <b>PR #214</b> · canvas state sealed 📦</div>
+          </div>
+          <button id="replayBtn" class="mt-3 hidden rotate-1 rounded-full border-2 border-[#241C3A] bg-white px-4 py-2 text-xs font-extrabold bouncy" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.22)">↺ Run the canvas again!</button>
+        </article>
+
+        <!-- events -->
+        <div class="rotate-[0.5deg] rounded-[1.6rem_2.2rem_1.4rem_2.4rem] border-2 border-dashed border-[#241C3A] bg-violet-50/80 p-4">
+          <div class="mb-2 flex justify-between text-[10px] font-black tracking-[0.2em] opacity-60"><span>📜 ZIKI'S DIARY</span><span id="eventCount">3</span></div>
+          <ul id="eventLog" class="space-y-1.5 text-[11px] font-semibold"></ul>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between gap-3 border-t-2 border-dashed border-[#241C3A]/30 px-5 py-3 text-[11px] font-black">
+        <span id="gateStatus" class="flex items-center gap-2 text-orange-600">
+          <span id="gateDot" class="h-2 w-2 animate-pulse rounded-full bg-amber-400"></span>
+          <span id="gateText">Gate G-02 · 1 human action required 🙏</span>
+        </span>
+        <span class="-rotate-2 rounded-full border-2 border-[#241C3A] bg-white px-3 py-1 font-mono text-[9px]">artifact → PR #214</span>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ============ flow strip ============ -->
+  <section class="rotate-[0.3deg] rounded-[2rem_3rem_1.6rem_2.6rem] border-2 border-[#241C3A] bg-white/85 px-6 py-5 backdrop-blur" style="box-shadow:6px 6px 0 0 rgba(36,28,58,.25)" aria-label="System process flowchart">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+      <h2 class="text-[11px] font-black tracking-[0.25em] opacity-70">🍭 HOW ZIKI THINKS — 6 SUGARY STAGES</h2>
+      <span class="text-[10px] font-bold opacity-50">C_eval threshold ≥ 0.75</span>
+    </div>
+    <div class="overflow-x-auto pb-1">
+      <ol class="flex min-w-[900px] items-stretch gap-3">
+        <li class="flex flex-1 items-center gap-1"><div class="rounded-[2.5rem_1.2rem_3rem_1.2rem] flex min-w-0 flex-1 flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-emerald-100 to-teal-100 px-4 py-3 bouncy" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.2); transform:rotate(-1deg)"><div class="flex items-center justify-between font-mono text-[9px] font-black opacity-50"><span>01</span><span class="rounded-full border-2 border-[#241C3A] bg-emerald-200 px-2 py-0.5 text-[8px]">TRIGGER</span></div><p class="text-[11px] font-bold leading-snug">Human @mentions Ziki in a thread 🧵</p></div><span class="shrink-0 -rotate-12 text-xl text-fuchsia-400">〜➜</span></li>
+        <li class="flex flex-1 items-center gap-1"><div class="rounded-[1.2rem_3rem_1.4rem_2.6rem] flex min-w-0 flex-1 flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-emerald-100 to-lime-100 px-4 py-3 bouncy" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.2); transform:rotate(1deg)"><div class="flex items-center justify-between font-mono text-[9px] font-black opacity-50"><span>02</span><span class="rounded-full border-2 border-[#241C3A] bg-emerald-200 px-2 py-0.5 text-[8px]">SCORING</span></div><p class="text-[11px] font-bold leading-snug">Ziki sniffs the task complexity (C_eval = 0.82) 🧠</p></div><span class="shrink-0 rotate-12 text-xl text-fuchsia-400">〜➜</span></li>
+        <li class="flex flex-1 items-center gap-1"><div class="rounded-[3rem_1.4rem_2.6rem_1.2rem] flex min-w-0 flex-1 flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-violet-100 to-fuchsia-100 px-4 py-3 bouncy" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.2); transform:rotate(-1deg)"><div class="flex items-center justify-between font-mono text-[9px] font-black opacity-50"><span>03</span><span id="pill03" class="rounded-full border-2 border-[#241C3A] bg-white px-2 py-0.5 text-[8px]">BRANCH</span></div><p class="text-[11px] font-bold leading-snug">Too tricky → unfurl the Brain Canvas 🎪</p></div><span class="shrink-0 -rotate-12 text-xl text-fuchsia-400">〜➜</span></li>
+        <li class="flex flex-1 items-center gap-1"><div id="flowGate" class="rounded-[2.5rem_1.2rem_3rem_1.2rem] flex min-w-0 flex-1 animate-pulse flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-amber-100 to-orange-200 px-4 py-3 bouncy" style="box-shadow:4px 4px 0 0 #F59E0B; transform:rotate(2deg)"><div class="flex items-center justify-between font-mono text-[9px] font-black opacity-50"><span>04</span><span id="pill04" class="rounded-full border-2 border-[#241C3A] bg-amber-200 px-2 py-0.5 text-[8px]">● GATE</span></div><p class="text-[11px] font-bold leading-snug">Pause at the ambiguity gate — no guessing! 🚧</p></div><span class="shrink-0 rotate-12 text-xl text-fuchsia-400">〜➜</span></li>
+        <li class="flex flex-1 items-center gap-1"><div id="flowHuman" class="rounded-[1.2rem_3rem_1.4rem_2.6rem] flex min-w-0 flex-1 flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-100 to-pink-100 px-4 py-3 bouncy" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.2); transform:rotate(-1deg)"><div class="flex items-center justify-between font-mono text-[9px] font-black opacity-50"><span>05</span><span id="pill05" class="rounded-full border-2 border-[#241C3A] bg-white px-2 py-0.5 text-[8px]">HUMAN</span></div><p class="text-[11px] font-bold leading-snug">A real human taps the shiny approve button 👆</p></div><span class="shrink-0 -rotate-12 text-xl text-slate-300">〜➜</span></li>
+        <li class="flex flex-1 items-center gap-1"><div id="flowOutput" class="rounded-[3rem_1.4rem_2.6rem_1.2rem] flex min-w-0 flex-1 flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-indigo-100 to-sky-100 px-4 py-3 bouncy" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.2); transform:rotate(1deg)"><div class="flex items-center justify-between font-mono text-[9px] font-black opacity-50"><span>06</span><span id="pill06" class="rounded-full border-2 border-[#241C3A] bg-white px-2 py-0.5 text-[8px]">QUEUED</span></div><p class="text-[11px] font-bold leading-snug">Patch rendered &amp; committed to PR #214 📦</p></div></li>
+      </ol>
+    </div>
+  </section>
+</div>
+
+<!-- ============ Ziki the floating sidekick ============ -->
+<div class="fixed bottom-6 right-6 z-50 select-none" role="img" aria-label="Ziki" id="zikiWrap">
+  <div id="zBubble" class="mb-2 ml-auto w-max rounded-[1.6rem_1.6rem_1.6rem_0.3rem] border-2 border-[#241C3A] bg-white px-4 py-2 text-xs font-extrabold" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.22)">Psst — your turn! Tap approve? 👀</div>
+  <div id="zRing" class="ml-auto w-max animate-pulse rounded-full">
+    <div id="zBody" class="bouncy grid h-20 w-20 cursor-pointer place-items-center rounded-[50%_46%_54%_48%/48%_54%_46%_52%] border-2 border-[#241C3A] bg-gradient-to-br from-amber-200 to-orange-300" style="box-shadow:5px 5px 0 0 rgba(36,28,58,.3)">
+      <svg width="52" height="44" viewBox="0 0 52 44" id="zFace">
+        <circle cx="18" cy="25" r="3.4" fill="#241C3A"/><circle cx="34" cy="25" r="3.4" fill="#241C3A"/>
+        <circle cx="19.2" cy="23.8" r="1.1" fill="#fff"/><circle cx="35.2" cy="23.8" r="1.1" fill="#fff"/>
+        <path d="M20 34q6 5 12 0" fill="none" stroke="#241C3A" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="12" cy="31" r="2.6" fill="#F9A8D4" opacity=".8"/><circle cx="40" cy="31" r="2.6" fill="#F9A8D4" opacity=".8"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(v){ return String(v).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+
+  /* ---------------- data ---------------- */
+  var CHANNELS = {
+    "general-dev": { title:"general-dev", topic:"PR #214 · fix(env): resolve undefined VITE_SUPABASE_URL", msgs:[
+      {k:"msg",who:"Adaeze N.",ini:"AN",c:"bg-violet-300",t:"09:41",html:"Morning all 👋 build 4821 is red again — the frontend bundle throws <code>VITE_SUPABASE_URL is undefined</code> at boot."},
+      {k:"msg",who:"Mark",ini:"MK",c:"bg-orange-300",t:"09:42",html:"@Ziki can you take PR #214? It keeps failing on env resolution in <code>src/lib/env-urls.ts</code> — I think the fallback chain broke after the config refactor."},
+      {k:"ziki",t:"09:42",html:"On it! Parsed the PR diff, CI logs and the dependency graph. C_eval = <code>0.82</code> → complexity <b>HIGH</b>. Opening a squishy little Dynamic Workspace Canvas so we can pause, poke around and approve changes together.",link:"Canvas #ZK-8821 · mounted ✨"},
+      {k:"sys",html:"Ziki launched a Dynamic Workspace Canvas · human-in-the-loop gate enabled"},
+      {k:"msg",who:"Snow",ini:"SN",c:"bg-emerald-300",t:"09:44",html:"Love this. The canvas is looping on the right — someone approve the path override once it stops on Step 2, then we rerun build 4821."},
+      {k:"msg",who:"Dave",ini:"DV",c:"bg-pink-300",t:"09:45",html:"142 of us online and the build is still red 😅 @Ziki save us."},
+      {k:"own",t:"09:46",html:"Stepping in — checking the env path in the canvas before we rerun."}]},
+    "announcements": { title:"announcements", topic:"Cohort 15 · week 6 · demo day Friday 14:00 WAT", msgs:[
+      {k:"sys",html:"Adaeze pinned a message to #announcements"},
+      {k:"msg",who:"Adaeze N.",ini:"AN",c:"bg-violet-300",t:"08:10",html:"Demo day is <b>Friday 14:00 WAT</b> — 8 minutes per team. Share your Ziki canvas in the thread before Thursday so reviewers can replay the run."},
+      {k:"msg",who:"Mark",ini:"MK",c:"bg-orange-300",t:"08:22",html:"Reminder: keep agent runs under 30 seconds so the demo stays inside the time box. Pauses count as part of the run."},
+      {k:"msg",who:"Snow",ini:"SN",c:"bg-emerald-300",t:"08:31",html:"Reviewers will look at how we handle the pause gate — that is the differentiator this week."}]},
+    "backend-go": { title:"backend-go", topic:"Build 4821 · Go service green, web bundle failing upstream", msgs:[
+      {k:"msg",who:"Mark",ini:"MK",c:"bg-orange-300",t:"09:31",html:"Backend has been green since #212. <code>go test ./...</code> passes locally. The failure is upstream in the web build."},
+      {k:"ziki",t:"09:33",html:"Cross-checked: <code>go test ./... — 118 tests, 2.4s</code>. No dependency drift in here. Root cause lives elsewhere! 🕵️"},
+      {k:"msg",who:"Adaeze N.",ini:"AN",c:"bg-violet-300",t:"09:35",html:"So it is definitely the env resolver. @Ziki want the canvas on this thread too?"},
+      {k:"sys",html:"Agent idle · awaiting next @Ziki invocation"}]},
+    "frontend-react": { title:"frontend-react", topic:"src/lib/env-urls.ts · hotfix branch fix/env-resolution", msgs:[
+      {k:"msg",who:"Dave",ini:"DV",c:"bg-pink-300",t:"09:24",html:"The fallback chain in <code>env-urls.ts</code> assumes <code>import.meta.env</code> is populated before module init. It is not."},
+      {k:"msg",who:"Snow",ini:"SN",c:"bg-emerald-300",t:"09:26",html:"React strict mode double-invokes the resolver in dev, which is exactly why only CI catches it."},
+      {k:"ziki",t:"09:27",html:"Two candidate resolution orders detected → ambiguity! I am pausing before touching anything. A human must pick. 🙈"},
+      {k:"msg",who:"Mark",ini:"MK",c:"bg-orange-300",t:"09:29",html:"Good call. Do not guess the order — that is how we got build 4817."}]},
+    "dm-mark": { title:"Mark", isDM:true, topic:"Direct message · Mark", msgs:[
+      {k:"msg",who:"Mark",ini:"MK",c:"bg-orange-300",t:"09:37",html:"If Ziki pauses on the env path, ping me before approving — I want to check which order we shipped last week."},
+      {k:"own",t:"09:38",html:"Will do. The canvas is open, I am reading Step 2 now."}]},
+    "dm-dave": { title:"Dave", isDM:true, topic:"Direct message · Dave", msgs:[
+      {k:"msg",who:"Dave",ini:"DV",c:"bg-pink-300",t:"09:39",html:"Can you screenshot the paused card for the demo deck? The amber state is the story."},
+      {k:"own",t:"09:40",html:"On it — sending the canvas view once the override is approved."}]},
+    "dm-ziki": { title:"Ziki Agent", isDM:true, topic:"Direct message · Ziki Agent", msgs:[
+      {k:"ziki",t:"09:42",html:"Canvas #ZK-8821 is live in #general-dev. Current gate: <code>envPath</code> ambiguity. I will hold Step 3 until you approve the override — pinky promise. 🤙",link:"Open execution canvas"},
+      {k:"own",t:"09:43",html:"Understood. Keep the patch staged, do not commit yet."}]},
+    "dm-snow": { title:"Snow", isDM:true, topic:"Direct message · Snow", msgs:[
+      {k:"msg",who:"Snow",ini:"SN",c:"bg-emerald-300",t:"09:20",html:"Reviewed PR #214 — logic is fine, config is the only risk. The canvas makes that obvious."},
+      {k:"own",t:"09:21",html:"Agreed. We will approve the override jointly before the patch lands."}]}
+  };
+  var CHANS = [["general-dev","general-dev",0,0],["announcements","announcements",3,0],["backend-go","backend-go",12,1],["frontend-react","frontend-react",4,1]];
+  var DMS = [["dm-mark","Mark","MK","bg-orange-300",2],["dm-dave","Dave","DV","bg-pink-300",1],["dm-ziki","Ziki Agent","✦","bg-violet-400",0],["dm-snow","Snow","SN","bg-emerald-300",5]];
+
+  /* ---------------- sidebar ---------------- */
+  var active = "general-dev";
+  function buildSidebar(){
+    $("chanList").innerHTML = CHANS.map(function(c,i){
+      return '<li class="'+(i%2?"ml-3":"mr-1")+'"><button data-channel="'+c[0]+'" class="chan bouncy-sm w-full rounded-full border-2 px-4 py-2 text-sm font-bold">'+
+        '<span class="opacity-50">#</span> '+esc(c[1])+
+        (c[2]?'<span class="ml-auto rounded-full border-2 border-[#241C3A] px-2 text-[10px] font-black '+(c[3]?"animate-pulse bg-orange-300":"bg-fuchsia-200")+'">'+c[2]+"</span>":"")+
+        "</button></li>";
+    }).join("");
+    $("dmList").innerHTML = DMS.map(function(d,i){
+      return '<li class="'+(i%2?"mr-2":"ml-4")+'"><button data-channel="'+d[0]+'" class="dm bouncy-sm w-full rounded-full border-2 px-3 py-2 text-sm font-bold">'+
+        '<span class="grid h-7 w-7 shrink-0 place-items-center rounded-[50%_45%_55%_50%] border-2 border-[#241C3A] text-[10px] font-black '+d[3]+'">'+d[2]+"</span> "+esc(d[1])+
+        (d[0]==="dm-ziki"?'<span class="ml-auto animate-pulse text-xs">✨</span>':"")+
+        (d[4]?'<span class="ml-auto grid h-5 w-5 place-items-center rounded-full border-2 border-[#241C3A] bg-pink-300 text-[9px] font-black">'+d[4]+"</span>":"")+
+        "</button></li>";
+    }).join("");
+    document.querySelectorAll("[data-channel]").forEach(function(b){
+      b.addEventListener("click", function(){ renderChannel(b.getAttribute("data-channel")); });
+    });
+    markActive();
+  }
+  function markActive(){
+    document.querySelectorAll(".chan,.dm").forEach(function(b){
+      var on = b.getAttribute("data-channel")===active;
+      b.style.borderColor = on ? "#241C3A" : "rgba(36,28,58,.25)";
+      b.style.background = on ? "linear-gradient(to right,#DDD6FE,#FBCFE8)" : "rgba(255,255,255,.7)";
+    });
+  }
+
+  /* ---------------- feed ---------------- */
+  var feedEl = $("chatFeed");
+  function msgHTML(m){
+    if(m.k==="sys") return '<div class="sys flex justify-center py-1" data-text="'+esc(m.html)+'"><span class="rounded-[2rem_1.4rem_2.2rem_1.6rem] border-2 border-[#241C3A] bg-indigo-100 px-5 py-1.5 text-center text-[11px] font-bold italic">✧ '+m.html+" ✧</span></div>";
+    var own=m.k==="own", ziki=m.k==="ziki";
+    var av = ziki
+      ? '<div class="grid h-11 w-11 shrink-0 place-items-center rounded-[45%_55%_50%_50%/55%_45%_55%_45%] border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-300 to-indigo-400 text-xs font-black text-white" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.25)">✦</div>'
+      : own ? "" : '<div class="grid h-11 w-11 shrink-0 place-items-center rounded-[45%_55%_50%_50%/55%_45%_55%_45%] border-2 border-[#241C3A] text-xs font-black '+m.c+'" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.25)">'+m.ini+"</div>";
+    var bubbleCls = ziki ? "bg-gradient-to-br from-violet-100 via-fuchsia-50 to-indigo-100" : own ? "ml-auto bg-gradient-to-br from-amber-200 to-orange-200" : "bg-white";
+    var radius = own ? "rounded-[1.8rem_0.5rem_2.2rem_0.9rem]" : "rounded-[0.5rem_2rem_0.9rem_2.2rem]";
+    var name = ziki ? "Ziki" : own ? "You" : m.who;
+    return '<div class="msg '+(own?"own flex-row-reverse":"flex")+' gap-3 items-start" data-text="'+esc(name+" "+m.html)+'">'+av+
+      '<div class="max-w-[82%] flex flex-col '+(own?"items-end text-right":"")+'">'+
+      '<div class="mb-1 flex items-center gap-2 text-[11px] font-bold opacity-70"><span>'+esc(name)+"</span>"+
+      (ziki?'<span class="rounded-full border-2 border-[#241C3A] bg-fuchsia-100 px-2 py-0.5 text-[8px] tracking-widest">AI SIDEKICK</span>':"")+
+      '<span class="font-mono text-[10px]">'+esc(m.t)+"</span></div>"+
+      '<div class="'+radius+' border-2 border-[#241C3A] px-5 py-3 text-sm leading-relaxed transition-all duration-300 hover:-translate-y-1 '+bubbleCls+'" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.18)">'+m.html+"</div>"+
+      (m.link?'<button data-open-canvas class="bouncy mt-2 -rotate-1 self-start rounded-full border-2 border-[#241C3A] bg-white px-4 py-2 text-xs font-extrabold" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.22)">▣ '+esc(m.link)+" →</button>":"")+
+      "</div></div>";
+  }
+  function renderChannel(key){
+    var ch = CHANNELS[key]; active = key;
+    $("channelTitle").textContent = (ch.isDM?"": "# ")+ch.title;
+    $("channelTopic").textContent = "📌 " + ch.topic;
+    $("composerInput").placeholder = "Message " + (ch.isDM?ch.title:"#"+ch.title) + " — type @Ziki to wake him up 👇";
+    feedEl.innerHTML = '<div class="flex items-center gap-3 text-[10px] font-black tracking-[0.25em] opacity-40"><span class="h-px flex-1 bg-current"></span>TODAY · COHORT 15<span class="h-px flex-1 bg-current"></span></div>' +
+      ch.msgs.map(msgHTML).join("") +
+      '<div class="typing flex items-center gap-2 pl-14 text-xs font-bold opacity-60"><span>Dave is typing</span><span class="flex gap-1">'+[0,1,2].map(function(i){return '<span class="h-2 w-2 animate-bounce rounded-full bg-violet-400" style="animation-delay:'+(i*120)+'ms"></span>';}).join("")+"</span></div>";
+    $("feedCount").textContent = ch.msgs.filter(function(m){return m.k!=="sys";}).length + " MESSAGES";
+    feedEl.scrollTop = feedEl.scrollHeight;
+    markActive();
+    $("globalSearch").value = "";
+  }
+  feedEl.addEventListener("click", function(e){
+    var link = e.target.closest("[data-open-canvas]");
+    if(!link) return;
+    setCanvas(true);
+    $("canvasPanel").scrollIntoView({behavior:"smooth", block:"nearest"});
+    var card = $("step2Card");
+    card.style.transform = "rotate(2deg) translateY(-8px)";
+    setTimeout(function(){ card.style.transform = st.approved ? "rotate(.6deg)" : "rotate(.6deg)"; }, 900);
+  });
+
+  /* ---------------- composer ---------------- */
+  var clockBase = 9*3600 + 46*60 + 38, st;
+  function hhmm(){ var t=clockBase+Math.floor(st.elapsed); return String(Math.floor(t/3600)%24).padStart(2,"0")+":"+String(Math.floor(t%3600/60)).padStart(2,"0"); }
+  function appendBubble(m){
+    CHANNELS[active].msgs.push(m);
+    var typing = feedEl.querySelector(".typing");
+    var w = document.createElement("div"); w.innerHTML = msgHTML(m);
+    feedEl.insertBefore(w.firstElementChild, typing);
+    feedEl.scrollTop = feedEl.scrollHeight;
+    $("feedCount").textContent = CHANNELS[active].msgs.filter(function(x){return x.k!=="sys";}).length + " MESSAGES";
+  }
+  $("composerForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var v = $("composerInput").value.trim(); if(!v) return;
+    $("composerInput").value = "";
+    appendBubble({k:"own", t:hhmm(), html:esc(v)});
+    if(/@ziki/i.test(v)) setTimeout(function(){
+      appendBubble({k:"ziki", t:hhmm(), html:"Queued for evaluation! Gate G-02 is still waiting on a human override — I won't boop <code>env-urls.ts</code> until it clears. 🙈", link:"Canvas #ZK-8821 · paused"});
+      logEv("Mention received · queued behind gate G-02");
+    }, 700);
+  });
+
+  /* ---------------- search ---------------- */
+  $("globalSearch").addEventListener("input", function(){
+    var q = this.value.trim().toLowerCase();
+    document.querySelectorAll(".chan,.dm").forEach(function(b){
+      b.parentElement.style.display = (!q || b.textContent.toLowerCase().indexOf(q)!==-1) ? "" : "none";
+    });
+    var vis=0;
+    feedEl.querySelectorAll(".msg,.sys").forEach(function(n){
+      var ok = !q || (n.getAttribute("data-text")||"").toLowerCase().indexOf(q)!==-1;
+      n.style.display = ok ? "" : "none"; if(ok) vis++;
+    });
+    var empty = feedEl.querySelector(".search-empty");
+    if(q && vis===0){
+      if(!empty){ empty=document.createElement("div"); empty.className="search-empty"; feedEl.appendChild(empty); }
+      empty.innerHTML='<div class="-rotate-1 rounded-[2rem_1rem_2.4rem_1rem] border-2 border-dashed border-[#241C3A] bg-amber-50 px-6 py-4 text-center text-sm font-bold">🔍 Nothing matches “'+esc(q)+'” — Ziki looked everywhere, even under the rug.</div>';
+    } else if(empty) empty.remove();
+  });
+
+  /* ---------------- canvas toggle ---------------- */
+  var panel = $("canvasPanel"), toggle = $("canvasToggle"), canvasOpen = true;
+  function setCanvas(open){
+    canvasOpen = open;
+    panel.style.display = open ? "" : "none";
+    toggle.setAttribute("aria-pressed", open);
+    $("canvasToggleState").textContent = open ? "[ON]" : "[OFF]";
+    toggle.classList.toggle("grayscale", !open);
+    toggle.classList.toggle("-rotate-1", !open);
+    toggle.classList.toggle("rotate-1", open);
+  }
+  toggle.addEventListener("click", function(){ setCanvas(!canvasOpen); });
+
+  /* ---------------- state machine ---------------- */
+  var GATE=74, S2END=88, S3END=100, DEFAULT_PATH="'src/lib/env-urls.ts'";
+  st = { running:false, progress:66, elapsed:4.2, phase:"step2", approved:false, rewound:false, held:false, step2At:0 };
+
+  var events = [
+    {ts:"09:46:34", text:"Paused: ambiguous envPath → a human needs to tap the shiny button 👉"},
+    {ts:"09:46:30", text:"Step 1 completed in 0.4s · 2 build logs parsed"},
+    {ts:"09:46:26", text:"Canvas #ZK-8821 mounted · 3 steps staged"}
+  ];
+  function stamp(){ var t=clockBase+Math.floor(st.elapsed); return [Math.floor(t/3600)%24,Math.floor(t%3600/60),t%60].map(function(n){return String(n).padStart(2,"0");}).join(":"); }
+  function logEv(text){ events.unshift({ts:stamp(), text:text}); events=events.slice(0,4); paintEvents(); }
+  function paintEvents(){
+    $("eventLog").innerHTML = events.map(function(e,i){
+      return '<li class="flex gap-2 '+(i%2?"ml-3":"")+'"><span class="mt-1 h-2 w-2 shrink-0 rounded-full '+(i===0?"animate-pulse bg-orange-400":"bg-violet-300")+'</span><span class="font-mono text-[9px] opacity-50">'+e.ts+"</span><span>"+esc(e.text)+"</span></li>";
+    }).join("");
+    $("eventCount").textContent = events.length;
+  }
+
+  var FACES = {
+    waiting:'<circle cx="18" cy="25" r="3.4" fill="#241C3A"/><circle cx="34" cy="25" r="3.4" fill="#241C3A"/><circle cx="19.2" cy="23.8" r="1.1" fill="#fff"/><circle cx="35.2" cy="23.8" r="1.1" fill="#fff"/>',
+    working:'<path d="M13 26q5-6 10 0" fill="none" stroke="#241C3A" stroke-width="2.5" stroke-linecap="round"/><path d="M29 26q5-6 10 0" fill="none" stroke="#241C3A" stroke-width="2.5" stroke-linecap="round"/>',
+    happy:'<path d="M13 25q5-7 10 0" fill="none" stroke="#241C3A" stroke-width="3" stroke-linecap="round"/><path d="M29 25q5-7 10 0" fill="none" stroke="#241C3A" stroke-width="3" stroke-linecap="round"/>'
+  };
+  var MOODS = {
+    waiting:{bubble:"Psst — your turn! Tap approve? 👀",ring:"animate-pulse",body:"animate-pulse bg-gradient-to-br from-amber-200 to-orange-300"},
+    working:{bubble:"Vroom vroom! Building the patch 🛠️",ring:"",body:"animate-bounce bg-gradient-to-br from-fuchsia-300 to-indigo-400"},
+    happy:{bubble:"We did it!! Artifact is committed 🎉",ring:"",body:"animate-bounce bg-gradient-to-br from-emerald-300 to-teal-300"}
+  };
+  function mood(){
+    if(st.phase==="done") return "happy";
+    if(st.approved || st.running || st.phase==="step3") return "working";
+    return "waiting";
+  }
+  function paintZiki(){
+    var m = mood(), cfg = MOODS[m];
+    $("zBubble").textContent = cfg.bubble;
+    $("zRing").className = "ml-auto w-max rounded-full " + cfg.ring;
+    $("zBody").className = "bouncy grid h-20 w-20 cursor-pointer place-items-center rounded-[50%_46%_54%_48%/48%_54%_46%_52%] border-2 border-[#241C3A] " + cfg.body;
+    $("zFace").innerHTML = FACES[m] +
+      '<path d="M20 34q6 5 12 0" fill="none" stroke="#241C3A" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="31" r="2.6" fill="#F9A8D4" opacity=".8"/><circle cx="40" cy="31" r="2.6" fill="#F9A8D4" opacity=".8"/>';
+    $("panelZ").className = "grid h-9 w-9 place-items-center rounded-[50%_42%_55%_45%] border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-300 to-indigo-400 text-white" + (m==="working"?" animate-bounce":m==="waiting"?" animate-pulse":"");
+    $("zikiChip").textContent = "@ZIKI " + (m==="working"?"IS BOOPING FILES":m==="happy"?"DONE! 🎉":"ACTIVE");
+    $("zikiChip").className = "rotate-1 rounded-full border-2 border-[#241C3A] px-3 py-1 " + (m==="working"?"animate-pulse bg-emerald-200":"bg-fuchsia-100");
+  }
+
+  function fmtT(s){ return String(Math.floor(s/60)).padStart(2,"0")+":"+(s%60).toFixed(1).padStart(4,"0")+"s"; }
+  function setChip(text, cls){ $("execState").textContent = text; $("execState").className = "rotate-1 rounded-full border-2 border-[#241C3A] px-3 py-1 text-[10px] font-black " + cls; }
+
+  function paint(){
+    var pct = Math.round(st.progress);
+    $("progressBar").style.width = st.progress + "%";
+    $("progressBar").className = "h-full rounded-full bg-gradient-to-r from-amber-300 via-fuchsia-400 to-indigo-400 transition-all duration-200" + (st.running?" candy-stripes":"");
+    $("progressPct").textContent = pct;
+    $("sessionTimer").textContent = fmtT(st.elapsed);
+
+    if(st.phase==="done") setChip("🌈 COMPLETE","bg-emerald-200");
+    else if(st.running) setChip("🛠️ ZIKI IS BOOPING FILES…","bg-gradient-to-r from-fuchsia-200 to-indigo-200 animate-pulse");
+    else if(st.rewound) setChip("⏪ REWOUND","bg-violet-200");
+    else if(st.held) setChip("🛑 HELD AT THE GATE","bg-amber-200 animate-pulse");
+    else setChip("😴 PAUSED — AWAITING YOU","bg-amber-200 animate-pulse");
+
+    var s2 = $("step2Card");
+    if(st.phase==="done"){
+      s2.className = "rounded-[1.2rem_3rem_1.4rem_2.6rem] border-2 border-[#241C3A] bg-gradient-to-br from-emerald-50 to-lime-50 px-5 py-4 md:ml-5";
+      s2.style.transform = "rotate(.6deg)"; s2.style.boxShadow = "6px 6px 0 0 rgba(36,28,58,.22)";
+      $("step2Icon").textContent = "✓"; $("step2Icon").className = "grid h-10 w-10 shrink-0 place-items-center rounded-[45%_55%_50%_50%/55%_45%_55%_45%] border-2 border-[#241C3A] bg-emerald-300 text-lg";
+      $("step2Badge").textContent = "COMPLETED"; $("step2Badge").style.background = "#A7F3D0";
+      $("pauseResume").style.display = "none"; $("approveBtn").style.display = "none"; $("overrideInput").disabled = true;
+    } else {
+      $("pauseResume").innerHTML = st.running ? "⏸️ Pause him" : "▶️ Let him go";
+      $("step2Badge").textContent = st.approved ? "APPROVED — RESUMING" : st.held ? "GATE HOLD · TAP TO CLEAR" : "AWAITING YOUR INPUT";
+      $("step2Badge").style.background = st.approved ? "#A7F3D0" : "#FDE68A";
+      $("step2Icon").textContent = st.approved ? "🫡" : "⚠️";
+      $("approveBtn").disabled = st.approved;
+      $("approveBtn").textContent = st.approved ? "Override approved ✓" : "Approve override 👍";
+      $("approveBtn").className = "bouncy rounded-full border-2 border-[#241C3A] px-8 py-4 text-sm font-extrabold text-white " + (st.approved ? "bg-gradient-to-br from-emerald-400 to-teal-400" : "animate-bounce bg-gradient-to-br from-fuchsia-500 via-violet-500 to-indigo-500");
+    }
+
+    var s3 = $("step3Card");
+    if(st.phase==="step2"){
+      s3.className = "rounded-[3rem_1.4rem_2.6rem_1.2rem] border-2 border-dashed border-[#241C3A] bg-white/60 px-5 py-4 opacity-70 transition-all duration-500 bouncy-sm";
+      s3.style.marginLeft = "2.5rem"; s3.style.transform = "rotate(1deg)"; s3.style.boxShadow = "4px 4px 0 0 rgba(36,28,58,.22)";
+      $("step3Icon").textContent = st.approved ? "🔓" : "🔒";
+      $("step3Icon").className = "grid h-9 w-9 shrink-0 place-items-center rounded-[50%_45%_55%_50%] border-2 border-[#241C3A] " + (st.approved?"bg-violet-200":"bg-slate-100");
+      $("step3Badge").textContent = st.approved ? "UNLOCKED" : "PENDING";
+      $("step3Badge").style.background = st.approved ? "#DDD6FE" : "#F1F5F9";
+      $("step3Note").textContent = st.approved ? "🔓 Unlocked · waiting for Step 2 to wrap up" : "◌ Queued behind gate G-02";
+      $("step3Note").className = "mt-2 pl-1 text-[10px] font-bold opacity-60";
+      $("step3Prog").className = "hidden"; $("step3Result").className = "hidden"; $("replayBtn").className = "hidden";
+    } else if(st.phase==="step3"){
+      s3.className = "rounded-[3rem_1.4rem_2.6rem_1.2rem] border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-50 to-violet-100 px-5 py-4 transition-all duration-500 bouncy";
+      s3.style.marginLeft = "0"; s3.style.transform = "rotate(.8deg)"; s3.style.boxShadow = "6px 6px 0 0 rgba(36,28,58,.25)";
+      $("step3Icon").textContent = "🛠️"; $("step3Icon").className = "grid h-9 w-9 shrink-0 animate-bounce place-items-center rounded-[50%_45%_55%_50%] border-2 border-[#241C3A] bg-fuchsia-300 text-base";
+      $("step3Badge").textContent = "SYNTHESIZING…"; $("step3Badge").style.background = "#F5D0FE";
+      $("step3Note").className = "hidden"; $("step3Prog").className = "mt-3 space-y-2";
+    } else if(st.phase==="done"){
+      s3.className = "rounded-[3rem_1.4rem_2.6rem_1.2rem] border-2 border-[#241C3A] bg-gradient-to-br from-emerald-50 to-teal-50 px-5 py-4 transition-all duration-500 bouncy";
+      s3.style.marginLeft = "0"; s3.style.transform = "rotate(-1deg)"; s3.style.boxShadow = "6px 6px 0 0 rgba(36,28,58,.25)";
+      $("step3Icon").textContent = "✓"; $("step3Icon").className = "grid h-9 w-9 shrink-0 animate-bounce place-items-center rounded-[50%_45%_55%_50%] border-2 border-[#241C3A] bg-emerald-300 text-base";
+      $("step3Badge").textContent = "COMMITTED 🎉"; $("step3Badge").style.background = "#A7F3D0";
+      $("step3Note").textContent = "✔ Artifact sealed — PR #214 is green again!";
+      $("step3Note").className = "mt-2 pl-1 text-[10px] font-bold opacity-60";
+      $("step3Prog").className = "hidden"; $("step3Result").className = "mt-3 space-y-1 border-t-2 border-dashed border-[#241C3A]/30 pt-3 text-xs font-semibold opacity-80";
+      $("replayBtn").className = "mt-3 rotate-1 rounded-full border-2 border-[#241C3A] bg-white px-4 py-2 text-xs font-extrabold bouncy";
+    }
+
+    /* gate footer + flow pills */
+    var cleared = st.approved || st.phase==="done";
+    $("gateStatus").className = "flex items-center gap-2 " + (cleared?"text-emerald-700":"text-orange-600");
+    $("gateDot").className = "h-2 w-2 rounded-full " + (cleared?"bg-emerald-400":"animate-pulse bg-amber-400");
+    $("gateText").textContent = st.phase==="done" ? "Gate cleared · artifact committed to PR #214 🎉"
+      : cleared ? "Gate cleared · override approved by a real human 🫶"
+      : st.held ? "Gate G-02 · held at 74% — approval required 🙏"
+      : "Gate G-02 · 1 human action required";
+    $("pill04").textContent = cleared ? "CLEARED ✓" : "● GATE";
+    $("pill04").style.background = cleared ? "#A7F3D0" : "#FDE68A";
+    $("pill05").textContent = cleared ? "APPROVED 🫶" : "HUMAN";
+    $("pill05").style.background = cleared ? "#A7F3D0" : "#fff";
+    $("pill06").textContent = st.phase==="done" ? "COMMITTED 🎉" : "QUEUED";
+    $("pill06").style.background = st.phase==="done" ? "#A7F3D0" : "#fff";
+    $("flowGate").className = "rounded-[2.5rem_1.2rem_3rem_1.2rem] flex min-w-0 flex-1 flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-amber-100 to-orange-200 px-4 py-3 bouncy" + (cleared?"":" animate-pulse");
+    $("flowGate").style.boxShadow = cleared ? "4px 4px 0 0 rgba(36,28,58,.2)" : "4px 4px 0 0 #F59E0B";
+    $("flowGate").style.transform = "rotate(2deg)";
+    $("flowOutput").style.boxShadow = st.phase==="done" ? "4px 4px 0 0 #34D399" : "4px 4px 0 0 rgba(36,28,58,.2)";
+
+    paintZiki();
+  }
+
+  setInterval(function(){
+    if(!st.running) return;
+    st.elapsed += 0.1;
+    if(st.phase==="step2"){
+      var ceil = st.approved ? S2END : GATE;
+      st.progress = Math.min(ceil, st.progress + 0.1*(st.approved?2.6:1.6));
+      if(!st.approved && st.progress>=GATE){ st.running=false; st.held=true; st.progress=GATE; logEv("Gate G-02 boing! 🛑 — stuck at 74% until a human approves"); }
+      else if(st.approved && st.progress>=S2END){ st.phase="step3"; st.progress=S2END; logEv("Step 2 finished with your override 🫡 — zooming into Step 3"); }
+    } else if(st.phase==="step3"){
+      st.progress = Math.min(S3END, st.progress + 0.36);
+      if(st.progress>=S3END){ st.running=false; st.phase="done"; st.progress=S3END; logEv("Artifact committed · 8f3c1a2 → PR #214 🎨"); }
+    }
+    paint();
+  }, 100);
+
+  $("pauseResume").addEventListener("click", function(){
+    if(st.phase==="done") return;
+    if(!st.running && st.phase==="step2" && !st.approved && st.progress>=GATE){
+      st.held = true; logEv("Resume blocked 🚧 — gate G-02 needs your golden tap"); paint(); return;
+    }
+    st.running = !st.running; st.held=false; st.rewound=false;
+    if(st.running) st.step2At = st.elapsed;
+    logEv(st.running ? "Ziki resumes the boop cycle 🛠️" : "Paused by human · state preserved 🧊");
+    paint();
+  });
+
+  $("approveBtn").addEventListener("click", function(){
+    if(st.phase==="done" || st.approved) return;
+    st.approved = true; st.held=false; st.rewound=false; st.running=true; st.step2At=st.elapsed;
+    $("overrideNote").textContent = "Approved · locked into canvas state 🔒";
+    $("overrideNote").className = "text-[10px] font-bold opacity-50";
+    $("overrideInput").disabled = true;
+    logEv("Human approved override: filepath = " + $("overrideInput").value + " ✅");
+    paint();
+  });
+
+  $("stepBack").addEventListener("click", function(){
+    st = { running:false, progress:33, elapsed:st.elapsed, phase:"step2", approved:false, rewound:true, held:false, step2At:0 };
+    $("overrideInput").value = DEFAULT_PATH; $("overrideInput").disabled = false;
+    $("overrideNote").textContent = "Override discarded · restored to checkpoint ⏪";
+    $("overrideNote").className = "-rotate-1 rounded-full bg-fuchsia-100 px-2 py-0.5 text-[10px] font-bold text-fuchsia-800";
+    $("pauseResume").style.display = ""; $("approveBtn").style.display = "";
+    $("step2Card").className = "rounded-[1.2rem_3rem_1.4rem_2.6rem] border-2 border-[#241C3A] bg-gradient-to-br from-amber-100 to-orange-100 px-5 py-4 transition-all duration-300 md:ml-5 animate-pulse";
+    $("step2Card").style.transform = "rotate(.6deg)"; $("step2Card").style.boxShadow = "6px 6px 0 0 #F59E0B";
+    logEv("Step-back ⏪ — checkpoint restored at end of Step 1 (33%)");
+    paint();
+  });
+
+  $("replayBtn").addEventListener("click", function(){
+    clockBase += Math.max(0, Math.floor(st.elapsed) - 4);
+    st = { running:false, progress:66, elapsed:4.2, phase:"step2", approved:false, rewound:false, held:false, step2At:0 };
+    $("overrideInput").value = DEFAULT_PATH; $("overrideInput").disabled = false;
+    $("overrideNote").textContent = "Editable · staged for human approval";
+    $("overrideNote").className = "text-[10px] font-bold opacity-50";
+    $("pauseResume").style.display = ""; $("approveBtn").style.display = "";
+    $("step2Card").className = "rounded-[1.2rem_3rem_1.4rem_2.6rem] border-2 border-[#241C3A] bg-gradient-to-br from-amber-100 to-orange-100 px-5 py-4 transition-all duration-300 md:ml-5 animate-pulse";
+    $("step2Card").style.transform = "rotate(.6deg)"; $("step2Card").style.boxShadow = "6px 6px 0 0 #F59E0B";
+    logEv("Canvas reset 🔄 — replay armed at gate G-02");
+    paint();
+  });
+
+  $("overrideInput").addEventListener("input", function(){
+    var dirty = this.value !== DEFAULT_PATH && !st.approved;
+    $("overrideNote").textContent = dirty ? "Staged change — Ziki won't touch it yet! ✋" : "Editable · staged for human approval";
+    $("overrideNote").className = dirty ? "-rotate-1 rounded-full bg-fuchsia-100 px-2 py-0.5 text-[10px] font-bold text-fuchsia-800" : "text-[10px] font-bold opacity-50";
+    $("ovrWrap").className = "mt-1 flex items-center gap-2 rounded-full border-2 border-[#241C3A] bg-white px-4 py-2" + (dirty ? " animate-pulse ring-4 ring-fuchsia-300" : "");
+  });
+
+  $("step1Toggle").addEventListener("click", function(){
+    var d = $("step1Details"), open = d.className.indexOf("hidden") === -1;
+    d.className = "mt-3 space-y-2 border-t-2 border-dashed border-[#241C3A]/30 pt-3 text-xs font-semibold opacity-80" + (open ? " hidden" : "");
+    this.setAttribute("aria-expanded", !open);
+    $("step1Chev").style.transform = open ? "" : "rotate(180deg)";
+  });
+
+  $("zBody").addEventListener("click", function(){
+    this.style.transition = "transform .2s"; this.style.transform = "rotate(14deg) scale(1.2)";
+    setTimeout(function(){ $("zBody").style.transform = ""; }, 300);
+  });
+
+  /* ---------------- boot ---------------- */
+  buildSidebar();
+  renderChannel("general-dev");
+  paintEvents();
+  paint();
+})();
+</script>
+</body>
+</html>
