@@ -3,248 +3,314 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Ziki Workspace — Whimsical Edition · Cohort 15</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='%23D946EF'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='18' font-weight='700' fill='white' text-anchor='middle'%3EZ%3C/text%3E%3C/svg%3E" />
+<title>Ziki Workspace — Cohort 15</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232563EB'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='18' font-weight='700' fill='white' text-anchor='middle'%3EZ%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: {
+      zk: {
+        bg:      "#F7F8FA",
+        surface: "#FFFFFF",
+        border:  "#E4E7EC",
+        chip:    "#F1F3F6",
+        text:    "#101828",
+        text2:   "#667085",
+        accent:  "#2563EB",
+        accentSoft: "#EFF6FF"
+      }
+    },
+    borderRadius: { zk: "24px" }
+  } }
+};
+</script>
 <style>
-  :root { --ink:#241C3A; }
-  body{
-    margin:0; color:var(--ink);
-    font-family:'Baloo 2','Comic Sans MS',ui-rounded,system-ui,sans-serif;
-    background:linear-gradient(135deg,#EEF2FF 0%,#FDF4FF 45%,#FFF7EB 100%);
-    min-height:100vh;
+  body{ margin:0; background:#F7F8FA; color:#101828; font-family:'Inter',ui-sans-serif,system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  code{ font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.85em; background:#F1F3F6; color:#2563EB; padding:1px 6px; border-radius:6px; }
+  .scroll-thin::-webkit-scrollbar{ width:8px; height:8px }
+  .scroll-thin::-webkit-scrollbar-thumb{ background:#E4E7EC; border-radius:99px }
+  .scroll-thin::-webkit-scrollbar-track{ background:transparent }
+  @keyframes softpulse{ 0%,100%{opacity:1} 50%{opacity:.45} }
+  .zk-pulse{ animation:softpulse 2s ease-in-out infinite }
+  @media (max-width:640px){
+    .zk-hide-sm{ display:none }
+    .apphead{ flex-wrap:nowrap; gap:8px; padding:10px 12px }
+    .zk-search{ display:none }
   }
-  code{font-family:ui-monospace,monospace;background:rgba(36,28,58,.08);padding:1px 6px;border-radius:99px;font-size:.85em}
-  @keyframes floaty{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
-  @keyframes stripes{to{background-position:34px 0}}
-  .candy-stripes{background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.35) 0 8px,transparent 8px 17px);animation:stripes 1s linear infinite}
-  .bouncy{transition:all .3s ease-out}
-  .bouncy:hover{transform:scale(1.05) translateY(-8px) rotate(1deg)}
-  .bouncy:active{transform:scale(.95)}
-  .bouncy-sm:hover{transform:scale(1.05) rotate(1deg)}
-  .bouncy-sm:active{transform:scale(.95)}
-  .blobfeed::-webkit-scrollbar{width:8px}
-  .blobfeed::-webkit-scrollbar-thumb{background:#C4B5FD;border-radius:99px;border:2px solid #FDF4FF}
-  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+  @media (prefers-reduced-motion:reduce){ *{ animation-duration:.001ms !important; transition-duration:.001ms !important } }
 </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
-<!-- ambient candy blobs -->
-<div class="pointer-events-none fixed -left-24 -top-24 z-0 h-72 w-72 rounded-[45%_55%_60%_40%/50%_45%_55%_50%] bg-fuchsia-200/50 blur-2xl" style="animation:floaty 9s ease-in-out infinite"></div>
-<div class="pointer-events-none fixed right-[-60px] top-40 z-0 h-80 w-80 rounded-[55%_45%_40%_60%/45%_60%_40%_55%] bg-indigo-200/50 blur-2xl" style="animation:floaty 12s ease-in-out infinite"></div>
-<div class="pointer-events-none fixed bottom-10 left-1/3 z-0 h-64 w-64 rounded-[40%_60%_50%_50%/60%_40%_55%_45%] bg-amber-200/40 blur-2xl" style="animation:floaty 14s ease-in-out infinite"></div>
+<div class="mx-auto flex min-h-screen max-w-[1440px] flex-col gap-4 p-3 md:p-5">
 
-<div class="relative z-10 mx-auto flex min-h-screen max-w-[1500px] flex-col gap-4 p-4 md:p-6">
-
-  <!-- ============ ZONE 1 · header ============ -->
-  <header class="flex flex-wrap items-center gap-4 rounded-[2.4rem_1.6rem_2.8rem_1.4rem] border-2 border-[#241C3A] bg-white/90 px-6 py-4 backdrop-blur md:rotate-[0.4deg]" style="box-shadow:6px 6px 0 0 rgba(36,28,58,.25)">
-    <div class="flex items-center gap-3">
-      <div class="grid h-12 w-12 -rotate-6 place-items-center rounded-[45%_55%_50%_50%/55%_45%_55%_45%] bg-gradient-to-br from-fuchsia-400 to-indigo-400 text-xl font-black text-white" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.3)">Z</div>
-      <div>
-        <h1 id="channelTitle" class="text-lg font-extrabold leading-tight"># general-dev</h1>
-        <span class="inline-block -rotate-2 rounded-full border-2 border-[#241C3A] bg-violet-100 px-3 py-0.5 text-[10px] font-extrabold tracking-widest">HNG15 COHORT</span>
+  <!-- ================= header ================= -->
+  <header class="apphead flex flex-wrap items-center gap-4 rounded-zk border border-zk-border bg-zk-surface px-5 py-4 shadow-sm">
+    <div class="flex min-w-0 items-center gap-3">
+      <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-zk-accent text-base font-bold text-white">Z</div>
+      <div class="min-w-0">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-zk-accent">Cohort workspace</div>
+        <h1 id="channelTitle" class="truncate text-base font-semibold leading-tight"># general-dev</h1>
       </div>
+      <span class="zk-hide-sm rounded-full border border-zk-border bg-zk-chip px-3 py-1 text-[11px] font-semibold text-zk-text2">HNG15</span>
     </div>
-    <div class="order-3 w-full md:order-none md:mx-4 md:flex-1">
-      <input id="globalSearch" type="text" autocomplete="off" placeholder="Search channels, threads, or poke Ziki…"
-        class="w-full rounded-full border-2 border-[#241C3A] bg-indigo-50 px-6 py-3 text-sm font-semibold outline-none transition-all duration-300 placeholder:opacity-50 focus:scale-[1.02] focus:bg-white focus:shadow-[4px_4px_0_0_rgba(36,28,58,.25)]" />
-    </div>
-    <div class="ml-auto flex items-center gap-4">
-      <span class="hidden items-center gap-2 text-xs font-extrabold lg:flex">
-        <span class="relative flex h-3 w-3"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"></span><span class="relative inline-flex h-3 w-3 rounded-full border-2 border-[#241C3A] bg-emerald-400"></span></span>
-        142 Online
+
+    <div class="zk-search relative mx-auto w-full max-w-[440px] md:flex-1">
+      <span class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zk-text2">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       </span>
-      <button id="canvasToggle" aria-pressed="true" class="bouncy rotate-1 rounded-full border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-500 via-violet-500 to-indigo-500 px-6 py-3 text-sm font-extrabold text-white" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.35)">✨ Ziki Canvas <span id="canvasToggleState">[ON]</span></button>
+      <input id="globalSearch" type="text" autocomplete="off" placeholder="Search channels, threads, or Ziki"
+        aria-label="Search channels, threads, or Ziki"
+        class="h-11 w-full rounded-full border border-zk-border bg-zk-chip pl-11 pr-4 text-sm text-zk-text outline-none transition placeholder:text-zk-text2 focus:bg-white focus:ring-2 focus:ring-blue-600/20" />
+    </div>
+
+    <div class="ml-auto flex shrink-0 items-center gap-3">
+      <span class="zk-hide-sm flex items-center gap-2 text-sm font-medium text-zk-text2">
+        <span class="relative flex h-2.5 w-2.5"><span class="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-40 zk-pulse"></span><span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span></span>
+        142 online
+      </span>
+      <button id="canvasToggle" aria-pressed="true"
+        class="inline-flex h-11 items-center gap-2 rounded-full bg-zk-accent px-5 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600/20">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        <span class="hidden sm:inline">Execution Canvas</span><span id="canvasToggleState" class="zk-hide-sm">On</span>
+      </button>
     </div>
   </header>
 
   <div class="flex flex-1 flex-col gap-4 lg:flex-row lg:items-start">
 
-    <!-- ============ sidebar ============ -->
-    <aside class="hidden w-64 shrink-0 flex-col gap-5 md:flex md:rotate-[-0.4deg]" aria-label="Channels and direct messages">
-      <nav class="rounded-[2rem_2.6rem_1.6rem_2.8rem] border-2 border-[#241C3A] bg-gradient-to-b from-white to-violet-50 p-5" style="box-shadow:5px 5px 0 0 rgba(36,28,58,.22)">
-        <div class="mb-3 flex items-center justify-between">
-          <span class="text-[11px] font-black tracking-[0.2em] opacity-60">✏️ CHANNELS</span>
-          <span class="grid h-6 w-6 rotate-6 place-items-center rounded-full border-2 border-[#241C3A] bg-amber-200 text-[10px] font-black">4</span>
-        </div>
-        <ul class="space-y-2" id="chanList"></ul>
-        <div class="mb-3 mt-5 text-[11px] font-black tracking-[0.2em] opacity-60">💌 DM BUDDIES</div>
-        <ul class="space-y-2" id="dmList"></ul>
+    <!-- ================= sidebar ================= -->
+    <aside class="hidden w-64 shrink-0 flex-col gap-4 lg:flex" aria-label="Channels and direct messages">
+      <nav class="rounded-zk border border-zk-border bg-zk-surface p-4 shadow-sm">
+        <div class="mb-2 px-2 text-[11px] font-bold uppercase tracking-wider text-zk-accent">Channels</div>
+        <ul class="space-y-1.5" id="chanList"></ul>
+        <div class="mb-2 mt-5 px-2 text-[11px] font-bold uppercase tracking-wider text-zk-accent">Direct messages</div>
+        <ul class="space-y-1.5" id="dmList"></ul>
+        <div class="mb-2 mt-5 px-2 text-[11px] font-bold uppercase tracking-wider text-zk-accent">Active threads</div>
+        <ul class="space-y-1.5">
+          <li><button data-channel="general-dev" class="thread-nav flex h-10 w-full items-center gap-2 rounded-full border border-zk-border bg-zk-chip px-4 text-sm text-zk-text2 transition hover:bg-zk-border"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg><span class="truncate">PR #214 env fix</span><span class="ml-auto rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-zk-text2">4</span></button></li>
+          <li><button data-channel="announcements" class="thread-nav flex h-10 w-full items-center gap-2 rounded-full border border-zk-border bg-zk-chip px-4 text-sm text-zk-text2 transition hover:bg-zk-border"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg><span class="truncate">Week 6 demo day</span><span class="ml-auto rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-zk-text2">2</span></button></li>
+        </ul>
       </nav>
-      <div class="-ml-2 rotate-[0.8deg] rounded-[1.4rem_2.4rem_1.2rem_2.6rem] border-2 border-[#241C3A] bg-gradient-to-r from-emerald-100 to-teal-100 p-4 text-xs font-bold" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.22)">
+      <div class="rounded-zk border border-zk-border bg-zk-surface p-4 shadow-sm">
         <div class="flex items-center gap-3">
-          <span class="grid h-9 w-9 -rotate-3 place-items-center rounded-full border-2 border-[#241C3A] bg-white font-black">PA</span>
-          <div>Pulse Analytics<div id="zikiOnline" class="flex items-center gap-1 text-emerald-700"><span class="h-2 w-2 rounded-full bg-emerald-400"></span> Ziki online</div></div>
-          <button class="bouncy ml-auto text-lg" aria-label="Settings">⚙️</button>
+          <span class="grid h-9 w-9 place-items-center rounded-full bg-zk-chip text-xs font-bold text-zk-text">PA</span>
+          <div class="min-w-0">
+            <div class="truncate text-sm font-semibold">Pulse Analytics</div>
+            <div class="flex items-center gap-1.5 text-xs text-zk-text2"><span class="h-2 w-2 rounded-full bg-emerald-500"></span>Ziki online</div>
+          </div>
+          <button class="ml-auto grid h-9 w-9 place-items-center rounded-full text-zk-text2 transition hover:bg-zk-chip" aria-label="Settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+          </button>
         </div>
       </div>
     </aside>
 
-    <!-- ============ ZONE 2 · feed ============ -->
-    <section class="flex min-h-[420px] min-w-0 flex-1 rotate-[0.3deg] flex-col rounded-[2.2rem_3rem_1.8rem_2.6rem] border-2 border-[#241C3A] bg-white/80 backdrop-blur" style="box-shadow:7px 7px 0 0 rgba(36,28,58,.25)" aria-label="Channel feed">
-      <div class="flex items-center justify-between gap-3 border-b-2 border-dashed border-[#241C3A]/30 px-6 py-3">
-        <span id="channelTopic" class="truncate text-xs font-bold opacity-70">📌 PR #214 · fix(env): resolve undefined VITE_SUPABASE_URL</span>
-        <div class="flex shrink-0 gap-2 text-[10px] font-black">
-          <span id="feedCount" class="-rotate-2 rounded-full border-2 border-[#241C3A] bg-indigo-100 px-3 py-1">7 MESSAGES</span>
-          <span id="zikiChip" class="rotate-1 rounded-full border-2 border-[#241C3A] bg-fuchsia-100 px-3 py-1">@ZIKI ACTIVE</span>
+    <!-- ================= feed ================= -->
+    <section class="flex min-h-[420px] min-w-0 flex-1 flex-col rounded-zk border border-zk-border bg-zk-surface shadow-sm" aria-label="Channel feed">
+      <div class="flex items-center gap-3 border-b border-zk-border px-5 py-3">
+        <button id="backToChannel" class="hidden h-9 shrink-0 items-center gap-1.5 rounded-full border border-zk-border bg-zk-chip px-3 text-sm font-medium text-zk-text2 transition hover:bg-zk-border" aria-label="Back to channel library">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back
+        </button>
+        <div class="min-w-0 flex-1">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-zk-accent">Channel</div>
+          <div id="channelTopic" class="truncate text-sm text-zk-text2">PR #214 · fix(env): resolve undefined VITE_SUPABASE_URL</div>
+        </div>
+        <div class="flex shrink-0 items-center gap-2">
+          <span id="feedCount" class="rounded-full border border-zk-border bg-zk-chip px-3 py-1 text-[11px] font-semibold text-zk-text2">7 messages</span>
+          <span id="zikiChip" class="hidden rounded-full bg-zk-accent px-3 py-1 text-[11px] font-semibold text-white sm:inline">Ziki active</span>
         </div>
       </div>
-      <div id="chatFeed" class="blobfeed flex-1 space-y-4 overflow-y-auto px-6 py-5" aria-live="polite" style="max-height:56vh"></div>
-      <form id="composerForm" autocomplete="off" class="border-t-2 border-dashed border-[#241C3A]/30 p-4">
-        <div class="flex items-center gap-3 rounded-full border-2 border-[#241C3A] bg-indigo-50 p-2 transition-all focus-within:scale-[1.01] focus-within:bg-white focus-within:shadow-[4px_4px_0_0_rgba(36,28,58,.25)]">
-          <button type="button" class="bouncy grid h-10 w-10 place-items-center rounded-full bg-white text-lg" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.2)" aria-label="Attach file">📎</button>
-          <input id="composerInput" type="text" placeholder="Message #general-dev — type @Ziki to wake him up 👇" class="min-w-0 flex-1 bg-transparent px-2 text-sm font-semibold outline-none placeholder:opacity-50" aria-label="Message channel" />
-          <button type="submit" class="bouncy rounded-full border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-500 via-violet-500 to-indigo-500 px-6 py-3 text-base font-extrabold text-white" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.35)">Send it 🚀</button>
+
+      <div id="chatFeed" class="scroll-thin flex-1 space-y-4 overflow-y-auto px-5 py-4" aria-live="polite" style="max-height:58vh"></div>
+
+      <form id="composerForm" autocomplete="off" class="border-t border-zk-border p-4">
+        <div class="flex items-center gap-3">
+          <button type="button" class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-zk-border bg-zk-chip text-zk-text2 transition hover:bg-zk-border" aria-label="Attach file">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.4 11.05 12.3 20.1a5.6 5.6 0 0 1-8-8l9.3-9.3a4 4 0 0 1 5.6 5.7l-9.2 9.2a2.5 2.5 0 0 1-3.5-3.5l8.6-8.6"/></svg>
+          </button>
+          <input id="composerInput" type="text" placeholder="Message the channel — mention Ziki to invoke the agent" aria-label="Message channel"
+            class="h-11 min-w-0 flex-1 rounded-full border border-zk-border bg-zk-chip px-5 text-sm text-zk-text outline-none transition placeholder:text-zk-text2 focus:bg-white focus:ring-2 focus:ring-blue-600/20" />
+          <button type="submit" class="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-zk-accent px-5 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600/20">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+            <span class="hidden sm:inline">Send</span>
+          </button>
         </div>
       </form>
     </section>
 
-    <!-- ============ ZONE 3 · Ziki Canvas ============ -->
-    <aside id="canvasPanel" class="flex w-full min-w-0 shrink-0 rotate-[-0.5deg] flex-col rounded-[2.8rem_1.6rem_3rem_1.8rem] border-2 border-[#241C3A] bg-gradient-to-b from-indigo-50 via-white to-fuchsia-50 transition-all duration-300 lg:sticky lg:top-4 lg:w-[420px]" style="box-shadow:8px 8px 0 0 rgba(36,28,58,.28)" aria-label="Ziki Agent Execution Canvas">
-      <div class="border-b-2 border-dashed border-[#241C3A]/30 px-5 py-4">
-        <div class="flex items-center gap-3 text-base font-black">
-          <span id="panelZ" class="grid h-9 w-9 place-items-center rounded-[50%_42%_55%_45%] border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-300 to-indigo-400 text-white">✦</span>
-          Ziki's Brain Canvas
-          <span class="ml-auto flex items-center gap-2 text-[10px] font-black tracking-widest opacity-60"><span class="h-2 w-2 animate-pulse rounded-full bg-emerald-400"></span>LIVE</span>
+    <!-- ================= execution canvas ================= -->
+    <aside id="canvasPanel" class="flex w-full shrink-0 flex-col rounded-zk border border-zk-border bg-zk-surface shadow-sm lg:w-[420px] lg:sticky lg:top-4" aria-label="Ziki Execution Canvas">
+      <div class="border-b border-zk-border px-5 py-4">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-zk-accent">Agent execution</div>
+        <div class="mt-1 flex items-center gap-2">
+          <h2 class="text-base font-semibold">Ziki Execution Canvas</h2>
+          <span class="ml-auto flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-emerald-600"><span class="h-2 w-2 rounded-full bg-emerald-500 zk-pulse"></span>Live</span>
         </div>
-        <div class="mt-2 flex justify-between text-[10px] font-bold opacity-60">
-          <span>SESSION #ZK-8821</span>
-          <span>C_eval <b class="rounded-full border-2 border-[#241C3A] bg-amber-200 px-2 text-amber-900">0.82</b> · HIGH</span>
+        <div class="mt-1 flex justify-between text-xs text-zk-text2">
+          <span>Session #ZK-8821 · Cohort 15</span>
+          <span>C_eval <b class="rounded-full bg-zk-accentSoft px-2 py-0.5 font-semibold text-zk-accent">0.82</b> high</span>
         </div>
       </div>
 
-      <div class="flex-1 space-y-5 overflow-y-auto p-5 blobfeed">
+      <div class="scroll-thin flex-1 space-y-4 overflow-y-auto p-5">
         <!-- progress -->
         <div>
-          <div class="mb-2 flex items-baseline justify-between text-xs font-black">
-            <span class="tracking-[0.15em] opacity-60">TASK EXECUTION</span>
-            <span><span id="progressPct">66</span>% complete!</span>
+          <div class="mb-2 flex items-baseline justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-zk-accent">Task execution</span>
+            <span class="text-sm font-semibold"><span id="progressPct">66</span>% complete</span>
           </div>
-          <div class="relative h-6 overflow-hidden rounded-full border-2 border-[#241C3A] bg-white" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.2)" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="66">
-            <div id="progressBar" class="h-full rounded-full bg-gradient-to-r from-amber-300 via-fuchsia-400 to-indigo-400 transition-all duration-200" style="width:66%"></div>
-            <div class="absolute inset-y-0 w-1.5 -translate-x-1/2 rounded-full bg-orange-500" style="left:74%; box-shadow:0 0 8px 2px rgba(249,115,22,.7)" title="Human approval gate 🚧"></div>
+          <div class="relative h-2.5 overflow-hidden rounded-full bg-zk-chip" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="66">
+            <div id="progressBar" class="h-full rounded-full bg-zk-accent transition-all duration-200" style="width:66%"></div>
+            <div class="absolute inset-y-0 w-0.5 bg-amber-500" style="left:74%" title="Human approval gate"></div>
           </div>
-          <div class="mt-2 flex items-center justify-between text-[11px] font-bold">
-            <span>⏱️ <b id="sessionTimer" class="font-mono">00:04.2s</b></span>
-            <span id="execState" class="rotate-1 rounded-full border-2 border-[#241C3A] bg-amber-200 px-3 py-1 text-[10px] font-black animate-pulse">😴 PAUSED — AWAITING YOU</span>
+          <div class="mt-2 flex items-center justify-between text-xs text-zk-text2">
+            <span>Session timer <b id="sessionTimer" class="font-mono font-semibold text-zk-text">00:04.2s</b></span>
+            <span id="execState" class="rounded-full border border-zk-border bg-zk-chip px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-zk-text2">Paused</span>
           </div>
         </div>
 
         <!-- step 1 -->
-        <article class="bouncy-sm rounded-[2.5rem_1.2rem_3rem_1.2rem] border-2 border-[#241C3A] bg-gradient-to-br from-emerald-50 to-teal-50 px-5 py-4 md:mr-8" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.22); transform:rotate(-.8deg)">
+        <article class="rounded-zk border border-zk-border bg-zk-surface p-4">
           <button id="step1Toggle" class="flex w-full items-center gap-3 text-left" aria-expanded="false" aria-controls="step1Details">
-            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-[50%_42%_55%_45%] border-2 border-[#241C3A] bg-emerald-300 font-black" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.25)">✓</span>
-            <span class="flex-1 text-sm font-extrabold">Step 1: Parse Pull Request &amp; Build Logs</span>
-            <span class="rotate-3 rounded-full border-2 border-[#241C3A] bg-emerald-200 px-3 py-1 text-[10px] font-extrabold">DONE · 0.4s</span>
-            <span id="step1Chev" class="transition-transform duration-300">⌄</span>
+            <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-emerald-50 text-emerald-600">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </span>
+            <span class="min-w-0 flex-1 text-sm font-semibold">Step 1: Parse pull request and build logs</span>
+            <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-700">Completed 0.4s</span>
+            <svg id="step1Chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#667085" stroke-width="2" stroke-linecap="round" class="transition-transform duration-200"><path d="m6 9 6 6 6-6"/></svg>
           </button>
-          <div id="step1Details" class="mt-3 hidden space-y-2 border-t-2 border-dashed border-[#241C3A]/30 pt-3 text-xs font-semibold opacity-80">
-            <div>🍩 <b>2 build logs parsed</b> — 4,218 lines · failing step <code>bun run build</code> @ 00:41</div>
-            <div class="md:translate-x-2">🔍 Detected undefined ENV <b>VITE_SUPABASE_URL</b> at <code>src/lib/env-urls.ts:42</code></div>
-            <div>🧵 Thread context attached: PR #214 · 3 reviewers · branch <b>fix/env-resolution</b></div>
+          <div id="step1Details" class="mt-3 hidden space-y-1.5 border-t border-dashed border-zk-border pt-3 text-xs text-zk-text2">
+            <div class="flex gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0"><path d="M20 6 9 17l-5-5"/></svg><span><b class="text-zk-text">2 build logs parsed</b> — 4,218 lines · failing step <code>bun run build</code> at 00:41</span></div>
+            <div class="flex gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0"><path d="M20 6 9 17l-5-5"/></svg><span>Detected undefined ENV <b class="text-zk-text">VITE_SUPABASE_URL</b> at <code>src/lib/env-urls.ts:42</code></span></div>
+            <div class="flex gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0"><path d="M20 6 9 17l-5-5"/></svg><span>Thread context attached: PR #214 · 3 reviewers · branch <b class="text-zk-text">fix/env-resolution</b></span></div>
           </div>
         </article>
 
         <!-- step 2 -->
-        <article id="step2Card" class="rounded-[1.2rem_3rem_1.4rem_2.6rem] border-2 border-[#241C3A] bg-gradient-to-br from-amber-100 to-orange-100 px-5 py-4 transition-all duration-300 md:ml-5" style="box-shadow:6px 6px 0 0 #F59E0B; transform:rotate(.6deg)">
+        <article id="step2Card" class="rounded-zk border-2 border-zk-accent bg-zk-surface p-4 shadow-sm">
           <div class="flex items-start gap-3">
-            <span id="step2Icon" class="grid h-10 w-10 shrink-0 animate-pulse place-items-center rounded-[45%_55%_50%_50%/55%_45%_55%_45%] border-2 border-[#241C3A] bg-amber-300 text-lg" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.3)">⚠️</span>
+            <span id="step2Icon" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-zk-accentSoft text-zk-accent">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+            </span>
             <div class="min-w-0 flex-1">
-              <div class="text-sm font-extrabold">Step 2: Inspect Dependency Configuration</div>
-              <span id="step2Badge" class="mt-1 inline-block rotate-2 rounded-full border-2 border-[#241C3A] bg-amber-200 px-3 py-1 text-[10px] font-extrabold">AWAITING YOUR INPUT</span>
+              <div class="text-sm font-semibold">Step 2: Inspect dependency configuration</div>
+              <span id="step2Badge" class="mt-1.5 inline-block rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-amber-700">Awaiting your input</span>
             </div>
           </div>
-          <p class="mt-3 -rotate-[.6deg] rounded-[1.4rem_0.6rem_1.6rem_0.8rem] bg-amber-50 px-4 py-2 text-xs font-semibold leading-relaxed">
-            Two valid resolution orders found for <code>envPath</code>. Ziki stopped before poking the config — a human must confirm the intent. 🧠
+          <p class="mt-3 rounded-xl bg-zk-chip px-4 py-2.5 text-xs leading-relaxed text-zk-text2">
+            Two valid resolution orders were found for <code>envPath</code>. Ziki paused before mutating configuration — a human must confirm the intent.
           </p>
-          <div class="mt-4 flex flex-wrap items-center gap-3">
-            <button id="pauseResume" class="bouncy rounded-full border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-500 via-violet-500 to-indigo-500 px-6 py-3 text-sm font-extrabold text-white" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.35)">▶️ Let him go</button>
-            <button id="stepBack" class="bouncy -rotate-1 rounded-full border-2 border-[#241C3A] bg-white px-6 py-3 text-sm font-extrabold" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.22)">⏪ Step-back</button>
-            <span class="ml-auto font-mono text-[10px] font-black opacity-50">2 / 3</span>
+          <div class="mt-4 flex flex-wrap items-center gap-2">
+            <button id="pauseResume" class="inline-flex h-11 items-center gap-2 rounded-full bg-zk-accent px-5 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600/20">
+              <span id="pauseIcon"></span><span id="pauseLabel">Resume</span>
+            </button>
+            <button id="stepBack" class="inline-flex h-11 items-center gap-2 rounded-full border border-zk-border bg-zk-chip px-4 text-sm font-medium text-zk-text2 transition hover:bg-zk-border">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>Step-back
+            </button>
+            <span class="ml-auto text-[11px] font-semibold text-zk-text2">2 of 3</span>
           </div>
-          <label class="mt-4 block text-[11px] font-black tracking-wide opacity-70">Context override: filepath
-            <div id="ovrWrap" class="mt-1 flex items-center gap-2 rounded-full border-2 border-[#241C3A] bg-white px-4 py-2">
-              <span class="font-mono opacity-40">›</span>
-              <input id="overrideInput" value="'src/lib/env-urls.ts'" spellcheck="false" class="w-full bg-transparent font-mono text-xs font-bold outline-none" aria-label="Context override filepath" />
+          <label class="mt-4 block">
+            <span class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-zk-accent">Context override: filepath</span>
+            <div class="flex h-11 items-center gap-2 rounded-full border border-zk-border bg-zk-chip px-4 transition focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-600/20">
+              <span class="font-mono text-zk-text2">›</span>
+              <input id="overrideInput" value="'src/lib/env-urls.ts'" spellcheck="false" aria-label="Context override filepath" class="w-full bg-transparent font-mono text-sm text-zk-text outline-none" />
             </div>
           </label>
-          <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
-            <span id="overrideNote" class="text-[10px] font-bold opacity-50">Editable · staged for human approval</span>
-            <button id="approveBtn" class="bouncy animate-bounce rounded-full border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-500 via-violet-500 to-indigo-500 px-8 py-4 text-sm font-extrabold text-white" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.35); animation-duration:1.6s">Approve override 👍</button>
+          <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+            <span id="overrideNote" class="text-xs text-zk-text2">Editable and staged for human approval</span>
+            <button id="approveBtn" class="inline-flex h-11 items-center gap-2 rounded-full bg-zk-accent px-6 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600/20">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Approve override
+            </button>
           </div>
         </article>
 
         <!-- step 3 -->
-        <article id="step3Card" class="rounded-[3rem_1.4rem_2.6rem_1.2rem] border-2 border-dashed border-[#241C3A] bg-white/60 px-5 py-4 opacity-70 transition-all duration-500 bouncy-sm" style="margin-left:2.5rem; transform:rotate(1deg)">
+        <article id="step3Card" class="rounded-zk border border-dashed border-zk-border bg-zk-chip/40 p-4 opacity-70">
           <div class="flex items-center gap-3">
-            <span id="step3Icon" class="grid h-9 w-9 shrink-0 place-items-center rounded-[50%_45%_55%_50%] border-2 border-[#241C3A] bg-slate-100 text-base">🔒</span>
-            <span class="flex-1 text-sm font-extrabold">Step 3: Generate Optimized Fix &amp; Commit Patch</span>
-            <span id="step3Badge" class="-rotate-3 rounded-full border-2 border-[#241C3A] bg-slate-100 px-3 py-1 text-[10px] font-extrabold">PENDING</span>
+            <span id="step3Icon" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-zk-chip text-zk-text2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            </span>
+            <span class="min-w-0 flex-1 text-sm font-semibold">Step 3: Generate optimized fix and commit patch</span>
+            <span id="step3Badge" class="rounded-full border border-zk-border bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-zk-text2">Pending approval</span>
           </div>
-          <div id="step3Note" class="mt-2 pl-1 text-[10px] font-bold opacity-60">◌ Queued behind gate G-02</div>
-          <div id="step3Prog" class="mt-3 hidden space-y-2">
-            <div class="h-2 animate-pulse rounded-full bg-fuchsia-200" style="width:78%"></div>
-            <div class="h-2 animate-pulse rounded-full bg-fuchsia-200" style="width:46%; animation-delay:150ms"></div>
-            <div class="pt-1 text-[10px] font-black tracking-widest opacity-60">⚡ ZIKI IS SYNTHESIZING YOUR PATCH · 1 FILE</div>
+          <div id="step3Note" class="mt-2 pl-11 text-xs text-zk-text2">Queued behind gate G-02</div>
+          <div id="step3Prog" class="mt-3 hidden space-y-2 pl-11">
+            <div class="h-1.5 w-3/4 rounded-full bg-zk-border zk-pulse"></div>
+            <div class="h-1.5 w-2/5 rounded-full bg-zk-border zk-pulse" style="animation-delay:150ms"></div>
+            <div class="text-[11px] font-semibold uppercase tracking-wide text-zk-text2">Synthesizing patch for 1 file</div>
           </div>
-          <div id="step3Result" class="mt-3 hidden space-y-1 border-t-2 border-dashed border-[#241C3A]/30 pt-3 text-xs font-semibold opacity-80">
-            <div>✔ <b>src/lib/env-urls.ts</b> — resolution order pinned · <code>8f3c1a2</code></div>
-            <div class="ml-3">✔ Artifact committed to <b>PR #214</b> · canvas state sealed 📦</div>
+          <div id="step3Result" class="mt-3 hidden space-y-1.5 border-t border-dashed border-zk-border pt-3 pl-11 text-xs text-zk-text2">
+            <div class="flex gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0"><path d="M20 6 9 17l-5-5"/></svg><span><b class="text-zk-text">src/lib/env-urls.ts</b> — resolution order pinned · <code>8f3c1a2</code></span></div>
+            <div class="flex gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0"><path d="M20 6 9 17l-5-5"/></svg><span>Artifact committed to <b class="text-zk-text">PR #214</b> · canvas state sealed</span></div>
           </div>
-          <button id="replayBtn" class="mt-3 hidden rotate-1 rounded-full border-2 border-[#241C3A] bg-white px-4 py-2 text-xs font-extrabold bouncy" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.22)">↺ Run the canvas again!</button>
+          <button id="replayBtn" class="mt-3 hidden h-10 items-center gap-2 rounded-full border border-zk-border bg-zk-chip px-4 text-sm font-medium text-zk-text2 transition hover:bg-zk-border" style="margin-left:2.75rem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Run canvas again
+          </button>
         </article>
 
         <!-- events -->
-        <div class="rotate-[0.5deg] rounded-[1.6rem_2.2rem_1.4rem_2.4rem] border-2 border-dashed border-[#241C3A] bg-violet-50/80 p-4">
-          <div class="mb-2 flex justify-between text-[10px] font-black tracking-[0.2em] opacity-60"><span>📜 ZIKI'S DIARY</span><span id="eventCount">3</span></div>
-          <ul id="eventLog" class="space-y-1.5 text-[11px] font-semibold"></ul>
+        <div class="rounded-zk border border-zk-border bg-zk-chip/50 p-4">
+          <div class="mb-2 flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-zk-accent">Event stream</span>
+            <span id="eventCount" class="text-[11px] font-semibold text-zk-text2">3</span>
+          </div>
+          <ul id="eventLog" class="space-y-1.5 text-xs text-zk-text2"></ul>
         </div>
       </div>
 
-      <div class="flex items-center justify-between gap-3 border-t-2 border-dashed border-[#241C3A]/30 px-5 py-3 text-[11px] font-black">
-        <span id="gateStatus" class="flex items-center gap-2 text-orange-600">
-          <span id="gateDot" class="h-2 w-2 animate-pulse rounded-full bg-amber-400"></span>
-          <span id="gateText">Gate G-02 · 1 human action required 🙏</span>
+      <div class="flex items-center justify-between gap-3 border-t border-zk-border px-5 py-3">
+        <span id="gateStatus" class="flex min-w-0 items-center gap-2 text-xs font-medium text-amber-700">
+          <span id="gateDot" class="h-2 w-2 shrink-0 rounded-full bg-amber-500 zk-pulse"></span>
+          <span id="gateText" class="truncate">Gate G-02 · 1 human action required</span>
         </span>
-        <span class="-rotate-2 rounded-full border-2 border-[#241C3A] bg-white px-3 py-1 font-mono text-[9px]">artifact → PR #214</span>
+        <a href="https://github.com/DebbyAngel/zedu-fe/pull/214" class="shrink-0 rounded-full border border-zk-border bg-zk-chip px-3 py-1 font-mono text-[11px] text-zk-text2 transition hover:bg-zk-border">artifact → PR #214</a>
       </div>
     </aside>
   </div>
 
-  <!-- ============ flow strip ============ -->
-  <section class="rotate-[0.3deg] rounded-[2rem_3rem_1.6rem_2.6rem] border-2 border-[#241C3A] bg-white/85 px-6 py-5 backdrop-blur" style="box-shadow:6px 6px 0 0 rgba(36,28,58,.25)" aria-label="System process flowchart">
-    <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
-      <h2 class="text-[11px] font-black tracking-[0.25em] opacity-70">🍭 HOW ZIKI THINKS — 6 SUGARY STAGES</h2>
-      <span class="text-[10px] font-bold opacity-50">C_eval threshold ≥ 0.75</span>
+  <!-- ================= process flow ================= -->
+  <section class="rounded-zk border border-zk-border bg-zk-surface px-5 py-4 shadow-sm" aria-label="System process flow">
+    <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+      <div>
+        <div class="text-[11px] font-bold uppercase tracking-wider text-zk-accent">Orchestration</div>
+        <h2 class="text-sm font-semibold">Ziki process flow — 6 stages</h2>
+      </div>
+      <div class="flex flex-wrap items-center gap-3 text-[11px] text-zk-text2">
+        <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-emerald-500"></span>Completed</span>
+        <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-amber-500"></span>Active gate</span>
+        <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-zk-accent"></span>Canvas</span>
+        <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-zk-border"></span>Queued</span>
+        <span class="hidden sm:inline">· C_eval threshold ≥ 0.75</span>
+      </div>
     </div>
-    <div class="overflow-x-auto pb-1">
-      <ol class="flex min-w-[900px] items-stretch gap-3">
-        <li class="flex flex-1 items-center gap-1"><div class="rounded-[2.5rem_1.2rem_3rem_1.2rem] flex min-w-0 flex-1 flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-emerald-100 to-teal-100 px-4 py-3 bouncy" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.2); transform:rotate(-1deg)"><div class="flex items-center justify-between font-mono text-[9px] font-black opacity-50"><span>01</span><span class="rounded-full border-2 border-[#241C3A] bg-emerald-200 px-2 py-0.5 text-[8px]">TRIGGER</span></div><p class="text-[11px] font-bold leading-snug">Human @mentions Ziki in a thread 🧵</p></div><span class="shrink-0 -rotate-12 text-xl text-fuchsia-400">〜➜</span></li>
-        <li class="flex flex-1 items-center gap-1"><div class="rounded-[1.2rem_3rem_1.4rem_2.6rem] flex min-w-0 flex-1 flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-emerald-100 to-lime-100 px-4 py-3 bouncy" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.2); transform:rotate(1deg)"><div class="flex items-center justify-between font-mono text-[9px] font-black opacity-50"><span>02</span><span class="rounded-full border-2 border-[#241C3A] bg-emerald-200 px-2 py-0.5 text-[8px]">SCORING</span></div><p class="text-[11px] font-bold leading-snug">Ziki sniffs the task complexity (C_eval = 0.82) 🧠</p></div><span class="shrink-0 rotate-12 text-xl text-fuchsia-400">〜➜</span></li>
-        <li class="flex flex-1 items-center gap-1"><div class="rounded-[3rem_1.4rem_2.6rem_1.2rem] flex min-w-0 flex-1 flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-violet-100 to-fuchsia-100 px-4 py-3 bouncy" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.2); transform:rotate(-1deg)"><div class="flex items-center justify-between font-mono text-[9px] font-black opacity-50"><span>03</span><span id="pill03" class="rounded-full border-2 border-[#241C3A] bg-white px-2 py-0.5 text-[8px]">BRANCH</span></div><p class="text-[11px] font-bold leading-snug">Too tricky → unfurl the Brain Canvas 🎪</p></div><span class="shrink-0 -rotate-12 text-xl text-fuchsia-400">〜➜</span></li>
-        <li class="flex flex-1 items-center gap-1"><div id="flowGate" class="rounded-[2.5rem_1.2rem_3rem_1.2rem] flex min-w-0 flex-1 animate-pulse flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-amber-100 to-orange-200 px-4 py-3 bouncy" style="box-shadow:4px 4px 0 0 #F59E0B; transform:rotate(2deg)"><div class="flex items-center justify-between font-mono text-[9px] font-black opacity-50"><span>04</span><span id="pill04" class="rounded-full border-2 border-[#241C3A] bg-amber-200 px-2 py-0.5 text-[8px]">● GATE</span></div><p class="text-[11px] font-bold leading-snug">Pause at the ambiguity gate — no guessing! 🚧</p></div><span class="shrink-0 rotate-12 text-xl text-fuchsia-400">〜➜</span></li>
-        <li class="flex flex-1 items-center gap-1"><div id="flowHuman" class="rounded-[1.2rem_3rem_1.4rem_2.6rem] flex min-w-0 flex-1 flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-100 to-pink-100 px-4 py-3 bouncy" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.2); transform:rotate(-1deg)"><div class="flex items-center justify-between font-mono text-[9px] font-black opacity-50"><span>05</span><span id="pill05" class="rounded-full border-2 border-[#241C3A] bg-white px-2 py-0.5 text-[8px]">HUMAN</span></div><p class="text-[11px] font-bold leading-snug">A real human taps the shiny approve button 👆</p></div><span class="shrink-0 -rotate-12 text-xl text-slate-300">〜➜</span></li>
-        <li class="flex flex-1 items-center gap-1"><div id="flowOutput" class="rounded-[3rem_1.4rem_2.6rem_1.2rem] flex min-w-0 flex-1 flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-indigo-100 to-sky-100 px-4 py-3 bouncy" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.2); transform:rotate(1deg)"><div class="flex items-center justify-between font-mono text-[9px] font-black opacity-50"><span>06</span><span id="pill06" class="rounded-full border-2 border-[#241C3A] bg-white px-2 py-0.5 text-[8px]">QUEUED</span></div><p class="text-[11px] font-bold leading-snug">Patch rendered &amp; committed to PR #214 📦</p></div></li>
+    <div class="scroll-thin overflow-x-auto pb-1">
+      <ol class="flex min-w-[880px] items-stretch gap-2">
+        <li class="flex flex-1 items-center gap-1"><div class="flow-node flex min-w-0 flex-1 flex-col gap-1 rounded-2xl border border-zk-border bg-zk-surface px-4 py-3 transition hover:border-zk-text2/40" data-i="0"><div class="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wide text-zk-text2"><span>01</span><span class="f-pill rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-700">Trigger</span></div><p class="text-xs font-medium leading-snug text-zk-text">User invokes Ziki in a thread</p></div><span class="f-arrow shrink-0 text-zk-border"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></li>
+        <li class="flex flex-1 items-center gap-1"><div class="flow-node flex min-w-0 flex-1 flex-col gap-1 rounded-2xl border border-zk-border bg-zk-surface px-4 py-3 transition hover:border-zk-text2/40" data-i="1"><div class="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wide text-zk-text2"><span>02</span><span class="f-pill rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-700">Scoring</span></div><p class="text-xs font-medium leading-snug text-zk-text">Orchestrator evaluates task complexity</p></div><span class="f-arrow shrink-0 text-zk-border"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></li>
+        <li class="flex flex-1 items-center gap-1"><div class="flow-node flex min-w-0 flex-1 flex-col gap-1 rounded-2xl border border-zk-accent/40 bg-zk-accentSoft px-4 py-3 transition hover:border-zk-accent/70" data-i="2"><div class="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wide text-zk-text2"><span>03</span><span class="f-pill rounded-full bg-white px-2 py-0.5 text-zk-accent">Branch</span></div><p class="text-xs font-medium leading-snug text-zk-text">High complexity launches the execution canvas</p></div><span class="f-arrow shrink-0 text-zk-border"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></li>
+        <li class="flex flex-1 items-center gap-1"><div class="flow-node flex min-w-0 flex-1 flex-col gap-1 rounded-2xl border border-amber-300 bg-amber-50/60 px-4 py-3 transition" data-i="3"><div class="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wide text-zk-text2"><span>04</span><span class="f-pill rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">Gate</span></div><p class="text-xs font-medium leading-snug text-zk-text">Pause and inspect on parameter ambiguity</p></div><span class="f-arrow shrink-0 text-zk-border"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></li>
+        <li class="flex flex-1 items-center gap-1"><div class="flow-node flex min-w-0 flex-1 flex-col gap-1 rounded-2xl border border-dashed border-zk-border bg-zk-surface px-4 py-3 transition" data-i="4"><div class="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wide text-zk-text2"><span>05</span><span class="f-pill rounded-full bg-zk-chip px-2 py-0.5 text-zk-text2">Human</span></div><p class="text-xs font-medium leading-snug text-zk-text">Human approves the state override</p></div><span class="f-arrow shrink-0 text-zk-border"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></li>
+        <li class="flex flex-1 items-center gap-1"><div class="flow-node flex min-w-0 flex-1 flex-col gap-1 rounded-2xl border border-zk-border bg-zk-chip/50 px-4 py-3 transition" data-i="5"><div class="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wide text-zk-text2"><span>06</span><span class="f-pill rounded-full bg-zk-chip px-2 py-0.5 text-zk-text2">Queued</span></div><p class="text-xs font-medium leading-snug text-zk-text">Output rendered and artifact committed</p></div></li>
       </ol>
     </div>
   </section>
 </div>
 
-<!-- ============ Ziki the floating sidekick ============ -->
-<div class="fixed bottom-6 right-6 z-50 select-none" role="img" aria-label="Ziki" id="zikiWrap">
-  <div id="zBubble" class="mb-2 ml-auto w-max rounded-[1.6rem_1.6rem_1.6rem_0.3rem] border-2 border-[#241C3A] bg-white px-4 py-2 text-xs font-extrabold" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.22)">Psst — your turn! Tap approve? 👀</div>
-  <div id="zRing" class="ml-auto w-max animate-pulse rounded-full">
-    <div id="zBody" class="bouncy grid h-20 w-20 cursor-pointer place-items-center rounded-[50%_46%_54%_48%/48%_54%_46%_52%] border-2 border-[#241C3A] bg-gradient-to-br from-amber-200 to-orange-300" style="box-shadow:5px 5px 0 0 rgba(36,28,58,.3)">
-      <svg width="52" height="44" viewBox="0 0 52 44" id="zFace">
-        <circle cx="18" cy="25" r="3.4" fill="#241C3A"/><circle cx="34" cy="25" r="3.4" fill="#241C3A"/>
-        <circle cx="19.2" cy="23.8" r="1.1" fill="#fff"/><circle cx="35.2" cy="23.8" r="1.1" fill="#fff"/>
-        <path d="M20 34q6 5 12 0" fill="none" stroke="#241C3A" stroke-width="2.2" stroke-linecap="round"/>
-        <circle cx="12" cy="31" r="2.6" fill="#F9A8D4" opacity=".8"/><circle cx="40" cy="31" r="2.6" fill="#F9A8D4" opacity=".8"/>
-      </svg>
+<!-- ================= Ziki presence widget ================= -->
+<div class="fixed bottom-4 right-4 z-50" role="status" aria-live="polite" aria-label="Ziki status">
+  <div class="flex items-center gap-3 rounded-full border border-zk-border bg-zk-surface py-2 pl-2 pr-5 shadow-lg">
+    <span class="relative grid h-10 w-10 place-items-center rounded-full bg-zk-accent text-white">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5M9 13h.01M15 13h.01M9 16h6"/><circle cx="12" cy="4" r="1"/></svg>
+      <span id="zDot" class="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-white bg-amber-500 zk-pulse"></span>
+    </span>
+    <div class="leading-tight">
+      <div class="text-sm font-semibold">Ziki</div>
+      <div id="zStatus" class="text-xs text-zk-text2">Waiting for your approval</div>
     </div>
   </div>
 </div>
@@ -255,62 +321,74 @@
   var $ = function (id) { return document.getElementById(id); };
   function esc(v){ return String(v).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
 
+  var ICON = {
+    play: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l14 8-14 8Z"/></svg>',
+    pause: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 5v14M17 5v14"/></svg>',
+    check: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+    lock: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+    unlock: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.9-1"/></svg>',
+    gear: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.2 2.2M16.9 16.9l2.2 2.2M4.9 19.1l2.2-2.2M16.9 7.1l2.2-2.2"/></svg>',
+    warn: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>'
+  };
+
   /* ---------------- data ---------------- */
   var CHANNELS = {
     "general-dev": { title:"general-dev", topic:"PR #214 · fix(env): resolve undefined VITE_SUPABASE_URL", msgs:[
-      {k:"msg",who:"Adaeze N.",ini:"AN",c:"bg-violet-300",t:"09:41",html:"Morning all 👋 build 4821 is red again — the frontend bundle throws <code>VITE_SUPABASE_URL is undefined</code> at boot."},
-      {k:"msg",who:"Mark",ini:"MK",c:"bg-orange-300",t:"09:42",html:"@Ziki can you take PR #214? It keeps failing on env resolution in <code>src/lib/env-urls.ts</code> — I think the fallback chain broke after the config refactor."},
-      {k:"ziki",t:"09:42",html:"On it! Parsed the PR diff, CI logs and the dependency graph. C_eval = <code>0.82</code> → complexity <b>HIGH</b>. Opening a squishy little Dynamic Workspace Canvas so we can pause, poke around and approve changes together.",link:"Canvas #ZK-8821 · mounted ✨"},
-      {k:"sys",html:"Ziki launched a Dynamic Workspace Canvas · human-in-the-loop gate enabled"},
-      {k:"msg",who:"Snow",ini:"SN",c:"bg-emerald-300",t:"09:44",html:"Love this. The canvas is looping on the right — someone approve the path override once it stops on Step 2, then we rerun build 4821."},
-      {k:"msg",who:"Dave",ini:"DV",c:"bg-pink-300",t:"09:45",html:"142 of us online and the build is still red 😅 @Ziki save us."},
+      {k:"msg",who:"Adaeze N.",ini:"AN",t:"09:41",html:"Morning all. Build 4821 is red again — the frontend bundle throws <code>VITE_SUPABASE_URL is undefined</code> at boot."},
+      {k:"msg",who:"Mark",ini:"MK",t:"09:42",html:"@Ziki can you take PR #214? It keeps failing on env resolution in <code>src/lib/env-urls.ts</code> — I think the fallback chain broke after the config refactor."},
+      {k:"ziki",t:"09:42",html:"On it. I parsed the PR diff, CI logs, and the dependency graph. C_eval = <code>0.82</code>, so complexity is <b>high</b>. I opened the execution canvas so we can pause, inspect, and approve state changes together.",link:"Open canvas #ZK-8821"},
+      {k:"sys",html:"Ziki launched the execution canvas · human-in-the-loop gate enabled"},
+      {k:"msg",who:"Snow",ini:"SN",t:"09:44",html:"Good. Someone approve the path override once it stops on Step 2, then we rerun build 4821."},
+      {k:"msg",who:"Dave",ini:"DV",t:"09:45",html:"142 of us online and the build is still red. @Ziki please walk us through the gate."},
       {k:"own",t:"09:46",html:"Stepping in — checking the env path in the canvas before we rerun."}]},
     "announcements": { title:"announcements", topic:"Cohort 15 · week 6 · demo day Friday 14:00 WAT", msgs:[
-      {k:"sys",html:"Adaeze pinned a message to #announcements"},
-      {k:"msg",who:"Adaeze N.",ini:"AN",c:"bg-violet-300",t:"08:10",html:"Demo day is <b>Friday 14:00 WAT</b> — 8 minutes per team. Share your Ziki canvas in the thread before Thursday so reviewers can replay the run."},
-      {k:"msg",who:"Mark",ini:"MK",c:"bg-orange-300",t:"08:22",html:"Reminder: keep agent runs under 30 seconds so the demo stays inside the time box. Pauses count as part of the run."},
-      {k:"msg",who:"Snow",ini:"SN",c:"bg-emerald-300",t:"08:31",html:"Reviewers will look at how we handle the pause gate — that is the differentiator this week."}]},
+      {k:"sys",html:"Adaeze pinned a message to announcements"},
+      {k:"msg",who:"Adaeze N.",ini:"AN",t:"08:10",html:"Demo day is <b>Friday 14:00 WAT</b> — 8 minutes per team. Share your Ziki canvas in the thread before Thursday so reviewers can replay the run."},
+      {k:"msg",who:"Mark",ini:"MK",t:"08:22",html:"Reminder: keep agent runs under 30 seconds so the demo stays inside the time box. Pauses count as part of the run."},
+      {k:"msg",who:"Snow",ini:"SN",t:"08:31",html:"Reviewers will look at how we handle the pause gate — that is the differentiator this week."}]},
     "backend-go": { title:"backend-go", topic:"Build 4821 · Go service green, web bundle failing upstream", msgs:[
-      {k:"msg",who:"Mark",ini:"MK",c:"bg-orange-300",t:"09:31",html:"Backend has been green since #212. <code>go test ./...</code> passes locally. The failure is upstream in the web build."},
-      {k:"ziki",t:"09:33",html:"Cross-checked: <code>go test ./... — 118 tests, 2.4s</code>. No dependency drift in here. Root cause lives elsewhere! 🕵️"},
-      {k:"msg",who:"Adaeze N.",ini:"AN",c:"bg-violet-300",t:"09:35",html:"So it is definitely the env resolver. @Ziki want the canvas on this thread too?"},
-      {k:"sys",html:"Agent idle · awaiting next @Ziki invocation"}]},
+      {k:"msg",who:"Mark",ini:"MK",t:"09:31",html:"Backend has been green since #212. <code>go test ./...</code> passes locally. The failure is upstream in the web build."},
+      {k:"ziki",t:"09:33",html:"Cross-checked: <code>go test ./... — 118 tests, 2.4s</code>. No dependency drift inside this service. The root cause is elsewhere."},
+      {k:"msg",who:"Adaeze N.",ini:"AN",t:"09:35",html:"So it is the env resolver. @Ziki do you want the canvas on this thread too?"},
+      {k:"sys",html:"Agent idle · awaiting next Ziki invocation"}]},
     "frontend-react": { title:"frontend-react", topic:"src/lib/env-urls.ts · hotfix branch fix/env-resolution", msgs:[
-      {k:"msg",who:"Dave",ini:"DV",c:"bg-pink-300",t:"09:24",html:"The fallback chain in <code>env-urls.ts</code> assumes <code>import.meta.env</code> is populated before module init. It is not."},
-      {k:"msg",who:"Snow",ini:"SN",c:"bg-emerald-300",t:"09:26",html:"React strict mode double-invokes the resolver in dev, which is exactly why only CI catches it."},
-      {k:"ziki",t:"09:27",html:"Two candidate resolution orders detected → ambiguity! I am pausing before touching anything. A human must pick. 🙈"},
-      {k:"msg",who:"Mark",ini:"MK",c:"bg-orange-300",t:"09:29",html:"Good call. Do not guess the order — that is how we got build 4817."}]},
+      {k:"msg",who:"Dave",ini:"DV",t:"09:24",html:"The fallback chain in <code>env-urls.ts</code> assumes <code>import.meta.env</code> is populated before module init. It is not."},
+      {k:"msg",who:"Snow",ini:"SN",t:"09:26",html:"React strict mode double-invokes the resolver in dev, which is exactly why only CI catches it."},
+      {k:"ziki",t:"09:27",html:"Two candidate resolution orders detected — ambiguity. I am forcing a pause and inspect gate before patching <code>src/lib/env-urls.ts</code>."},
+      {k:"msg",who:"Mark",ini:"MK",t:"09:29",html:"Good call. Do not guess the order — that is how we got build 4817."}]},
     "dm-mark": { title:"Mark", isDM:true, topic:"Direct message · Mark", msgs:[
-      {k:"msg",who:"Mark",ini:"MK",c:"bg-orange-300",t:"09:37",html:"If Ziki pauses on the env path, ping me before approving — I want to check which order we shipped last week."},
-      {k:"own",t:"09:38",html:"Will do. The canvas is open, I am reading Step 2 now."}]},
+      {k:"msg",who:"Mark",ini:"MK",t:"09:37",html:"If Ziki pauses on the env path, ping me before approving — I want to check which order we shipped last week."},
+      {k:"own",t:"09:38",html:"Will do. The canvas is open and I am reading Step 2 now."}]},
     "dm-dave": { title:"Dave", isDM:true, topic:"Direct message · Dave", msgs:[
-      {k:"msg",who:"Dave",ini:"DV",c:"bg-pink-300",t:"09:39",html:"Can you screenshot the paused card for the demo deck? The amber state is the story."},
-      {k:"own",t:"09:40",html:"On it — sending the canvas view once the override is approved."}]},
+      {k:"msg",who:"Dave",ini:"DV",t:"09:39",html:"Can you screenshot the paused card for the demo deck? The gate state is the story."},
+      {k:"own",t:"09:40",html:"On it — I will send the canvas view once the override is approved."}]},
     "dm-ziki": { title:"Ziki Agent", isDM:true, topic:"Direct message · Ziki Agent", msgs:[
-      {k:"ziki",t:"09:42",html:"Canvas #ZK-8821 is live in #general-dev. Current gate: <code>envPath</code> ambiguity. I will hold Step 3 until you approve the override — pinky promise. 🤙",link:"Open execution canvas"},
-      {k:"own",t:"09:43",html:"Understood. Keep the patch staged, do not commit yet."}]},
+      {k:"ziki",t:"09:42",html:"Canvas #ZK-8821 is live in the general-dev channel. The current gate is the <code>envPath</code> ambiguity. I will hold Step 3 until you approve the override.",link:"Open execution canvas"},
+      {k:"own",t:"09:43",html:"Understood. Keep the patch staged and do not commit yet."}]},
     "dm-snow": { title:"Snow", isDM:true, topic:"Direct message · Snow", msgs:[
-      {k:"msg",who:"Snow",ini:"SN",c:"bg-emerald-300",t:"09:20",html:"Reviewed PR #214 — logic is fine, config is the only risk. The canvas makes that obvious."},
+      {k:"msg",who:"Snow",ini:"SN",t:"09:20",html:"Reviewed PR #214 — the logic is fine and the config is the only risk. The canvas makes that obvious."},
       {k:"own",t:"09:21",html:"Agreed. We will approve the override jointly before the patch lands."}]}
   };
   var CHANS = [["general-dev","general-dev",0,0],["announcements","announcements",3,0],["backend-go","backend-go",12,1],["frontend-react","frontend-react",4,1]];
-  var DMS = [["dm-mark","Mark","MK","bg-orange-300",2],["dm-dave","Dave","DV","bg-pink-300",1],["dm-ziki","Ziki Agent","✦","bg-violet-400",0],["dm-snow","Snow","SN","bg-emerald-300",5]];
+  var DMS = [["dm-mark","Mark","MK",2],["dm-dave","Dave","DV",1],["dm-ziki","Ziki Agent","Z",0],["dm-snow","Snow","SN",5]];
+
+  var active = "general-dev";
 
   /* ---------------- sidebar ---------------- */
-  var active = "general-dev";
+  function navBtn(cls, inner){ return '<li><button data-channel="'+cls+'" class="nav-btn flex h-10 w-full items-center gap-2 rounded-full px-4 text-sm transition '+inner[1]+'">'+inner[0]+'</button></li>'; }
   function buildSidebar(){
-    $("chanList").innerHTML = CHANS.map(function(c,i){
-      return '<li class="'+(i%2?"ml-3":"mr-1")+'"><button data-channel="'+c[0]+'" class="chan bouncy-sm w-full rounded-full border-2 px-4 py-2 text-sm font-bold">'+
-        '<span class="opacity-50">#</span> '+esc(c[1])+
-        (c[2]?'<span class="ml-auto rounded-full border-2 border-[#241C3A] px-2 text-[10px] font-black '+(c[3]?"animate-pulse bg-orange-300":"bg-fuchsia-200")+'">'+c[2]+"</span>":"")+
-        "</button></li>";
+    $("chanList").innerHTML = CHANS.map(function(c){
+      return '<li><button data-channel="'+c[0]+'" class="nav-btn chan-nav flex h-10 w-full items-center gap-2 rounded-full px-4 text-sm transition">' +
+        '<span class="font-semibold text-zk-text2">#</span><span class="truncate">'+esc(c[1])+'</span>' +
+        (c[2]?'<span class="ml-auto rounded-full px-2 py-0.5 text-[10px] font-semibold '+(c[3]?"bg-amber-100 text-amber-800":"bg-white text-zk-text2")+'">'+c[2]+'</span>':'') +
+        '</button></li>';
     }).join("");
-    $("dmList").innerHTML = DMS.map(function(d,i){
-      return '<li class="'+(i%2?"mr-2":"ml-4")+'"><button data-channel="'+d[0]+'" class="dm bouncy-sm w-full rounded-full border-2 px-3 py-2 text-sm font-bold">'+
-        '<span class="grid h-7 w-7 shrink-0 place-items-center rounded-[50%_45%_55%_50%] border-2 border-[#241C3A] text-[10px] font-black '+d[3]+'">'+d[2]+"</span> "+esc(d[1])+
-        (d[0]==="dm-ziki"?'<span class="ml-auto animate-pulse text-xs">✨</span>':"")+
-        (d[4]?'<span class="ml-auto grid h-5 w-5 place-items-center rounded-full border-2 border-[#241C3A] bg-pink-300 text-[9px] font-black">'+d[4]+"</span>":"")+
-        "</button></li>";
+    $("dmList").innerHTML = DMS.map(function(d){
+      return '<li><button data-channel="'+d[0]+'" class="nav-btn dm-nav flex h-10 w-full items-center gap-2 rounded-full px-3 text-sm transition">' +
+        '<span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-zk-chip text-[10px] font-bold text-zk-text">'+d[2]+'</span><span class="truncate">'+esc(d[1])+'</span>' +
+        (d[0]==="dm-ziki"?'<span class="ml-auto rounded-full bg-zk-accentSoft px-2 py-0.5 text-[9px] font-semibold uppercase text-zk-accent">Canvas</span>':'')+
+        (d[3]?'<span class="ml-auto rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-zk-text2">'+d[3]+'</span>':'') +
+        '</button></li>';
     }).join("");
     document.querySelectorAll("[data-channel]").forEach(function(b){
       b.addEventListener("click", function(){ renderChannel(b.getAttribute("data-channel")); });
@@ -318,54 +396,52 @@
     markActive();
   }
   function markActive(){
-    document.querySelectorAll(".chan,.dm").forEach(function(b){
+    document.querySelectorAll(".nav-btn").forEach(function(b){
       var on = b.getAttribute("data-channel")===active;
-      b.style.borderColor = on ? "#241C3A" : "rgba(36,28,58,.25)";
-      b.style.background = on ? "linear-gradient(to right,#DDD6FE,#FBCFE8)" : "rgba(255,255,255,.7)";
+      b.className = b.className.replace(/bg-zk-accent text-white font-semibold|border border-zk-border bg-zk-chip text-zk-text2 hover:bg-zk-border/g,"").trim()
+        + " " + (on ? "bg-zk-accent text-white font-semibold" : "border border-zk-border bg-zk-chip text-zk-text2 hover:bg-zk-border");
     });
   }
 
   /* ---------------- feed ---------------- */
   var feedEl = $("chatFeed");
   function msgHTML(m){
-    if(m.k==="sys") return '<div class="sys flex justify-center py-1" data-text="'+esc(m.html)+'"><span class="rounded-[2rem_1.4rem_2.2rem_1.6rem] border-2 border-[#241C3A] bg-indigo-100 px-5 py-1.5 text-center text-[11px] font-bold italic">✧ '+m.html+" ✧</span></div>";
+    if(m.k==="sys") return '<div class="sys-msg flex items-center justify-center gap-2 py-1 text-xs italic text-zk-text2" data-text="'+esc(m.html)+'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="4"/></svg><span>'+m.html+'</span></div>';
     var own=m.k==="own", ziki=m.k==="ziki";
     var av = ziki
-      ? '<div class="grid h-11 w-11 shrink-0 place-items-center rounded-[45%_55%_50%_50%/55%_45%_55%_45%] border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-300 to-indigo-400 text-xs font-black text-white" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.25)">✦</div>'
-      : own ? "" : '<div class="grid h-11 w-11 shrink-0 place-items-center rounded-[45%_55%_50%_50%/55%_45%_55%_45%] border-2 border-[#241C3A] text-xs font-black '+m.c+'" style="box-shadow:3px 3px 0 0 rgba(36,28,58,.25)">'+m.ini+"</div>";
-    var bubbleCls = ziki ? "bg-gradient-to-br from-violet-100 via-fuchsia-50 to-indigo-100" : own ? "ml-auto bg-gradient-to-br from-amber-200 to-orange-200" : "bg-white";
-    var radius = own ? "rounded-[1.8rem_0.5rem_2.2rem_0.9rem]" : "rounded-[0.5rem_2rem_0.9rem_2.2rem]";
-    var name = ziki ? "Ziki" : own ? "You" : m.who;
-    return '<div class="msg '+(own?"own flex-row-reverse":"flex")+' gap-3 items-start" data-text="'+esc(name+" "+m.html)+'">'+av+
-      '<div class="max-w-[82%] flex flex-col '+(own?"items-end text-right":"")+'">'+
-      '<div class="mb-1 flex items-center gap-2 text-[11px] font-bold opacity-70"><span>'+esc(name)+"</span>"+
-      (ziki?'<span class="rounded-full border-2 border-[#241C3A] bg-fuchsia-100 px-2 py-0.5 text-[8px] tracking-widest">AI SIDEKICK</span>':"")+
-      '<span class="font-mono text-[10px]">'+esc(m.t)+"</span></div>"+
-      '<div class="'+radius+' border-2 border-[#241C3A] px-5 py-3 text-sm leading-relaxed transition-all duration-300 hover:-translate-y-1 '+bubbleCls+'" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.18)">'+m.html+"</div>"+
-      (m.link?'<button data-open-canvas class="bouncy mt-2 -rotate-1 self-start rounded-full border-2 border-[#241C3A] bg-white px-4 py-2 text-xs font-extrabold" style="box-shadow:4px 4px 0 0 rgba(36,28,58,.22)">▣ '+esc(m.link)+" →</button>":"")+
-      "</div></div>";
+      ? '<span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-zk-accent text-xs font-bold text-white">Z</span>'
+      : own ? "" : '<span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-zk-chip text-[10px] font-bold text-zk-text">'+m.ini+'</span>';
+    var bubble = ziki ? "border border-zk-accent/30 bg-zk-accentSoft text-zk-text" : own ? "ml-auto bg-zk-accent text-white" : "bg-zk-chip text-zk-text";
+    return '<div class="msg '+(own?"flex flex-row-reverse":"flex")+' items-start gap-3" data-text="'+esc((m.who||(ziki?"Ziki":"You"))+" "+m.html)+'">'+av+
+      '<div class="flex max-w-[80%] flex-col '+(own?"items-end":"")+'">'+
+      '<div class="mb-1 flex items-center gap-2 text-xs text-zk-text2"><span class="font-semibold text-zk-text">'+esc(ziki?"Ziki":own?"You":m.who)+'</span>'+
+      (ziki?'<span class="rounded-full bg-zk-accentSoft px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-zk-accent">Agent</span>':'')+
+      '<span class="font-mono text-[10px]">'+esc(m.t)+'</span></div>'+
+      '<div class="rounded-2xl px-4 py-2.5 text-sm leading-relaxed '+bubble+'">'+m.html+'</div>'+
+      (m.link?'<button data-open-canvas class="mt-2 inline-flex h-9 items-center gap-2 self-start rounded-full border border-zk-accent/40 bg-white px-4 text-xs font-semibold text-zk-accent transition hover:bg-zk-accentSoft">'+esc(m.link)+'</button>':'')+
+      '</div></div>';
   }
   function renderChannel(key){
     var ch = CHANNELS[key]; active = key;
-    $("channelTitle").textContent = (ch.isDM?"": "# ")+ch.title;
-    $("channelTopic").textContent = "📌 " + ch.topic;
-    $("composerInput").placeholder = "Message " + (ch.isDM?ch.title:"#"+ch.title) + " — type @Ziki to wake him up 👇";
-    feedEl.innerHTML = '<div class="flex items-center gap-3 text-[10px] font-black tracking-[0.25em] opacity-40"><span class="h-px flex-1 bg-current"></span>TODAY · COHORT 15<span class="h-px flex-1 bg-current"></span></div>' +
+    $("channelTitle").textContent = (ch.isDM?"":"# ")+ch.title;
+    $("channelTopic").textContent = ch.topic;
+    $("composerInput").placeholder = ch.isDM ? "Message "+ch.title : "Message the channel — mention Ziki to invoke the agent";
+    var back = $("backToChannel");
+    back.className = (key==="general-dev" ? "hidden" : "inline-flex") + " h-9 shrink-0 items-center gap-1.5 rounded-full border border-zk-border bg-zk-chip px-3 text-sm font-medium text-zk-text2 transition hover:bg-zk-border";
+    feedEl.innerHTML = '<div class="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-zk-text2"><span class="h-px flex-1 bg-zk-border"></span>Today · Cohort 15<span class="h-px flex-1 bg-zk-border"></span></div>' +
       ch.msgs.map(msgHTML).join("") +
-      '<div class="typing flex items-center gap-2 pl-14 text-xs font-bold opacity-60"><span>Dave is typing</span><span class="flex gap-1">'+[0,1,2].map(function(i){return '<span class="h-2 w-2 animate-bounce rounded-full bg-violet-400" style="animation-delay:'+(i*120)+'ms"></span>';}).join("")+"</span></div>";
-    $("feedCount").textContent = ch.msgs.filter(function(m){return m.k!=="sys";}).length + " MESSAGES";
+      '<div class="typing flex items-center gap-2 pl-12 text-xs text-zk-text2"><span>Dave is typing</span><span class="flex gap-1">'+[0,1,2].map(function(i){return '<span class="h-1.5 w-1.5 rounded-full bg-zk-border zk-pulse" style="animation-delay:'+(i*200)+'ms"></span>';}).join("")+'</span></div>';
+    $("feedCount").textContent = ch.msgs.filter(function(m){return m.k!=="sys";}).length + " messages";
     feedEl.scrollTop = feedEl.scrollHeight;
     markActive();
     $("globalSearch").value = "";
   }
+  $("backToChannel").addEventListener("click", function(){ renderChannel("general-dev"); });
   feedEl.addEventListener("click", function(e){
     var link = e.target.closest("[data-open-canvas]");
     if(!link) return;
     setCanvas(true);
     $("canvasPanel").scrollIntoView({behavior:"smooth", block:"nearest"});
-    var card = $("step2Card");
-    card.style.transform = "rotate(2deg) translateY(-8px)";
-    setTimeout(function(){ card.style.transform = st.approved ? "rotate(.6deg)" : "rotate(.6deg)"; }, 900);
   });
 
   /* ---------------- composer ---------------- */
@@ -377,7 +453,7 @@
     var w = document.createElement("div"); w.innerHTML = msgHTML(m);
     feedEl.insertBefore(w.firstElementChild, typing);
     feedEl.scrollTop = feedEl.scrollHeight;
-    $("feedCount").textContent = CHANNELS[active].msgs.filter(function(x){return x.k!=="sys";}).length + " MESSAGES";
+    $("feedCount").textContent = CHANNELS[active].msgs.filter(function(x){return x.k!=="sys";}).length + " messages";
   }
   $("composerForm").addEventListener("submit", function(e){
     e.preventDefault();
@@ -385,7 +461,7 @@
     $("composerInput").value = "";
     appendBubble({k:"own", t:hhmm(), html:esc(v)});
     if(/@ziki/i.test(v)) setTimeout(function(){
-      appendBubble({k:"ziki", t:hhmm(), html:"Queued for evaluation! Gate G-02 is still waiting on a human override — I won't boop <code>env-urls.ts</code> until it clears. 🙈", link:"Canvas #ZK-8821 · paused"});
+      appendBubble({k:"ziki", t:hhmm(), html:"Queued for evaluation. Gate G-02 is still awaiting a human override — I will not modify <code>env-urls.ts</code> until it clears.", link:"Open canvas #ZK-8821"});
       logEv("Mention received · queued behind gate G-02");
     }, 700);
   });
@@ -393,40 +469,39 @@
   /* ---------------- search ---------------- */
   $("globalSearch").addEventListener("input", function(){
     var q = this.value.trim().toLowerCase();
-    document.querySelectorAll(".chan,.dm").forEach(function(b){
+    document.querySelectorAll(".nav-btn").forEach(function(b){
       b.parentElement.style.display = (!q || b.textContent.toLowerCase().indexOf(q)!==-1) ? "" : "none";
     });
     var vis=0;
-    feedEl.querySelectorAll(".msg,.sys").forEach(function(n){
+    feedEl.querySelectorAll(".msg,.sys-msg").forEach(function(n){
       var ok = !q || (n.getAttribute("data-text")||"").toLowerCase().indexOf(q)!==-1;
       n.style.display = ok ? "" : "none"; if(ok) vis++;
     });
     var empty = feedEl.querySelector(".search-empty");
     if(q && vis===0){
       if(!empty){ empty=document.createElement("div"); empty.className="search-empty"; feedEl.appendChild(empty); }
-      empty.innerHTML='<div class="-rotate-1 rounded-[2rem_1rem_2.4rem_1rem] border-2 border-dashed border-[#241C3A] bg-amber-50 px-6 py-4 text-center text-sm font-bold">🔍 Nothing matches “'+esc(q)+'” — Ziki looked everywhere, even under the rug.</div>';
+      empty.innerHTML='<div class="rounded-2xl border border-dashed border-zk-border bg-zk-chip px-5 py-4 text-center text-sm text-zk-text2">No messages match this search in the current channel.</div>';
     } else if(empty) empty.remove();
   });
 
   /* ---------------- canvas toggle ---------------- */
-  var panel = $("canvasPanel"), toggle = $("canvasToggle"), canvasOpen = true;
+  var canvasOpen = true;
   function setCanvas(open){
     canvasOpen = open;
-    panel.style.display = open ? "" : "none";
-    toggle.setAttribute("aria-pressed", open);
-    $("canvasToggleState").textContent = open ? "[ON]" : "[OFF]";
-    toggle.classList.toggle("grayscale", !open);
-    toggle.classList.toggle("-rotate-1", !open);
-    toggle.classList.toggle("rotate-1", open);
+    $("canvasPanel").style.display = open ? "" : "none";
+    $("canvasToggle").setAttribute("aria-pressed", String(open));
+    $("canvasToggle").className = "inline-flex h-11 items-center gap-2 rounded-full px-5 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600/20 " +
+      (open ? "bg-zk-accent text-white hover:bg-blue-700" : "border border-zk-border bg-zk-chip text-zk-text2 hover:bg-zk-border");
+    $("canvasToggleState").textContent = open ? "On" : "Off";
   }
-  toggle.addEventListener("click", function(){ setCanvas(!canvasOpen); });
+  $("canvasToggle").addEventListener("click", function(){ setCanvas(!canvasOpen); });
 
   /* ---------------- state machine ---------------- */
   var GATE=74, S2END=88, S3END=100, DEFAULT_PATH="'src/lib/env-urls.ts'";
   st = { running:false, progress:66, elapsed:4.2, phase:"step2", approved:false, rewound:false, held:false, step2At:0 };
 
   var events = [
-    {ts:"09:46:34", text:"Paused: ambiguous envPath → a human needs to tap the shiny button 👉"},
+    {ts:"09:46:34", text:"Paused on ambiguous envPath — a human approval is required"},
     {ts:"09:46:30", text:"Step 1 completed in 0.4s · 2 build logs parsed"},
     {ts:"09:46:26", text:"Canvas #ZK-8821 mounted · 3 steps staged"}
   ];
@@ -434,119 +509,113 @@
   function logEv(text){ events.unshift({ts:stamp(), text:text}); events=events.slice(0,4); paintEvents(); }
   function paintEvents(){
     $("eventLog").innerHTML = events.map(function(e,i){
-      return '<li class="flex gap-2 '+(i%2?"ml-3":"")+'"><span class="mt-1 h-2 w-2 shrink-0 rounded-full '+(i===0?"animate-pulse bg-orange-400":"bg-violet-300")+'</span><span class="font-mono text-[9px] opacity-50">'+e.ts+"</span><span>"+esc(e.text)+"</span></li>";
+      return '<li class="flex gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full '+(i===0?"bg-zk-accent":"bg-zk-border")+'"></span><span class="font-mono text-[10px] text-zk-text2">'+e.ts+'</span><span>'+esc(e.text)+'</span></li>';
     }).join("");
     $("eventCount").textContent = events.length;
   }
 
-  var FACES = {
-    waiting:'<circle cx="18" cy="25" r="3.4" fill="#241C3A"/><circle cx="34" cy="25" r="3.4" fill="#241C3A"/><circle cx="19.2" cy="23.8" r="1.1" fill="#fff"/><circle cx="35.2" cy="23.8" r="1.1" fill="#fff"/>',
-    working:'<path d="M13 26q5-6 10 0" fill="none" stroke="#241C3A" stroke-width="2.5" stroke-linecap="round"/><path d="M29 26q5-6 10 0" fill="none" stroke="#241C3A" stroke-width="2.5" stroke-linecap="round"/>',
-    happy:'<path d="M13 25q5-7 10 0" fill="none" stroke="#241C3A" stroke-width="3" stroke-linecap="round"/><path d="M29 25q5-7 10 0" fill="none" stroke="#241C3A" stroke-width="3" stroke-linecap="round"/>'
-  };
-  var MOODS = {
-    waiting:{bubble:"Psst — your turn! Tap approve? 👀",ring:"animate-pulse",body:"animate-pulse bg-gradient-to-br from-amber-200 to-orange-300"},
-    working:{bubble:"Vroom vroom! Building the patch 🛠️",ring:"",body:"animate-bounce bg-gradient-to-br from-fuchsia-300 to-indigo-400"},
-    happy:{bubble:"We did it!! Artifact is committed 🎉",ring:"",body:"animate-bounce bg-gradient-to-br from-emerald-300 to-teal-300"}
-  };
-  function mood(){
-    if(st.phase==="done") return "happy";
-    if(st.approved || st.running || st.phase==="step3") return "working";
-    return "waiting";
-  }
-  function paintZiki(){
-    var m = mood(), cfg = MOODS[m];
-    $("zBubble").textContent = cfg.bubble;
-    $("zRing").className = "ml-auto w-max rounded-full " + cfg.ring;
-    $("zBody").className = "bouncy grid h-20 w-20 cursor-pointer place-items-center rounded-[50%_46%_54%_48%/48%_54%_46%_52%] border-2 border-[#241C3A] " + cfg.body;
-    $("zFace").innerHTML = FACES[m] +
-      '<path d="M20 34q6 5 12 0" fill="none" stroke="#241C3A" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="31" r="2.6" fill="#F9A8D4" opacity=".8"/><circle cx="40" cy="31" r="2.6" fill="#F9A8D4" opacity=".8"/>';
-    $("panelZ").className = "grid h-9 w-9 place-items-center rounded-[50%_42%_55%_45%] border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-300 to-indigo-400 text-white" + (m==="working"?" animate-bounce":m==="waiting"?" animate-pulse":"");
-    $("zikiChip").textContent = "@ZIKI " + (m==="working"?"IS BOOPING FILES":m==="happy"?"DONE! 🎉":"ACTIVE");
-    $("zikiChip").className = "rotate-1 rounded-full border-2 border-[#241C3A] px-3 py-1 " + (m==="working"?"animate-pulse bg-emerald-200":"bg-fuchsia-100");
+  function status(){
+    if(st.phase==="done") return {s:"Completed — patch committed", dot:"bg-emerald-500", pulse:false, chip:"Ziki idle"};
+    if(st.approved || st.running || st.phase==="step3") return {s:"Working — synthesizing patch", dot:"bg-zk-accent", pulse:true, chip:"Ziki working"};
+    return {s:"Waiting for your approval", dot:"bg-amber-500", pulse:true, chip:"Ziki waiting"};
   }
 
   function fmtT(s){ return String(Math.floor(s/60)).padStart(2,"0")+":"+(s%60).toFixed(1).padStart(4,"0")+"s"; }
-  function setChip(text, cls){ $("execState").textContent = text; $("execState").className = "rotate-1 rounded-full border-2 border-[#241C3A] px-3 py-1 text-[10px] font-black " + cls; }
 
   function paint(){
     var pct = Math.round(st.progress);
     $("progressBar").style.width = st.progress + "%";
-    $("progressBar").className = "h-full rounded-full bg-gradient-to-r from-amber-300 via-fuchsia-400 to-indigo-400 transition-all duration-200" + (st.running?" candy-stripes":"");
     $("progressPct").textContent = pct;
     $("sessionTimer").textContent = fmtT(st.elapsed);
 
-    if(st.phase==="done") setChip("🌈 COMPLETE","bg-emerald-200");
-    else if(st.running) setChip("🛠️ ZIKI IS BOOPING FILES…","bg-gradient-to-r from-fuchsia-200 to-indigo-200 animate-pulse");
-    else if(st.rewound) setChip("⏪ REWOUND","bg-violet-200");
-    else if(st.held) setChip("🛑 HELD AT THE GATE","bg-amber-200 animate-pulse");
-    else setChip("😴 PAUSED — AWAITING YOU","bg-amber-200 animate-pulse");
+    var chip = $("execState");
+    if(st.phase==="done"){ chip.textContent="Complete"; chip.className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-emerald-700"; }
+    else if(st.running){ chip.textContent="Running"; chip.className="rounded-full bg-zk-accentSoft px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-zk-accent zk-pulse"; }
+    else if(st.rewound){ chip.textContent="Rewound"; chip.className="rounded-full border border-zk-border bg-zk-chip px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-zk-text2"; }
+    else if(st.held){ chip.textContent="Held at gate"; chip.className="rounded-full bg-amber-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-amber-700 zk-pulse"; }
+    else { chip.textContent="Paused"; chip.className="rounded-full border border-zk-border bg-zk-chip px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-zk-text2"; }
+
+    $("pauseIcon").innerHTML = st.running ? ICON.pause : ICON.play;
+    $("pauseLabel").textContent = st.phase==="done" ? "Complete" : st.running ? "Pause" : "Resume";
+    $("pauseResume").disabled = st.phase==="done";
 
     var s2 = $("step2Card");
     if(st.phase==="done"){
-      s2.className = "rounded-[1.2rem_3rem_1.4rem_2.6rem] border-2 border-[#241C3A] bg-gradient-to-br from-emerald-50 to-lime-50 px-5 py-4 md:ml-5";
-      s2.style.transform = "rotate(.6deg)"; s2.style.boxShadow = "6px 6px 0 0 rgba(36,28,58,.22)";
-      $("step2Icon").textContent = "✓"; $("step2Icon").className = "grid h-10 w-10 shrink-0 place-items-center rounded-[45%_55%_50%_50%/55%_45%_55%_45%] border-2 border-[#241C3A] bg-emerald-300 text-lg";
-      $("step2Badge").textContent = "COMPLETED"; $("step2Badge").style.background = "#A7F3D0";
-      $("pauseResume").style.display = "none"; $("approveBtn").style.display = "none"; $("overrideInput").disabled = true;
+      s2.className = "rounded-zk border border-zk-border bg-zk-surface p-4";
+      $("step2Icon").className = "grid h-8 w-8 shrink-0 place-items-center rounded-full bg-emerald-50 text-emerald-600";
+      $("step2Icon").innerHTML = ICON.check;
+      $("step2Badge").textContent = "Completed"; $("step2Badge").className = "mt-1.5 inline-block rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-700";
+      $("pauseResume").style.display="none"; $("approveBtn").style.display="none"; $("overrideInput").disabled = true;
     } else {
-      $("pauseResume").innerHTML = st.running ? "⏸️ Pause him" : "▶️ Let him go";
-      $("step2Badge").textContent = st.approved ? "APPROVED — RESUMING" : st.held ? "GATE HOLD · TAP TO CLEAR" : "AWAITING YOUR INPUT";
-      $("step2Badge").style.background = st.approved ? "#A7F3D0" : "#FDE68A";
-      $("step2Icon").textContent = st.approved ? "🫡" : "⚠️";
+      s2.className = "rounded-zk border-2 " + (st.approved ? "border-emerald-400 bg-zk-surface" : "border-zk-accent bg-zk-surface") + " p-4 shadow-sm";
+      $("step2Icon").className = "grid h-8 w-8 shrink-0 place-items-center rounded-full " + (st.approved ? "bg-emerald-50 text-emerald-600" : "bg-zk-accentSoft text-zk-accent");
+      $("step2Icon").innerHTML = st.approved ? ICON.check : ICON.warn;
+      $("step2Badge").textContent = st.approved ? "Override approved — resuming" : st.held ? "Gate hold · approval required" : st.rewound ? "Rewound to checkpoint" : "Awaiting your input";
+      $("step2Badge").className = "mt-1.5 inline-block rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide " + (st.approved ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700");
       $("approveBtn").disabled = st.approved;
-      $("approveBtn").textContent = st.approved ? "Override approved ✓" : "Approve override 👍";
-      $("approveBtn").className = "bouncy rounded-full border-2 border-[#241C3A] px-8 py-4 text-sm font-extrabold text-white " + (st.approved ? "bg-gradient-to-br from-emerald-400 to-teal-400" : "animate-bounce bg-gradient-to-br from-fuchsia-500 via-violet-500 to-indigo-500");
+      $("approveBtn").className = "inline-flex h-11 items-center gap-2 rounded-full px-6 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600/20 " +
+        (st.approved ? "bg-emerald-50 text-emerald-700" : "bg-zk-accent text-white hover:bg-blue-700");
+      $("approveBtn").innerHTML = (st.approved ? "" : ICON.check) + (st.approved ? "Override approved" : "Approve override");
     }
 
     var s3 = $("step3Card");
     if(st.phase==="step2"){
-      s3.className = "rounded-[3rem_1.4rem_2.6rem_1.2rem] border-2 border-dashed border-[#241C3A] bg-white/60 px-5 py-4 opacity-70 transition-all duration-500 bouncy-sm";
-      s3.style.marginLeft = "2.5rem"; s3.style.transform = "rotate(1deg)"; s3.style.boxShadow = "4px 4px 0 0 rgba(36,28,58,.22)";
-      $("step3Icon").textContent = st.approved ? "🔓" : "🔒";
-      $("step3Icon").className = "grid h-9 w-9 shrink-0 place-items-center rounded-[50%_45%_55%_50%] border-2 border-[#241C3A] " + (st.approved?"bg-violet-200":"bg-slate-100");
-      $("step3Badge").textContent = st.approved ? "UNLOCKED" : "PENDING";
-      $("step3Badge").style.background = st.approved ? "#DDD6FE" : "#F1F5F9";
-      $("step3Note").textContent = st.approved ? "🔓 Unlocked · waiting for Step 2 to wrap up" : "◌ Queued behind gate G-02";
-      $("step3Note").className = "mt-2 pl-1 text-[10px] font-bold opacity-60";
-      $("step3Prog").className = "hidden"; $("step3Result").className = "hidden"; $("replayBtn").className = "hidden";
+      s3.className = "rounded-zk border border-dashed " + (st.approved ? "border-zk-accent/50 bg-zk-accentSoft/40 opacity-90" : "border-zk-border bg-zk-chip/40 opacity-70") + " p-4";
+      $("step3Icon").className = "grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white " + (st.approved ? "text-zk-accent" : "text-zk-text2");
+      $("step3Icon").innerHTML = st.approved ? ICON.unlock : ICON.lock;
+      $("step3Badge").textContent = st.approved ? "Unlocked · pending step 2" : "Pending approval";
+      $("step3Badge").className = "rounded-full border border-zk-border bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide " + (st.approved ? "text-zk-accent" : "text-zk-text2");
+      $("step3Note").textContent = st.approved ? "Unlocked and waiting for Step 2 to complete" : "Queued behind gate G-02";
+      $("step3Note").style.display=""; $("step3Prog").className="hidden"; $("step3Result").className="hidden"; $("replayBtn").className="hidden";
     } else if(st.phase==="step3"){
-      s3.className = "rounded-[3rem_1.4rem_2.6rem_1.2rem] border-2 border-[#241C3A] bg-gradient-to-br from-fuchsia-50 to-violet-100 px-5 py-4 transition-all duration-500 bouncy";
-      s3.style.marginLeft = "0"; s3.style.transform = "rotate(.8deg)"; s3.style.boxShadow = "6px 6px 0 0 rgba(36,28,58,.25)";
-      $("step3Icon").textContent = "🛠️"; $("step3Icon").className = "grid h-9 w-9 shrink-0 animate-bounce place-items-center rounded-[50%_45%_55%_50%] border-2 border-[#241C3A] bg-fuchsia-300 text-base";
-      $("step3Badge").textContent = "SYNTHESIZING…"; $("step3Badge").style.background = "#F5D0FE";
-      $("step3Note").className = "hidden"; $("step3Prog").className = "mt-3 space-y-2";
-    } else if(st.phase==="done"){
-      s3.className = "rounded-[3rem_1.4rem_2.6rem_1.2rem] border-2 border-[#241C3A] bg-gradient-to-br from-emerald-50 to-teal-50 px-5 py-4 transition-all duration-500 bouncy";
-      s3.style.marginLeft = "0"; s3.style.transform = "rotate(-1deg)"; s3.style.boxShadow = "6px 6px 0 0 rgba(36,28,58,.25)";
-      $("step3Icon").textContent = "✓"; $("step3Icon").className = "grid h-9 w-9 shrink-0 animate-bounce place-items-center rounded-[50%_45%_55%_50%] border-2 border-[#241C3A] bg-emerald-300 text-base";
-      $("step3Badge").textContent = "COMMITTED 🎉"; $("step3Badge").style.background = "#A7F3D0";
-      $("step3Note").textContent = "✔ Artifact sealed — PR #214 is green again!";
-      $("step3Note").className = "mt-2 pl-1 text-[10px] font-bold opacity-60";
-      $("step3Prog").className = "hidden"; $("step3Result").className = "mt-3 space-y-1 border-t-2 border-dashed border-[#241C3A]/30 pt-3 text-xs font-semibold opacity-80";
-      $("replayBtn").className = "mt-3 rotate-1 rounded-full border-2 border-[#241C3A] bg-white px-4 py-2 text-xs font-extrabold bouncy";
+      s3.className = "rounded-zk border-2 border-zk-accent bg-zk-surface p-4 shadow-sm";
+      $("step3Icon").className = "grid h-8 w-8 shrink-0 place-items-center rounded-full bg-zk-accentSoft text-zk-accent zk-pulse";
+      $("step3Icon").innerHTML = ICON.gear;
+      $("step3Badge").textContent = "Running · patch synthesis"; $("step3Badge").className = "rounded-full bg-zk-accentSoft px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-zk-accent";
+      $("step3Note").style.display="none"; $("step3Prog").className="mt-3 space-y-2 pl-11"; $("step3Result").className="hidden";
+    } else {
+      s3.className = "rounded-zk border border-zk-border bg-zk-surface p-4";
+      $("step3Icon").className = "grid h-8 w-8 shrink-0 place-items-center rounded-full bg-emerald-50 text-emerald-600";
+      $("step3Icon").innerHTML = ICON.check;
+      $("step3Badge").textContent = "Completed · committed"; $("step3Badge").className = "rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-700";
+      $("step3Note").style.display="none"; $("step3Prog").className="hidden";
+      $("step3Result").className = "mt-3 space-y-1.5 border-t border-dashed border-zk-border pt-3 pl-11 text-xs text-zk-text2";
+      $("replayBtn").className = "mt-3 inline-flex h-10 items-center gap-2 rounded-full border border-zk-border bg-zk-chip px-4 text-sm font-medium text-zk-text2 transition hover:bg-zk-border";
+      $("replayBtn").style.marginLeft = "2.75rem";
     }
 
-    /* gate footer + flow pills */
     var cleared = st.approved || st.phase==="done";
-    $("gateStatus").className = "flex items-center gap-2 " + (cleared?"text-emerald-700":"text-orange-600");
-    $("gateDot").className = "h-2 w-2 rounded-full " + (cleared?"bg-emerald-400":"animate-pulse bg-amber-400");
-    $("gateText").textContent = st.phase==="done" ? "Gate cleared · artifact committed to PR #214 🎉"
-      : cleared ? "Gate cleared · override approved by a real human 🫶"
-      : st.held ? "Gate G-02 · held at 74% — approval required 🙏"
+    $("gateStatus").className = "flex min-w-0 items-center gap-2 text-xs font-medium " + (cleared ? "text-emerald-700" : "text-amber-700");
+    $("gateDot").className = "h-2 w-2 shrink-0 rounded-full " + (cleared ? "bg-emerald-500" : "bg-amber-500 zk-pulse");
+    $("gateText").textContent = st.phase==="done" ? "Gate cleared · artifact committed to PR #214"
+      : cleared ? "Gate cleared · human approved the state override"
+      : st.held ? "Gate G-02 · held at 74% — approval required"
       : "Gate G-02 · 1 human action required";
-    $("pill04").textContent = cleared ? "CLEARED ✓" : "● GATE";
-    $("pill04").style.background = cleared ? "#A7F3D0" : "#FDE68A";
-    $("pill05").textContent = cleared ? "APPROVED 🫶" : "HUMAN";
-    $("pill05").style.background = cleared ? "#A7F3D0" : "#fff";
-    $("pill06").textContent = st.phase==="done" ? "COMMITTED 🎉" : "QUEUED";
-    $("pill06").style.background = st.phase==="done" ? "#A7F3D0" : "#fff";
-    $("flowGate").className = "rounded-[2.5rem_1.2rem_3rem_1.2rem] flex min-w-0 flex-1 flex-col gap-1 border-2 border-[#241C3A] bg-gradient-to-br from-amber-100 to-orange-200 px-4 py-3 bouncy" + (cleared?"":" animate-pulse");
-    $("flowGate").style.boxShadow = cleared ? "4px 4px 0 0 rgba(36,28,58,.2)" : "4px 4px 0 0 #F59E0B";
-    $("flowGate").style.transform = "rotate(2deg)";
-    $("flowOutput").style.boxShadow = st.phase==="done" ? "4px 4px 0 0 #34D399" : "4px 4px 0 0 rgba(36,28,58,.2)";
 
-    paintZiki();
+    /* flow strip */
+    function node(i, done, live, pill, pillCls){
+      var n = document.querySelectorAll(".flow-node")[i];
+      if(!n) return;
+      n.className = n.className.replace(/border-zk-border|border-emerald-300|border-zk-accent\/40|bg-zk-chip\/50|bg-emerald-50\/40|bg-zk-surface|bg-zk-accentSoft|bg-amber-50\/60|border-amber-300|border-zk-accent\/30/g,"").trim()
+        + " " + (done ? "border-emerald-300 bg-emerald-50/40" : live ? "border-amber-300 bg-amber-50/60" : n.getAttribute("data-i")==="2" ? "border-zk-accent/40 bg-zk-accentSoft" : "border-zk-border bg-zk-surface");
+      var p = n.querySelector(".f-pill");
+      p.textContent = pill; p.className = "f-pill rounded-full px-2 py-0.5 " + pillCls;
+    }
+    node(0,true,false,"Done","bg-emerald-100 text-emerald-700");
+    node(1,true,false,"Done","bg-emerald-100 text-emerald-700");
+    node(2,st.phase!=="step2",st.phase==="step2","Mounted","bg-white text-zk-accent");
+    node(3,cleared,!cleared,cleared?"Cleared":"Active","bg-emerald-100 text-emerald-700");
+    if(!cleared) document.querySelectorAll(".flow-node")[3].querySelector(".f-pill").className="f-pill rounded-full bg-amber-100 px-2 py-0.5 text-amber-700";
+    node(4,cleared,!cleared,cleared?"Approved":"Human","bg-emerald-100 text-emerald-700");
+    if(!cleared) document.querySelectorAll(".flow-node")[4].querySelector(".f-pill").className="f-pill rounded-full bg-zk-chip px-2 py-0.5 text-zk-text2";
+    node(5,st.phase==="done",st.phase==="step3",st.phase==="done"?"Committed":"Queued","bg-emerald-100 text-emerald-700");
+    if(st.phase!=="done") document.querySelectorAll(".flow-node")[5].querySelector(".f-pill").className="f-pill rounded-full bg-zk-chip px-2 py-0.5 text-zk-text2";
+
+    /* presence widget + feed chip */
+    var s = status();
+    $("zStatus").textContent = s.s;
+    $("zDot").className = "absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-white " + s.dot + (s.pulse?" zk-pulse":"");
+    $("zikiChip").textContent = s.chip;
   }
 
   setInterval(function(){
@@ -555,11 +624,11 @@
     if(st.phase==="step2"){
       var ceil = st.approved ? S2END : GATE;
       st.progress = Math.min(ceil, st.progress + 0.1*(st.approved?2.6:1.6));
-      if(!st.approved && st.progress>=GATE){ st.running=false; st.held=true; st.progress=GATE; logEv("Gate G-02 boing! 🛑 — stuck at 74% until a human approves"); }
-      else if(st.approved && st.progress>=S2END){ st.phase="step3"; st.progress=S2END; logEv("Step 2 finished with your override 🫡 — zooming into Step 3"); }
+      if(!st.approved && st.progress>=GATE){ st.running=false; st.held=true; st.progress=GATE; logEv("Gate G-02 held at 74% — approval required to continue"); }
+      else if(st.approved && st.progress>=S2END){ st.phase="step3"; st.progress=S2END; logEv("Step 2 completed with the approved override · Step 3 started"); }
     } else if(st.phase==="step3"){
       st.progress = Math.min(S3END, st.progress + 0.36);
-      if(st.progress>=S3END){ st.running=false; st.phase="done"; st.progress=S3END; logEv("Artifact committed · 8f3c1a2 → PR #214 🎨"); }
+      if(st.progress>=S3END){ st.running=false; st.phase="done"; st.progress=S3END; logEv("Step 3 complete · patch committed 8f3c1a2 to PR #214"); }
     }
     paint();
   }, 100);
@@ -567,66 +636,58 @@
   $("pauseResume").addEventListener("click", function(){
     if(st.phase==="done") return;
     if(!st.running && st.phase==="step2" && !st.approved && st.progress>=GATE){
-      st.held = true; logEv("Resume blocked 🚧 — gate G-02 needs your golden tap"); paint(); return;
+      st.held = true; logEv("Resume blocked · gate G-02 requires human approval"); paint(); return;
     }
     st.running = !st.running; st.held=false; st.rewound=false;
     if(st.running) st.step2At = st.elapsed;
-    logEv(st.running ? "Ziki resumes the boop cycle 🛠️" : "Paused by human · state preserved 🧊");
+    logEv(st.running ? "Step resumed by human action" : "Paused by user · state preserved at " + Math.round(st.progress) + "%");
     paint();
   });
 
   $("approveBtn").addEventListener("click", function(){
     if(st.phase==="done" || st.approved) return;
     st.approved = true; st.held=false; st.rewound=false; st.running=true; st.step2At=st.elapsed;
-    $("overrideNote").textContent = "Approved · locked into canvas state 🔒";
-    $("overrideNote").className = "text-[10px] font-bold opacity-50";
+    $("overrideNote").textContent = "Approved · override committed to canvas state";
+    $("overrideNote").className = "text-xs font-medium text-emerald-700";
     $("overrideInput").disabled = true;
-    logEv("Human approved override: filepath = " + $("overrideInput").value + " ✅");
+    logEv("Human approved override: filepath = " + $("overrideInput").value);
     paint();
   });
 
-  $("stepBack").addEventListener("click", function(){
-    st = { running:false, progress:33, elapsed:st.elapsed, phase:"step2", approved:false, rewound:true, held:false, step2At:0 };
+  function resetStep2(progress){
+    st = { running:false, progress:progress, elapsed:st.elapsed, phase:"step2", approved:false, rewound:(progress===33), held:false, step2At:0 };
     $("overrideInput").value = DEFAULT_PATH; $("overrideInput").disabled = false;
-    $("overrideNote").textContent = "Override discarded · restored to checkpoint ⏪";
-    $("overrideNote").className = "-rotate-1 rounded-full bg-fuchsia-100 px-2 py-0.5 text-[10px] font-bold text-fuchsia-800";
-    $("pauseResume").style.display = ""; $("approveBtn").style.display = "";
-    $("step2Card").className = "rounded-[1.2rem_3rem_1.4rem_2.6rem] border-2 border-[#241C3A] bg-gradient-to-br from-amber-100 to-orange-100 px-5 py-4 transition-all duration-300 md:ml-5 animate-pulse";
-    $("step2Card").style.transform = "rotate(.6deg)"; $("step2Card").style.boxShadow = "6px 6px 0 0 #F59E0B";
-    logEv("Step-back ⏪ — checkpoint restored at end of Step 1 (33%)");
+    $("pauseResume").style.display=""; $("approveBtn").style.display="";
+  }
+  $("stepBack").addEventListener("click", function(){
+    resetStep2(33);
+    $("overrideNote").textContent = "Override discarded · restored to checkpoint";
+    $("overrideNote").className = "text-xs text-zk-text2";
+    logEv("Step-back · checkpoint restored at end of Step 1 (33%)");
     paint();
   });
-
   $("replayBtn").addEventListener("click", function(){
     clockBase += Math.max(0, Math.floor(st.elapsed) - 4);
     st = { running:false, progress:66, elapsed:4.2, phase:"step2", approved:false, rewound:false, held:false, step2At:0 };
     $("overrideInput").value = DEFAULT_PATH; $("overrideInput").disabled = false;
-    $("overrideNote").textContent = "Editable · staged for human approval";
-    $("overrideNote").className = "text-[10px] font-bold opacity-50";
-    $("pauseResume").style.display = ""; $("approveBtn").style.display = "";
-    $("step2Card").className = "rounded-[1.2rem_3rem_1.4rem_2.6rem] border-2 border-[#241C3A] bg-gradient-to-br from-amber-100 to-orange-100 px-5 py-4 transition-all duration-300 md:ml-5 animate-pulse";
-    $("step2Card").style.transform = "rotate(.6deg)"; $("step2Card").style.boxShadow = "6px 6px 0 0 #F59E0B";
-    logEv("Canvas reset 🔄 — replay armed at gate G-02");
+    $("overrideNote").textContent = "Editable and staged for human approval";
+    $("overrideNote").className = "text-xs text-zk-text2";
+    $("pauseResume").style.display=""; $("approveBtn").style.display="";
+    logEv("Canvas reset · replay armed at gate G-02");
     paint();
   });
 
   $("overrideInput").addEventListener("input", function(){
     var dirty = this.value !== DEFAULT_PATH && !st.approved;
-    $("overrideNote").textContent = dirty ? "Staged change — Ziki won't touch it yet! ✋" : "Editable · staged for human approval";
-    $("overrideNote").className = dirty ? "-rotate-1 rounded-full bg-fuchsia-100 px-2 py-0.5 text-[10px] font-bold text-fuchsia-800" : "text-[10px] font-bold opacity-50";
-    $("ovrWrap").className = "mt-1 flex items-center gap-2 rounded-full border-2 border-[#241C3A] bg-white px-4 py-2" + (dirty ? " animate-pulse ring-4 ring-fuchsia-300" : "");
+    $("overrideNote").textContent = dirty ? "Staged change · awaiting human approval" : "Editable and staged for human approval";
+    $("overrideNote").className = "text-xs " + (dirty ? "font-medium text-amber-700" : "text-zk-text2");
   });
 
   $("step1Toggle").addEventListener("click", function(){
     var d = $("step1Details"), open = d.className.indexOf("hidden") === -1;
-    d.className = "mt-3 space-y-2 border-t-2 border-dashed border-[#241C3A]/30 pt-3 text-xs font-semibold opacity-80" + (open ? " hidden" : "");
-    this.setAttribute("aria-expanded", !open);
+    d.className = "mt-3 space-y-1.5 border-t border-dashed border-zk-border pt-3 text-xs text-zk-text2" + (open ? " hidden" : "");
+    this.setAttribute("aria-expanded", String(!open));
     $("step1Chev").style.transform = open ? "" : "rotate(180deg)";
-  });
-
-  $("zBody").addEventListener("click", function(){
-    this.style.transition = "transform .2s"; this.style.transform = "rotate(14deg) scale(1.2)";
-    setTimeout(function(){ $("zBody").style.transform = ""; }, 300);
   });
 
   /* ---------------- boot ---------------- */
