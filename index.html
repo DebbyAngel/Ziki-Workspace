@@ -69,6 +69,44 @@ tailwind.config = {
   .orbit i:nth-child(4){top:50%;left:0;margin-top:-3.5px;background:#D9D2FF}
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
   @media (max-width:640px){.hide-sm{display:none!important}#widget{left:12px;right:12px;width:auto!important}#card{max-height:calc(100vh - 110px);overflow-y:auto}}
+
+  /* ============ whimsy: cursor · hover · click ============ */
+  @keyframes wzSpark{0%{opacity:0;transform:translate(-50%,-50%) scale(.35) rotate(0)}30%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--sx,0px)),calc(-50% + var(--sy,-20px))) scale(1.1) rotate(var(--sr,90deg))}}
+  @keyframes wzRipple{0%{opacity:.85;transform:translate(-50%,-50%) scale(.3)}100%{opacity:0;transform:translate(-50%,-50%) scale(2)} }
+  @keyframes wzSweep{0%{translate:-120% 0}55%,100%{translate:120% 0}}
+
+  body.whimsy,body.whimsy *{cursor:none!important}
+  body.whimsy :is(input,textarea,select){cursor:auto!important}
+
+  #wzFx{position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden}
+  .wz-dot{position:fixed;top:0;left:0;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:9999px;background:#0B1733;pointer-events:none;z-index:10001;opacity:0;transition:opacity .2s,background .2s}
+  .wz-blob{position:fixed;top:0;left:0;width:32px;height:32px;margin:-16px 0 0 -16px;border:2px solid rgba(11,23,51,.55);border-radius:44% 56% 52% 48%/48% 44% 56% 52%;
+    background:radial-gradient(circle at 34% 28%,rgba(201,228,255,.95),rgba(217,210,255,.85) 55%,rgba(255,211,225,.85));
+    box-shadow:0 8px 18px -8px rgba(46,111,239,.7);pointer-events:none;z-index:10000;opacity:0;overflow:hidden;will-change:transform;
+    transition:opacity .25s,width .3s cubic-bezier(.34,1.56,.64,1),height .3s cubic-bezier(.34,1.56,.64,1),margin .3s cubic-bezier(.34,1.56,.64,1),background .3s,border-color .3s,border-style .3s,scale .18s cubic-bezier(.34,1.56,.64,1)}
+  .wz-blob::after{content:"";position:absolute;inset:-40%;background:conic-gradient(from 0deg,transparent,rgba(255,255,255,.85),transparent 55%);animation:spin 3.4s linear infinite;opacity:.55}
+  .wz-blob.wz-hot{width:56px;height:56px;margin:-28px 0 0 -28px;border-style:dashed;border-color:#2E6FEF;
+    background:radial-gradient(circle at 40% 35%,rgba(201,228,255,.6),rgba(217,210,255,.4));
+    box-shadow:0 0 0 7px rgba(46,111,239,.09),0 10px 22px -12px rgba(46,111,239,.8)}
+  .wz-blob.wz-press{scale:.72}
+  .wz-blob.wz-hide{opacity:0!important}
+  .wz-spark{position:fixed;left:0;top:0;line-height:1;pointer-events:none;will-change:transform;animation:wzSpark .95s ease-out forwards}
+  .wz-bit{position:fixed;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:3px;pointer-events:none;animation:confetti 1s ease-out forwards}
+  .wz-ripple{position:fixed;width:26px;height:26px;border:2px solid #2E6FEF;border-radius:9999px;pointer-events:none;animation:wzRipple .55s ease-out forwards}
+
+  .wz-magnet{transition:translate .34s cubic-bezier(.34,1.56,.64,1)}
+  .wz-tilt{transition:rotate .5s cubic-bezier(.34,1.56,.64,1),translate .5s cubic-bezier(.34,1.56,.64,1),box-shadow .35s ease-out}
+  #faceWrap{will-change:translate}
+
+  main section{transition:box-shadow .35s ease-out}
+  main section:hover{box-shadow:11px 11px 0 0 rgba(11,23,51,.12)}
+  header nav a:hover svg{animation:wiggle .55s ease-in-out 2}
+  #steps li,#feed li,#thread li{transition:translate .3s cubic-bezier(.34,1.56,.64,1),transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s,border-color .3s,background-color .3s}
+  #steps li:hover{translate:5px -1px}
+  #feed li:hover,#thread li:hover{translate:3px 0}
+  #pgFill{position:relative;overflow:hidden}
+  #pgFill::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);translate:-120% 0;animation:wzSweep 2.8s ease-in-out infinite}
+  #widget #card:hover{border-color:#2E6FEF}
 </style>
 </head>
 <body class="min-h-screen pb-10">
@@ -103,7 +141,7 @@ tailwind.config = {
       </nav>
 
       <div class="ml-auto flex items-center gap-2">
-        <button class="hide-sm inline-flex h-9 items-center gap-1.5 rounded-full border-2 border-zk-border bg-zk-surface px-3 text-[12.5px] font-bold text-zk-text transition-all hover:-translate-y-0.5 hover:shadow-chunk active:scale-95">
+        <button data-act="agents" aria-haspopup="dialog" aria-expanded="false" class="hide-sm inline-flex h-9 items-center gap-1.5 rounded-full border-2 border-zk-border bg-zk-surface px-3 text-[12.5px] font-bold text-zk-text transition-all hover:-translate-y-0.5 hover:shadow-chunk active:scale-95">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2E6FEF" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="4"/><path d="M12 7V4"/></svg>Agents
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
         </button>
@@ -113,9 +151,9 @@ tailwind.config = {
         </span>
         <span class="inline-flex h-9 items-center gap-1.5 rounded-full border-2 border-zk-warnbd bg-candy-butter px-3 font-mono text-[12px] font-bold text-zk-warnfg">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v6a5 5 0 0 1-10 0z"/><path d="M8 20h8M12 15v5"/></svg>15 pts</span>
-        <button class="relative grid h-9 w-9 place-items-center rounded-full text-zk-text2 transition-colors hover:bg-zk-chip" aria-label="Inbox">
+        <button data-act="bell" aria-haspopup="dialog" aria-expanded="false" class="relative grid h-9 w-9 place-items-center rounded-full text-zk-text2 transition-colors hover:bg-zk-chip" aria-label="Inbox, 1 unread">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
-          <span class="absolute right-1 top-1 h-2 w-2 rounded-full bg-zk-badfg a-breathe"></span>
+          <span id="bellDot" class="absolute right-1 top-1 h-2 w-2 rounded-full bg-zk-badfg a-breathe"></span>
         </button>
       </div>
     </div>
@@ -135,17 +173,17 @@ tailwind.config = {
       <div class="flex flex-wrap items-center gap-2 text-[11px] font-bold">
         <span class="rounded-full border-2 border-zk-badbd bg-zk-badbg px-2.5 py-0.5 uppercase tracking-wider text-zk-badfg">Bug</span>
         <span class="rounded-full border-2 border-zk-border bg-zk-chip px-2.5 py-0.5 uppercase tracking-wider text-zk-muted">Priority &middot; High</span>
-        <span class="rounded-full border-2 border-zk-warnbd bg-candy-butter px-2.5 py-0.5 text-zk-warnfg">Reward $18</span>
-        <span class="rounded-full border-2 border-electric-strong/30 bg-zk-tint px-2.5 py-0.5 text-zk-infofg">7 votes</span>
+        <button type="button" data-act="reward" aria-haspopup="dialog" aria-expanded="false" class="rounded-full border-2 border-zk-warnbd bg-candy-butter px-2.5 py-0.5 text-zk-warnfg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-chunk active:scale-95">Reward $18</button>
+        <button type="button" data-act="vote" aria-pressed="false" aria-label="Upvote this issue" class="rounded-full border-2 border-electric-strong/30 bg-zk-tint px-2.5 py-0.5 text-zk-infofg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-chunk active:scale-95"><span id="voteCount">7</span> votes</button>
       </div>
       <h1 class="mt-3 font-display text-[26px] font-bold leading-[1.15] sm:text-[32px]">Reward badge shows $0 while estimates are still open</h1>
 
       <div class="mt-4 flex flex-wrap items-center gap-2 text-[11.5px] font-bold">
-        <span class="rounded-full border-2 border-zk-okfg/25 bg-zk-okbg px-3 py-1 text-zk-okfg">Idea</span>
+        <button type="button" data-act="stage" data-stage="idea" aria-current="false" class="rounded-full border-2 border-zk-okfg/25 bg-zk-okbg px-3 py-1 text-zk-okfg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-chunk active:scale-95">Idea</button>
         <span class="text-zk-muted">&rarr;</span>
-        <span class="rounded-full border-2 border-electric-strong bg-electric-strong px-3 py-1 text-white shadow-chunkBlue">In progress</span>
+        <button type="button" data-act="stage" data-stage="progress" aria-current="step" class="rounded-full border-2 border-electric-strong bg-electric-strong px-3 py-1 text-white shadow-chunkBlue transition-all duration-300 hover:-translate-y-0.5 hover:shadow-pop active:scale-95">In progress</button>
         <span class="text-zk-muted">&rarr;</span>
-        <span class="rounded-full border-2 border-dashed border-zk-border bg-zk-chip px-3 py-1 text-zk-muted">Done</span>
+        <button type="button" data-act="stage" data-stage="done" aria-current="false" class="rounded-full border-2 border-dashed border-zk-border bg-zk-chip px-3 py-1 text-zk-muted transition-all duration-300 hover:-translate-y-0.5 hover:shadow-chunk active:scale-95">Done</button>
       </div>
 
       <div class="mt-5">
@@ -192,7 +230,7 @@ tailwind.config = {
     <span class="relative grid h-11 w-11 shrink-0 place-items-center">
       <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
         <circle cx="22" cy="22" r="18" fill="none" stroke="#E3E8F2" stroke-width="4"/>
-        <circle id="pillRing" class="ring" cx="22" cy="22" r="18" fill="none" stroke="#2E6FEF" stroke-width="4" stroke-linecap="round" stroke-dasharray="113" stroke-dashoffset="68" transform="rotate(-90) 22 22"/>
+        <circle id="pillRing" class="ring" cx="22" cy="22" r="18" fill="none" stroke="#2E6FEF" stroke-width="4" stroke-linecap="round" stroke-dasharray="113" stroke-dashoffset="68" transform="rotate(-90 22 22)"/>
       </svg>
       <span class="absolute text-[10px] font-bold text-navy-slate" id="pillPct">2/5</span>
       <span id="pillAlert" class="absolute -right-0.5 -top-0.5 grid h-4 w-4 place-items-center rounded-full bg-candy-butter font-mono text-[9px] font-bold text-zk-warnfg a-breathe">!</span>
@@ -229,6 +267,9 @@ tailwind.config = {
           <span id="stateLine" class="truncate text-[11.5px] text-zk-muted">Patching the estimate label</span>
         </p>
       </div>
+      <button id="pause" data-act="pause" aria-pressed="false" aria-label="Pause the agent" title="Pause the agent" class="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-zk-border bg-zk-surface text-zk-text2 transition-all duration-300 hover:-translate-y-0.5 hover:bg-candy-butter active:scale-95">
+        <svg id="pauseIcon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7" y="5" width="3.4" height="14" rx="1.4"/><rect x="13.6" y="5" width="3.4" height="14" rx="1.4"/></svg>
+      </button>
       <button id="collapse" class="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-zk-border bg-zk-surface text-zk-text2 transition-all duration-300 hover:-translate-y-0.5 hover:bg-candy-sky active:scale-95" aria-label="Collapse">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="m6 10 6 6 6-6"/></svg>
       </button>
@@ -239,12 +280,12 @@ tailwind.config = {
       <span class="relative grid h-14 w-14 shrink-0 place-items-center">
         <svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
           <circle cx="28" cy="28" r="24" fill="none" stroke="#E3E8F2" stroke-width="5"/>
-          <circle id="ring" class="ring" cx="28" cy="28" r="24" fill="none" stroke="#2E6FEF" stroke-width="5" stroke-linecap="round" stroke-dasharray="151" stroke-dashoffset="90" transform="rotate(-90) 28 28"/>
+          <circle id="ring" class="ring" cx="28" cy="28" r="24" fill="none" stroke="#2E6FEF" stroke-width="5" stroke-linecap="round" stroke-dasharray="151" stroke-dashoffset="90" transform="rotate(-90 28 28)"/>
         </svg>
         <span class="absolute font-mono text-[11px] font-bold text-navy-slate" id="ringPct">2/5</span>
       </span>
       <div class="min-w-0 flex-1">
-        <p class="font-mono text-[10px] font-bold uppercase tracking-widest text-electric-strong">Live progress</p>
+        <p id="liveLabel" class="font-mono text-[10px] font-bold uppercase tracking-widest text-electric-strong">Live progress</p>
         <p class="mt-0.5 text-[12.5px] text-zk-text2" id="elapsed">on it for 00:12 · <span class="font-mono font-bold text-zk-warnfg">due in 02:00:00</span></p>
       </div>
     </div>
@@ -284,14 +325,14 @@ tailwind.config = {
     <div id="evidence" class="mx-4 mt-3 hidden rounded-blob2 border-2 border-zk-border bg-zk-bg p-3.5">
       <p class="font-mono text-[10px] font-bold uppercase tracking-widest text-electric-strong">Evidence: 2 screenshots and test results</p>
       <div class="mt-2 grid grid-cols-2 gap-2">
-        <div class="rounded-blob4 border-2 border-zk-border bg-zk-surface p-2 transition-transform duration-300 hover:-translate-y-1 hover:rotate-1">
-          <div class="h-12 rounded-blob3 bg-gradient-to-br from-candy-sky to-candy-lilac"></div>
-          <p class="mt-1.5 font-mono text-[10px] text-zk-muted">before · $0</p>
-        </div>
-        <div class="rounded-blob4 border-2 border-zk-border bg-zk-surface p-2 transition-transform duration-300 hover:-translate-y-1 hover:-rotate-1">
-          <div class="h-12 rounded-blob3 bg-gradient-to-br from-candy-mint to-candy-butter"></div>
-          <p class="mt-1.5 font-mono text-[10px] text-zk-muted">after · $6 · 2 of 3</p>
-        </div>
+        <button type="button" data-act="evidence" data-ev="before" aria-haspopup="dialog" aria-expanded="false" class="rounded-blob4 border-2 border-zk-border bg-zk-surface p-2 text-left transition-transform duration-300 hover:-translate-y-1 hover:rotate-1 active:scale-95">
+          <span class="block h-12 rounded-blob3 bg-gradient-to-br from-candy-sky to-candy-lilac"></span>
+          <span class="mt-1.5 block font-mono text-[10px] text-zk-muted">before · $0</span>
+        </button>
+        <button type="button" data-act="evidence" data-ev="after" aria-haspopup="dialog" aria-expanded="false" class="rounded-blob4 border-2 border-zk-border bg-zk-surface p-2 text-left transition-transform duration-300 hover:-translate-y-1 hover:-rotate-1 active:scale-95">
+          <span class="block h-12 rounded-blob3 bg-gradient-to-br from-candy-mint to-candy-butter"></span>
+          <span class="mt-1.5 block font-mono text-[10px] text-zk-muted">after · $6 · 2 of 3</span>
+        </button>
       </div>
       <pre class="mt-2 overflow-x-auto rounded-blob4 bg-slate-950 p-3 font-mono text-[10.5px] leading-relaxed text-emerald-400">✓ reward-badge: shows estimate midpoint
 ✓ reward-badge: title reads "2 of 3 estimates"
@@ -433,7 +474,7 @@ tailwind.config = {
         : isDone ? '<span class="font-mono text-[11px] font-bold text-zk-okfg">✓</span>'
         : isLive ? '<span class="h-2 w-2 rounded-full bg-electric-strong a-breathe"></span>'
         : '<span class="h-2 w-2 rounded-full bg-zk-border"></span>';
-      return '<li class="flex items-center gap-2 rounded-blob4 border-2 px-3 py-2 text-[12px] font-semibold ' + tone + ' ' + (k % 2 ? "ml-3" : "ml-1") + '">' +
+      return '<li data-act="step" data-i="' + k + '" role="button" tabindex="0" class="flex cursor-pointer items-center gap-2 rounded-blob4 border-2 px-3 py-2 text-[12px] font-semibold ' + tone + ' ' + (k % 2 ? "ml-3" : "ml-1") + '">' +
         mark + '<span class="min-w-0 flex-1 truncate ' + (isDone ? "text-zk-text2" : "text-zk-text") + '">' + s + "</span>" +
         (isLive ? '<span class="caret font-mono text-[10px] text-electric-strong"></span>' : "") +
         (held ? '<span class="font-mono text-[9.5px] font-bold uppercase tracking-wider text-zk-warnfg">paused</span>' : "") +
@@ -607,7 +648,363 @@ tailwind.config = {
     if (st.phase === "working" && st.step >= 4 && Date.now() >= st.deliverAt) deliver();
     paint();
   }, 1000);
-  setInterval(advance, 3400);
+  let advTimer = setInterval(advance, 3400);
+  window.zikiAgent = {
+    paused: function () { return !advTimer; },
+    pause: function () { if (advTimer) { clearInterval(advTimer); advTimer = null; } },
+    resume: function () { if (!advTimer) advTimer = setInterval(advance, 3400); }
+  };
+})();
+</script>
+
+<script>
+/* ================= whimsy: cursor · hover · click ================= */
+(function () {
+  "use strict";
+  const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!fine || calm) return;
+
+  document.body.classList.add("whimsy");
+
+  const CANDY = ["#2E6FEF", "#C7F5E4", "#FFE9A8", "#D9D2FF", "#FFD3E1", "#C9E4FF"];
+  const near = (el, sel) => (el && el.closest ? el.closest(sel) : null);
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+
+  const fx = document.createElement("div");
+  fx.id = "wzFx";
+  fx.setAttribute("aria-hidden", "true");
+  const blob = document.createElement("div");
+  blob.className = "wz-blob";
+  blob.setAttribute("aria-hidden", "true");
+  const dot = document.createElement("div");
+  dot.className = "wz-dot";
+  dot.setAttribute("aria-hidden", "true");
+  document.body.append(fx, blob, dot);
+
+  let px = window.innerWidth / 2, py = window.innerHeight / 2;
+  let bx = px, by = py, nx = 0, ny = 0, pnx = 0, pny = 0, live = false, lastSpark = 0;
+
+  /* ---------- sparkles ---------- */
+  function spark(x, y, force) {
+    const t = performance.now();
+    if (!force && t - lastSpark < 55) return;
+    lastSpark = t;
+    if (fx.childElementCount > 44) return;
+    const s = document.createElement("span");
+    s.className = "wz-spark";
+    s.textContent = pick(["✦", "✧", "✺", "·"]);
+    s.style.color = pick(CANDY);
+    s.style.left = x + "px";
+    s.style.top = y + "px";
+    s.style.fontSize = rnd(9, 16).toFixed(0) + "px";
+    s.style.setProperty("--sx", rnd(-16, 16).toFixed(0) + "px");
+    s.style.setProperty("--sy", rnd(-26, 4).toFixed(0) + "px");
+    s.style.setProperty("--sr", rnd(-140, 140).toFixed(0) + "deg");
+    fx.appendChild(s);
+    setTimeout(() => s.remove(), 1000);
+  }
+
+  function bit(x, y) {
+    const b = document.createElement("i");
+    b.className = "wz-bit";
+    b.style.left = x + "px";
+    b.style.top = y + "px";
+    b.style.background = pick(CANDY);
+    b.style.setProperty("--dx", rnd(-90, 90).toFixed(0) + "px");
+    b.style.setProperty("--dy", rnd(-165, -40).toFixed(0) + "px");
+    b.style.setProperty("--rot", rnd(-360, 360).toFixed(0) + "deg");
+    fx.appendChild(b);
+    setTimeout(() => b.remove(), 1150);
+  }
+
+  /* ---------- the cursor ---------- */
+  document.addEventListener("pointermove", (e) => {
+    px = e.clientX;
+    py = e.clientY;
+    nx = (px / window.innerWidth - 0.5) * 2;
+    ny = (py / window.innerHeight - 0.5) * 2;
+    if (!live) { live = true; blob.style.opacity = "1"; dot.style.opacity = "1"; }
+    dot.style.transform = "translate3d(" + px + "px," + py + "px,0)";
+    const textZone = !!near(e.target, "input,textarea,select");
+    const hot = !!near(e.target, "a,button,[role=button],.gate-btn,.verdict-btn,label");
+    blob.classList.toggle("wz-hot", hot && !textZone);
+    blob.classList.toggle("wz-hide", textZone);
+    dot.style.opacity = textZone ? "0" : "1";
+    dot.style.background = hot ? "#2E6FEF" : "#0B1733";
+    if (!textZone) spark(px, py);
+  }, { passive: true });
+
+  document.addEventListener("mouseleave", () => {
+    live = false;
+    blob.style.opacity = "0";
+    dot.style.opacity = "0";
+  });
+
+  const parallax = Array.from(document.querySelectorAll(".candy-blob"));
+  const face = document.getElementById("faceWrap");
+
+  (function loop() {
+    bx += (px - bx) * 0.16;
+    by += (py - by) * 0.16;
+    blob.style.transform = "translate3d(" + bx.toFixed(2) + "px," + by.toFixed(2) + "px,0)";
+    pnx += (nx - pnx) * 0.07;
+    pny += (ny - pny) * 0.07;
+    parallax.forEach((b, i) => {
+      b.style.translate = (pnx * (7 + i * 5)).toFixed(2) + "px " + (pny * (6 + i * 4)).toFixed(2) + "px";
+    });
+    if (face) face.style.translate = (pnx * 5).toFixed(2) + "px " + (pny * 4).toFixed(2) + "px";
+    requestAnimationFrame(loop);
+  })();
+
+  /* ---------- click ---------- */
+  document.addEventListener("pointerdown", (e) => {
+    blob.classList.add("wz-press");
+    const r = document.createElement("span");
+    r.className = "wz-ripple";
+    r.style.left = e.clientX + "px";
+    r.style.top = e.clientY + "px";
+    fx.appendChild(r);
+    setTimeout(() => r.remove(), 620);
+
+    const hit = near(e.target, "a,button,[role=button],.gate-btn,.verdict-btn,label,input,textarea");
+    const n = hit ? 10 : 4;
+    for (let i = 0; i < n; i++) bit(e.clientX, e.clientY);
+    if (hit) for (let i = 0; i < 3; i++) spark(e.clientX, e.clientY, true);
+  }, true);
+
+  document.addEventListener("pointerup", () => setTimeout(() => blob.classList.remove("wz-press"), 80), true);
+
+  /* ---------- hover ---------- */
+  let lastHot = null;
+  document.addEventListener("pointerover", (e) => {
+    const t = near(e.target, "a,button,[role=button],.gate-btn,.verdict-btn");
+    if (!t) { lastHot = null; return; }
+    if (t === lastHot) return;
+    lastHot = t;
+    const r = t.getBoundingClientRect();
+    for (let i = 0; i < 3; i++) spark(r.left + rnd(4, Math.max(6, r.width - 4)), r.top + rnd(0, r.height), true);
+  }, true);
+
+  function magnet(el, sx, sy) {
+    if (!el) return;
+    el.classList.add("wz-magnet");
+    el.addEventListener("pointermove", (e) => {
+      const r = el.getBoundingClientRect();
+      const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2 || 1);
+      const dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2 || 1);
+      el.style.translate = (dx * sx).toFixed(1) + "px " + (dy * sy).toFixed(1) + "px";
+    });
+    el.addEventListener("pointerleave", () => { el.style.translate = "0px 0px"; });
+  }
+
+  function tilt(el, max) {
+    if (!el) return;
+    el.classList.add("wz-tilt");
+    el.addEventListener("pointermove", (e) => {
+      const r = el.getBoundingClientRect();
+      const dx = (e.clientX - (r.left + r.width / 2)) / r.width;
+      const dy = (e.clientY - (r.top + r.height / 2)) / r.height;
+      el.style.rotate = (-dy * max).toFixed(2) + "deg";
+      el.style.translate = (dx * 7).toFixed(1) + "px " + (dy * 5).toFixed(1) + "px";
+    });
+    el.addEventListener("pointerleave", () => {
+      el.style.rotate = "0deg";
+      el.style.translate = "0px 0px";
+    });
+  }
+
+  document.querySelectorAll(".gate-btn,.verdict-btn,#askSend,#collapse,#customSend,#customToggle,#pill,header nav a,header button")
+    .forEach((el) => magnet(el, 6, 5));
+  document.querySelectorAll("main section").forEach((el) => tilt(el, 1.6));
+  tilt(document.getElementById("card"), 1.2);
+
+  window.whimsyFX = {
+    spark: spark,
+    burst: function (x, y, n) {
+      for (let i = 0; i < (n || 8); i++) bit(x + rnd(-6, 6), y + rnd(-4, 4));
+      for (let i = 0; i < 2; i++) spark(x, y, true);
+    }
+  };
+})();
+</script>
+
+<script>
+/* ================= clickable human affordances ================= */
+(function () {
+  "use strict";
+  const q = (s, r) => (r || document).querySelector(s);
+  const id = (i) => document.getElementById(i);
+  const fx = window.whimsyFX;
+
+  const pop = document.createElement("div");
+  pop.id = "popover";
+  pop.setAttribute("role", "dialog");
+  pop.setAttribute("aria-label", "Detail");
+  pop.className = "hidden fixed z-50 rounded-blob4 border-2 border-navy-ocean bg-zk-surface p-3.5 shadow-chunkLg";
+  document.body.appendChild(pop);
+
+  let owner = null;
+
+  function close() {
+    if (owner) {
+      owner.setAttribute("aria-expanded", "false");
+      owner.classList.remove("ring-2", "ring-electric-strong/50");
+      owner = null;
+    }
+    pop.classList.add("hidden");
+    pop.innerHTML = "";
+  }
+
+  function open(anchor, html, width) {
+    if (owner === anchor) return close();
+    if (owner) {
+      owner.setAttribute("aria-expanded", "false");
+      owner.classList.remove("ring-2", "ring-electric-strong/50");
+    }
+    pop.style.width = (width || 268) + "px";
+    pop.innerHTML = html;
+    pop.classList.remove("hidden", "a-pop");
+    void pop.offsetWidth;
+    pop.classList.add("a-pop");
+    const r = anchor.getBoundingClientRect();
+    const pw = pop.offsetWidth;
+    const ph = pop.offsetHeight;
+    const x = Math.min(Math.max(8, r.left), Math.max(8, window.innerWidth - pw - 8));
+    let y = r.bottom + 8;
+    if (y + ph > window.innerHeight - 8) y = Math.max(8, r.top - ph - 8);
+    pop.style.left = x + "px";
+    pop.style.top = y + "px";
+    owner = anchor;
+    anchor.setAttribute("aria-expanded", "true");
+    anchor.classList.add("ring-2", "ring-electric-strong/50");
+  }
+
+  const label = (t) => '<p class="font-mono text-[10px] font-bold uppercase tracking-widest text-electric-strong">' + t + "</p>";
+
+  function handle(act, el) {
+    if (act === "reward") {
+      open(el, label("Reward · estimated") +
+        '<p class="mt-1.5 font-display text-[24px] font-bold leading-none">$12 – $24</p>' +
+        '<p class="mt-1.5 text-[11.5px] leading-relaxed text-zk-text2">2 of 3 estimates are in — midpoint <b class="font-mono text-zk-text">$18</b>. Nothing is confirmed until a maintainer sets it, which is exactly what #4817 is about.</p>' +
+        '<p class="mt-2.5 rounded-blob4 bg-candy-butter/60 px-2.5 py-1.5 font-mono text-[10.5px] font-bold text-zk-warnfg">badge today: $18 · confirmed</p>');
+    }
+
+    if (act === "vote") {
+      const on = el.getAttribute("aria-pressed") !== "true";
+      el.setAttribute("aria-pressed", on ? "true" : "false");
+      q("#voteCount", el).textContent = on ? "8" : "7";
+      el.style.background = on ? "#E7F0FF" : "";
+      el.style.borderColor = on ? "#2E6FEF" : "";
+      const r = el.getBoundingClientRect();
+      if (fx) fx.burst(r.left + r.width / 2, r.top + r.height / 2, on ? 10 : 4);
+      close();
+    }
+
+    if (act === "stage") {
+      const ON = {
+        idea: "border-zk-okfg bg-zk-okbg text-zk-okfg",
+        progress: "border-electric-strong bg-electric-strong text-white shadow-chunkBlue",
+        done: "border-zk-okfg bg-zk-okfg text-white shadow-chunk"
+      };
+      const OFF = "border-dashed border-zk-border bg-zk-chip text-zk-muted";
+      const names = { idea: "Idea", progress: "In progress", done: "Done" };
+      document.querySelectorAll('[data-act="stage"]').forEach((b) => {
+        const active = b === el;
+        b.className = "rounded-full border-2 px-3 py-1 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-chunk active:scale-95 " + (active ? ON[b.dataset.stage] : OFF);
+        if (active) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current");
+      });
+      id("nextStep").textContent = "Ziki: you moved #4817 to " + names[el.dataset.stage] + " — Pulse Analytics has been notified.";
+      const r = el.getBoundingClientRect();
+      if (fx) fx.burst(r.left + r.width / 2, r.top + r.height / 2, 8);
+      close();
+    }
+
+    if (act === "agents") {
+      const row = (initials, name, note, tone) =>
+        '<li class="flex items-center gap-2"><span class="grid h-7 w-7 shrink-0 place-items-center rounded-blob2 ' + tone + ' text-[9.5px] font-bold text-navy-slate">' + initials + '</span><span class="min-w-0"><span class="block text-[12px] font-bold text-zk-text">' + name + '</span><span class="block text-[10.5px] text-zk-muted">' + note + "</span></span></li>";
+      open(el, label("Agents on #4817") + '<ul class="mt-2 space-y-2">' +
+        row("PA", "Pulse Analytics", "working · step 3 of 5", "bg-candy-sky") +
+        row("SE", "Sentry", "idle · waiting on evidence", "bg-candy-mint") +
+        row("MO", "Moss", "reviewing · merge rights", "bg-candy-lilac") + "</ul>");
+    }
+
+    if (act === "bell") {
+      const dot = id("bellDot");
+      const unread = dot && dot.style.display !== "none";
+      if (unread) {
+        dot.style.display = "none";
+        el.setAttribute("aria-label", "Inbox, all read");
+      }
+      open(el, label("Inbox") +
+        '<p class="mt-1.5 text-[12px] font-bold text-zk-text">' + (unread ? "Marked all read." : "All caught up.") + "</p>" +
+        '<p class="mt-1 text-[11.5px] leading-relaxed text-zk-text2">Ziki pings you only when an agent opens a gate or a delivery needs your verdict.</p>');
+    }
+
+    if (act === "evidence") {
+      const before = el.dataset.ev === "before";
+      open(el, label("Screenshot · " + (before ? "before" : "after")) +
+        '<div class="mt-2 h-36 rounded-blob3 border-2 border-zk-border bg-gradient-to-br ' + (before ? "from-candy-sky to-candy-lilac" : "from-candy-mint to-candy-butter") + '"></div>' +
+        '<p class="mt-2 font-mono text-[10.5px] text-zk-muted">' + (before ? "before · badge reads $0" : "after · $6 · 2 of 3 estimates") + "</p>" +
+        (before ? "" : '<pre class="mt-2 overflow-x-auto rounded-blob4 bg-slate-950 p-2.5 font-mono text-[10px] leading-relaxed text-emerald-400">✓ 41 tests passed in 2.4s</pre>'), 300);
+    }
+
+    if (act === "step") {
+      const detail = [
+        "Claimed 09:32 · two-hour delivery window",
+        "3 files read · reward-badge.tsx, reward-badge.test.tsx, use-reward.ts",
+        "1 file changed · +12 −4 · estimate label only",
+        "41 tests · 2.4s · no snapshots changed",
+        "Not started · waits for the other four"
+      ];
+      const i = Number(el.dataset.i);
+      open(el, label("Step " + (i + 1) + " of 5") +
+        '<p class="mt-1.5 text-[12.5px] font-bold text-zk-text">' + el.textContent.trim() + "</p>" +
+        '<p class="mt-1 font-mono text-[10.5px] leading-relaxed text-zk-muted">' + (detail[i] || "") + "</p>", 252);
+    }
+
+    if (act === "pause") {
+      const agent = window.zikiAgent;
+      if (!agent) return;
+      const wasPaused = agent.paused();
+      if (wasPaused) agent.resume(); else agent.pause();
+      el.setAttribute("aria-pressed", String(!wasPaused));
+      el.setAttribute("aria-label", wasPaused ? "Pause the agent" : "Resume the agent");
+      el.classList.toggle("bg-candy-butter", !wasPaused);
+      el.classList.toggle("border-zk-warnbd", !wasPaused);
+      id("pauseIcon").innerHTML = wasPaused
+        ? '<rect x="7" y="5" width="3.4" height="14" rx="1.4"/><rect x="13.6" y="5" width="3.4" height="14" rx="1.4"/>'
+        : '<path d="M7 4.5v15l13-7.5z"/>';
+      const lab = id("liveLabel");
+      if (lab) lab.textContent = wasPaused ? "Live progress" : "Paused by you";
+      const r = el.getBoundingClientRect();
+      if (fx) fx.burst(r.left + r.width / 2, r.top + r.height / 2, 6);
+      close();
+    }
+  }
+
+  document.addEventListener("click", (e) => {
+    const el = e.target.closest("[data-act]");
+    if (!el) {
+      if (!e.target.closest("#popover")) close();
+      return;
+    }
+    handle(el.dataset.act, el);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { close(); return; }
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const el = document.activeElement;
+    if (!el || ["BUTTON", "A", "INPUT", "TEXTAREA"].indexOf(el.tagName) !== -1) return;
+    if (!el.hasAttribute("data-act")) return;
+    e.preventDefault();
+    el.click();
+  });
+
+  window.addEventListener("scroll", close, true);
+  window.addEventListener("resize", close);
 })();
 </script>
 </body>
